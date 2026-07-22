@@ -123,17 +123,32 @@ function renderQuestions() {
   });
 }
 
-let mediaRecorder, audioChunks = [], activeIdx = null;
+let mediaRecorder, audioChunks = [], activeKey = null;
+
+// Works for two kinds of record buttons: STAR-answer buttons (data-idx —
+// text goes into the qa-text-N textarea) and plain field buttons
+// (data-target="someInputId" — text goes straight into that input, used
+// for the "personal detail" and "top values" fields on step 1). Both share
+// the same recording/transcription plumbing, just a different place to put
+// the resulting text and status message.
+function recordingTargets(btn) {
+  if (btn.dataset.idx !== undefined) {
+    const idx = btn.dataset.idx;
+    return { key: `idx:${idx}`, textEl: $(`qa-text-${idx}`), statusEl: $(`qa-status-${idx}`), idleLabel: "● Record answer" };
+  }
+  const target = btn.dataset.target;
+  return { key: `field:${target}`, textEl: $(target), statusEl: $(`${target}-status`), idleLabel: "● Record" };
+}
 
 async function toggleRecording(btn) {
-  const idx = Number(btn.dataset.idx);
-  if (mediaRecorder && mediaRecorder.state === "recording" && activeIdx === idx) {
+  const { key, textEl, statusEl, idleLabel } = recordingTargets(btn);
+  if (mediaRecorder && mediaRecorder.state === "recording" && activeKey === key) {
     mediaRecorder.stop();
     return;
   }
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    activeIdx = idx;
+    activeKey = key;
     audioChunks = [];
 
     // Safari (and some other browsers) don't support 'audio/webm' at all —
@@ -156,34 +171,41 @@ async function toggleRecording(btn) {
     mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
     mediaRecorder.onstop = async () => {
       btn.classList.remove("recording");
-      btn.textContent = "● Record answer";
+      btn.textContent = idleLabel;
       stream.getTracks().forEach((t) => t.stop());
       // Use whatever format the recorder actually produced (mediaRecorder.mimeType
       // reflects what really got encoded), not a hardcoded guess.
       const actualType = mediaRecorder.mimeType || "audio/webm";
       const ext = actualType.includes("mp4") ? "m4a" : actualType.includes("ogg") ? "ogg" : actualType.includes("mpeg") ? "mp3" : "webm";
       const blob = new Blob(audioChunks, { type: actualType });
-      const statusEl = $(`qa-status-${idx}`);
-      statusEl.textContent = "Transcribing…";
+      if (statusEl) statusEl.textContent = "Transcribing…";
       const fd = new FormData();
       fd.append("audio", blob, `answer.${ext}`);
       const res = await fetch("/api/transcribe", { method: "POST", body: fd });
       const data = await res.json();
-      if (data.text) {
-        $(`qa-text-${idx}`).value = data.text;
-        statusEl.textContent = "Transcribed ✓";
-      } else {
+      if (data.text && textEl) {
+        textEl.value = data.text;
+        if (statusEl) statusEl.textContent = "Transcribed ✓";
+      } else if (statusEl) {
         statusEl.textContent = data.message || "Transcription unavailable — please type your answer.";
       }
     };
     mediaRecorder.start();
     btn.classList.add("recording");
-    btn.textContent = "■ Stop recording";
-    $(`qa-status-${idx}`).textContent = "Recording…";
+    btn.textContent = "■ Stop";
+    if (statusEl) statusEl.textContent = "Recording…";
   } catch (err) {
     alert("Couldn't access the microphone. You can type your answer instead.");
   }
 }
+
+// Step-1 record buttons (personal detail, top values) exist in the static
+// HTML from page load, unlike the STAR-answer buttons which are rendered
+// dynamically per question — so they're wired up once here rather than in
+// renderQuestions().
+document.querySelectorAll(".record-btn-inline").forEach((btn) => {
+  btn.addEventListener("click", () => toggleRecording(btn));
+});
 
 on("back1", "click", () => showPanel(1));
 

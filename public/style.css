@@ -168,6 +168,13 @@ input[type="file"] { color: var(--cream-soft); font-size: 13px; }
 }
 .record-btn.recording { background: var(--orange); border-color: var(--orange); color: var(--bg-dark); }
 .qa-status { font-size: 12px; color: var(--cream-soft); font-family: var(--font-body); font-style: italic; }
+
+/* Step 1: record buttons on the personal-detail / values fields — same
+   look as the STAR-answer record buttons, just inline with the input. */
+.input-with-record { display: flex; gap: 8px; align-items: stretch; }
+.input-with-record input { flex: 1; }
+.record-btn-inline { white-space: nowrap; font-size: 11px; padding: 0 12px; }
+.status-line-small { font-size: 11px; margin-top: 4px; display: block; }
 .qa-based-on {
   font-size: 12px;
   color: var(--sky);

@@ -36,16 +36,25 @@
         <span class="tooltip-trigger">?
           <span class="tooltip-box"><b>Bread 1 — Connect.</b> 10–15 seconds of the human you — a detail that builds rapport. Not a CV recap.<br><br>Template: "A bit about me — I'm [X], based in [Y] and outside work I'm into [interest]."</span>
         </span>
-        <input type="text" id="connectDetail" placeholder="e.g. based just outside Leeds, into trail running">
+        <div class="input-with-record">
+          <input type="text" id="connectDetail" placeholder="e.g. based just outside Leeds, into trail running">
+          <button type="button" class="record-btn record-btn-inline" data-target="connectDetail">● Record</button>
+        </div>
+        <span id="connectDetail-status" class="status-line status-line-small"></span>
       </label>
       <label>
         Your top values at work
         <span class="tooltip-trigger">?
           <span class="tooltip-box"><b>Bread 2 — Values.</b> Two values, and what they look like in how you work — not generic buzzwords.<br><br>Template: "In how I work, I value [value 1] and [value 2] — which means you'll get someone who [behaviour]."</span>
         </span>
-        <input type="text" id="values" placeholder="e.g. honesty, curiosity">
+        <div class="input-with-record">
+          <input type="text" id="values" placeholder="e.g. honesty, curiosity">
+          <button type="button" class="record-btn record-btn-inline" data-target="values">● Record</button>
+        </div>
+        <span id="values-status" class="status-line status-line-small"></span>
       </label>
     </div>
+    <p class="audio-consent">Recording uses your microphone and sends the audio to our transcription provider to convert it to text — see our <a href="/privacy.html" target="_blank">privacy notice</a> for details. Typing instead skips this entirely.</p>
 
     <div class="upload-block">
       <h3>Job description</h3>

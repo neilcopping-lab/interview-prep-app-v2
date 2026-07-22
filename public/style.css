@@ -69,6 +69,10 @@ p { margin: 0 0 12px; }
 
 /* ---------------- FORMS ---------------- */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+/* Keeps 5 fields from leaving an orphaned empty cell in a 2-column grid —
+   the company field spans the full row on its own, and the two
+   record-enabled fields (personal detail, values) pair up neatly below it. */
+.form-grid-full { grid-column: 1 / -1; }
 label { display: flex; flex-direction: column; font-family: var(--font-heading); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--cream-soft); gap: 6px; position: relative; margin-bottom: 10px; }
 input[type="text"], input[type="email"], textarea {
   background: var(--bg-dark);

@@ -244,7 +244,11 @@ const GENERATION_STEPS = [
 // rather than ticking evenly to zero, and once it's essentially out of
 // runway it switches to an honest "taking longer than usual" message
 // instead of showing 0:00 or negative time.
-const ESTIMATED_GENERATION_SECONDS = 100;
+// Lowered from 100s now that Claude calls run concurrently instead of
+// dead-serial (see lib/aiClients.js) — a report is normally bounded by the
+// single web-search call (~30-60s) rather than the sum of every call's
+// time, so this estimate should track reality much more closely now.
+const ESTIMATED_GENERATION_SECONDS = 55;
 
 function formatRemaining(seconds) {
   const s = Math.max(0, Math.round(seconds));

@@ -11,6 +11,7 @@ const { generateReport } = require("./lib/reportGenerator");
 const { buildReportDocx } = require("./lib/docxExport");
 const { selectQuestions } = require("./lib/questionBank");
 const { getAvailableSlots, bookSlot } = require("./lib/booking");
+const { recordConsent } = require("./lib/consent");
 const { hasOpenAI, getOpenAI, TRANSCRIBE_MODEL } = require("./lib/aiClients");
 
 const app = express();
@@ -199,6 +200,20 @@ app.post("/api/report/docx", async (req, res) => {
 // add-on — /api/booking/book below should also check for a confirmed
 // payment on that specific slot before accepting it.
 // -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
+// GDPR consent + optional marketing sign-up. Called once, right when the
+// candidate moves past the intake step — before any report generation
+// happens — so there's a real record of who agreed to the Privacy & Data
+// Notice and when, separate from whether they also opted in to future
+// marketing (two distinct consents, not bundled into one checkbox).
+// -------------------------------------------------------------------------
+app.post("/api/consent", (req, res) => {
+  const { name, email, companyName, agreedToPrivacy, marketingOptIn } = req.body || {};
+  const result = recordConsent({ name, email, companyName, agreedToPrivacy, marketingOptIn });
+  if (!result.ok) return res.status(400).json(result);
+  res.json(result);
+});
+
 app.post("/api/checkout", (req, res) => {
   res.json({
     url: null,

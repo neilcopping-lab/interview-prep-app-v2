@@ -65,15 +65,53 @@ on("cvFile", "change", async (e) => {
 
 on("toStep2", "click", async () => {
   state.candidateName = $("candidateName")?.value.trim() || "";
+  state.candidateEmail = $("candidateEmail")?.value.trim() || "";
   state.companyName = $("companyName")?.value.trim() || "";
   state.connectDetail = $("connectDetail")?.value.trim() || "";
   state.values = ($("values")?.value || "").split(",").map((v) => v.trim()).filter(Boolean);
   state.jobDescription = $("jobDescription")?.value.trim() || "";
   state.cvText = $("cvText")?.value.trim() || "";
+  const agreedToPrivacy = !!$("agreePrivacy")?.checked;
+  const marketingOptIn = !!$("marketingOptIn")?.checked;
 
   if (!state.jobDescription || !state.cvText) {
     if ($("questionStatus")) $("questionStatus").textContent = "Please add both a job description and your CV before continuing.";
     return;
+  }
+  // A valid email and an explicit tick against the Privacy & Data Notice
+  // are both required before we generate anything — this is deliberately
+  // checked here, not just left to the server, so the candidate sees a
+  // clear reason immediately rather than a generic error.
+  const emailLooksValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.candidateEmail);
+  if (!emailLooksValid) {
+    if ($("consentStatus")) $("consentStatus").textContent = "Please add a valid email address to continue.";
+    return;
+  }
+  if (!agreedToPrivacy) {
+    if ($("consentStatus")) $("consentStatus").textContent = "Please tick the box agreeing to the Privacy & Data Notice to continue.";
+    return;
+  }
+  if ($("consentStatus")) $("consentStatus").textContent = "";
+
+  // Record the consent server-side before moving on. This is a genuine
+  // "best effort" — if logging it fails for some reason (network blip,
+  // disk issue), that's an internal record-keeping problem, not something
+  // that should block a candidate who's already agreed from getting the
+  // report they're here for.
+  try {
+    await fetch("/api/consent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: state.candidateName,
+        email: state.candidateEmail,
+        companyName: state.companyName,
+        agreedToPrivacy,
+        marketingOptIn,
+      }),
+    });
+  } catch (err) {
+    console.error("[consent] could not record consent (continuing anyway):", err);
   }
 
   if ($("questionStatus")) $("questionStatus").textContent = "Picking the right questions for this role…";
@@ -244,11 +282,11 @@ const GENERATION_STEPS = [
 // rather than ticking evenly to zero, and once it's essentially out of
 // runway it switches to an honest "taking longer than usual" message
 // instead of showing 0:00 or negative time.
-// Lowered from 100s now that Claude calls run concurrently instead of
-// dead-serial (see lib/aiClients.js) — a report is normally bounded by the
-// single web-search call (~30-60s) rather than the sum of every call's
-// time, so this estimate should track reality much more closely now.
-const ESTIMATED_GENERATION_SECONDS = 55;
+// Claude calls now run with some concurrency (2 at a time, see
+// lib/aiClients.js) rather than dead-serial, so this is well under the
+// old 100s estimate, but not as low as full concurrency would allow —
+// left some headroom for the occasional retry.
+const ESTIMATED_GENERATION_SECONDS = 70;
 
 function formatRemaining(seconds) {
   const s = Math.max(0, Math.round(seconds));

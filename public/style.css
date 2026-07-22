@@ -153,6 +153,13 @@ input[type="file"] { color: var(--cream-soft); font-size: 13px; }
 }
 .audio-consent { font-size: 12px; color: var(--cream-soft); font-style: italic; margin-top: 8px; }
 
+/* Step 1: GDPR / marketing consent checkboxes, right before Continue */
+.consent-block { margin: 20px 0; padding: 16px 18px; background: var(--bg-panel-2); border-left: 3px solid var(--sky); }
+.consent-row { display: flex; flex-direction: row; align-items: flex-start; gap: 10px; font-family: var(--font-body); font-size: 13px; text-transform: none; letter-spacing: normal; color: var(--cream); margin-bottom: 10px; }
+.consent-row:last-child { margin-bottom: 0; }
+.consent-row input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; width: 16px; height: 16px; }
+.consent-row a { color: var(--sky); }
+
 .qa-card { background: var(--bg-panel-2); padding: 16px; margin-bottom: 14px; }
 .qa-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
 .record-btn {

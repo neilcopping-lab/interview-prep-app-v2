@@ -28,6 +28,10 @@
         <input type="text" id="candidateName" placeholder="e.g. Neil Copping">
       </label>
       <label>
+        Your email
+        <input type="email" id="candidateEmail" placeholder="e.g. neil@example.com">
+      </label>
+      <label>
         Company you're interviewing with
         <input type="text" id="companyName" placeholder="e.g. Driver Require">
       </label>
@@ -68,6 +72,18 @@
       <input type="file" id="cvFile" accept=".pdf,.docx,.txt">
       <p class="upload-or">or paste it below</p>
       <textarea id="cvText" rows="6" placeholder="Paste your CV here"></textarea>
+    </div>
+
+    <div class="consent-block">
+      <label class="consent-row">
+        <input type="checkbox" id="agreePrivacy">
+        <span>I've read and agree to the <a href="/privacy.html" target="_blank">Privacy &amp; Data Notice</a> — required to generate a report.</span>
+      </label>
+      <label class="consent-row">
+        <input type="checkbox" id="marketingOptIn">
+        <span>Yes, keep me posted on future guides, tools and offers from The Com'mon People (optional — you can unsubscribe any time).</span>
+      </label>
+      <p id="consentStatus" class="status-line"></p>
     </div>
 
     <button type="button" id="toStep2" class="btn-primary">Continue</button>

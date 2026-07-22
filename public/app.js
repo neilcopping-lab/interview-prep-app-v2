@@ -135,17 +135,38 @@ async function toggleRecording(btn) {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     activeIdx = idx;
     audioChunks = [];
-    mediaRecorder = new MediaRecorder(stream);
+
+    // Safari (and some other browsers) don't support 'audio/webm' at all —
+    // if you force it as the MediaRecorder mimeType, recording silently
+    // fails or falls back to whatever the browser actually supports (often
+    // 'audio/mp4'), while the code used to hardcode the blob's type and
+    // filename as "audio/webm" regardless. OpenAI then received a file
+    // labelled webm that wasn't actually webm-encoded, rejected it, and
+    // transcription failed every time on Safari — this was the real bug
+    // behind "Transcription hit a problem just now" persisting even after
+    // the OpenAI billing/account issue was fixed. Ask the browser what it
+    // actually supports and use that, both for recording and for the
+    // filename/type sent to the server, instead of assuming webm.
+    const preferredTypes = ["audio/webm", "audio/mp4", "audio/ogg", "audio/mpeg"];
+    const supportedType = preferredTypes.find(
+      (t) => window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)
+    );
+    mediaRecorder = supportedType ? new MediaRecorder(stream, { mimeType: supportedType }) : new MediaRecorder(stream);
+
     mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
     mediaRecorder.onstop = async () => {
       btn.classList.remove("recording");
       btn.textContent = "● Record answer";
       stream.getTracks().forEach((t) => t.stop());
-      const blob = new Blob(audioChunks, { type: "audio/webm" });
+      // Use whatever format the recorder actually produced (mediaRecorder.mimeType
+      // reflects what really got encoded), not a hardcoded guess.
+      const actualType = mediaRecorder.mimeType || "audio/webm";
+      const ext = actualType.includes("mp4") ? "m4a" : actualType.includes("ogg") ? "ogg" : actualType.includes("mpeg") ? "mp3" : "webm";
+      const blob = new Blob(audioChunks, { type: actualType });
       const statusEl = $(`qa-status-${idx}`);
       statusEl.textContent = "Transcribing…";
       const fd = new FormData();
-      fd.append("audio", blob, "answer.webm");
+      fd.append("audio", blob, `answer.${ext}`);
       const res = await fetch("/api/transcribe", { method: "POST", body: fd });
       const data = await res.json();
       if (data.text) {

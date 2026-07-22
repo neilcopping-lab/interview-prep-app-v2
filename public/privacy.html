@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy &amp; Data Notice — The Com'mon People</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600&family=Arvo:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .legal { max-width: 760px; margin: 0 auto; padding: 32px 20px 60px; font-size: 14px; }
+  .legal h2 { margin-top: 32px; }
+  .legal table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 13px; }
+  .legal th, .legal td { text-align: left; padding: 8px 10px; border: 1px solid var(--bg-panel-2); }
+  .legal th { background: var(--bg-panel-2); font-family: var(--font-heading); text-transform: uppercase; font-size: 11px; letter-spacing: 0.04em; }
+  .legal ul { padding-left: 20px; }
+  .legal li { margin-bottom: 6px; }
+  .last-updated { color: var(--cream-soft); font-style: italic; font-size: 12px; }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="brand">The Com'mon People</div>
+  <div class="brand-sub">Privacy &amp; Data Notice</div>
+</header>
+
+<main class="legal">
+  <p class="last-updated">This is a draft notice for a prototype product. It has not had a formal legal review — get it checked (ideally by a solicitor) before real customer data flows through this app.</p>
+
+  <h2>Who we are</h2>
+  <p>The Com'mon People Interview Prep Report is a service that generates a personalised interview preparation report from the job description and CV you provide, optionally including a recorded practice answer and a paid coaching add-on.</p>
+
+  <h2>What we collect</h2>
+  <table>
+    <tr><th>Data</th><th>Why we collect it</th></tr>
+    <tr><td>Your name, and the company/role you're applying for</td><td>To personalise your report and pitch</td></tr>
+    <tr><td>Your CV and the job description (uploaded file or pasted text)</td><td>To generate the gap analysis, pitch and tailored questions</td></tr>
+    <tr><td>Spoken answers to competency questions (audio, then transcribed to text)</td><td>To draft your STAR answers — audio is sent to our transcription provider and not retained by us afterwards</td></tr>
+    <tr><td>Email address, and name (if you book a coaching call)</td><td>To arrange and confirm your coaching session</td></tr>
+  </table>
+
+  <h2>How long we keep it</h2>
+  <ul>
+    <li>Uploaded CV/JD files are deleted from our server immediately after the text is extracted.</li>
+    <li>Recorded audio is deleted immediately after transcription.</li>
+    <li>Report content generated for you is not stored after it's returned to your browser, other than what's needed to build your downloadable document in the same request.</li>
+    <li>Coaching booking details (name, email, chosen time) are kept until the session has taken place, plus a short period afterwards for any follow-up.</li>
+  </ul>
+
+  <h2>Who we share data with</h2>
+  <p>We use the following third-party processors to provide the service. None of them are permitted to use your data for their own purposes beyond providing the service to us.</p>
+  <table>
+    <tr><th>Processor</th><th>What they see</th></tr>
+    <tr><td>Anthropic (Claude API)</td><td>Your job description and CV text, to generate research, analysis and drafted answers</td></tr>
+    <tr><td>OpenAI</td><td>Your spoken answers (for transcription) and a description of the role (to generate cover artwork)</td></tr>
+    <tr><td>Stripe</td><td>Payment details, when payment is enabled — we do not see or store your card details ourselves</td></tr>
+    <tr><td>Render (hosting)</td><td>Standard hosting-level access to run the application</td></tr>
+  </table>
+
+  <h2>Your rights</h2>
+  <p>Under UK GDPR you have the right to access, correct, or ask us to delete the personal data we hold about you, and the right to object to or restrict certain processing. Contact us if you'd like to exercise any of these. If you're unhappy with how we've handled your data, you can also complain to the Information Commissioner's Office (ico.org.uk).</p>
+
+  <h2>Security</h2>
+  <p>Uploaded files are size- and type-restricted before they're accepted, and are deleted from our server as soon as they've been processed. Access to hosting and third-party accounts is restricted to those who need it to run the service.</p>
+
+  <h2>Cookies</h2>
+  <p>This app does not currently use tracking or advertising cookies.</p>
+
+  <h2>Changes to this notice</h2>
+  <p>We may update this notice as the service develops. Material changes will be reflected here with an updated date.</p>
+</main>
+
+<footer class="site-footer">
+  <a href="/">Back to the app</a>
+</footer>
+</body>
+</html>

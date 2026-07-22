@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Prep Report — The Com'mon People</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600&family=Arvo:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="brand"><span>The</span><span>Com'mon</span><span>People</span></div>
+  <div class="brand-sub">Interview Prep Report</div>
+</header>
+
+<main class="wizard">
+
+  <!-- STEP 1: INTAKE -->
+  <section id="panel1" class="panel">
+    <h2>Tell us about the interview</h2>
+    <p class="panel-intro">Add the job description and your CV, and we'll build your personalised prep report from them.</p>
+
+    <div class="form-grid">
+      <label>
+        Your name
+        <input type="text" id="candidateName" placeholder="e.g. Neil Copping">
+      </label>
+      <label>
+        Company you're interviewing with
+        <input type="text" id="companyName" placeholder="e.g. Driver Require">
+      </label>
+      <label>
+        A personal detail to open with
+        <span class="tooltip-trigger">?
+          <span class="tooltip-box"><b>Bread 1 — Connect.</b> 10–15 seconds of the human you — a detail that builds rapport. Not a CV recap.<br><br>Template: "A bit about me — I'm [X], based in [Y] and outside work I'm into [interest]."</span>
+        </span>
+        <input type="text" id="connectDetail" placeholder="e.g. based just outside Leeds, into trail running">
+      </label>
+      <label>
+        Your top values at work
+        <span class="tooltip-trigger">?
+          <span class="tooltip-box"><b>Bread 2 — Values.</b> Two values, and what they look like in how you work — not generic buzzwords.<br><br>Template: "In how I work, I value [value 1] and [value 2] — which means you'll get someone who [behaviour]."</span>
+        </span>
+        <input type="text" id="values" placeholder="e.g. honesty, curiosity">
+      </label>
+    </div>
+
+    <div class="upload-block">
+      <h3>Job description</h3>
+      <input type="file" id="jdFile" accept=".pdf,.docx,.txt">
+      <p class="upload-or">or paste it below</p>
+      <textarea id="jobDescription" rows="6" placeholder="Paste the job description here"></textarea>
+    </div>
+
+    <div class="upload-block">
+      <h3>Your CV</h3>
+      <input type="file" id="cvFile" accept=".pdf,.docx,.txt">
+      <p class="upload-or">or paste it below</p>
+      <textarea id="cvText" rows="6" placeholder="Paste your CV here"></textarea>
+    </div>
+
+    <button type="button" id="toStep2" class="btn-primary">Continue</button>
+    <p id="questionStatus" class="status-line"></p>
+  </section>
+
+  <!-- STEP 2: COMPETENCY QUESTIONS -->
+  <section id="panel2" class="panel hidden">
+    <h2>Your competency questions</h2>
+
+    <div class="star-guide-callout">
+      <h3>Answering with STAR Stories</h3>
+      <p>Predict likely questions from the job spec, then prepare 2–3 versatile stories that cover most scenarios. Tell each one in four parts: <b>S</b>ituation (the context, briefly), <b>T</b>ask (what you were responsible for), <b>A</b>ction (what you did — the actual steps, say "I," not "we"), <b>R</b>esult (measurable outcomes, numbers if you can). Record your answer out loud, or just type it — either way, we'll tidy it into a clean STAR structure for your report.</p>
+      <p class="info-note">These are a sample of the type of competency questions this role is likely to attract, based on the job description — not a guaranteed or exhaustive list of what you'll actually be asked. Build versatile stories that can flex to cover whatever comes up.</p>
+      <p class="audio-consent">Recording uses your microphone and sends the audio to our transcription provider to convert it to text — see our <a href="/privacy.html" target="_blank">privacy notice</a> for details. Typing instead skips this entirely.</p>
+    </div>
+
+    <div id="questionList"></div>
+
+    <div class="step-nav">
+      <button type="button" id="back1" class="btn-secondary">Back</button>
+      <button type="button" id="toStep3" class="btn-primary">Generate my report</button>
+    </div>
+  </section>
+
+  <!-- STEP 3: REPORT -->
+  <section id="panel3" class="panel hidden">
+    <h2>Your Interview Prep Report</h2>
+    <p id="genStatus" class="status-line"></p>
+    <div id="genProgressBar" class="gen-progress-bar hidden"><div id="genProgressFill" class="gen-progress-fill"></div></div>
+    <p id="genCountdown" class="gen-countdown"></p>
+
+    <div id="reportPreview"></div>
+
+    <button type="button" id="downloadDocx" class="btn-primary">Download as Word document</button>
+
+    <div id="addonCard" class="addon-card hidden">
+      <h3>Want a 20-minute coaching call tailored to your report?</h3>
+      <p>£29 add-on — a real person walks through your report with you, focused on the areas most likely to trip you up.</p>
+      <button type="button" id="showBooking" class="btn-secondary">See available times</button>
+
+      <div id="bookingPanel" class="booking-panel hidden">
+        <div id="slotList" class="slot-list"></div>
+        <div id="bookingForm" class="hidden">
+          <label>Name <input type="text" id="bookingName"></label>
+          <label>Email <input type="email" id="bookingEmail"></label>
+          <button type="button" id="confirmBooking" class="btn-primary">Confirm booking</button>
+          <p id="bookingStatus" class="status-line"></p>
+        </div>
+      </div>
+      <p class="paywall-note">Payment isn't wired up in this prototype yet — bookings and reports are currently free to generate while we finish testing.</p>
+    </div>
+
+    <div class="step-nav">
+      <button type="button" id="back2" class="btn-secondary">Back</button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <a href="/privacy.html" target="_blank">Privacy &amp; data notice</a>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

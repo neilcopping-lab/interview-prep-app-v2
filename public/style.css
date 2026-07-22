@@ -1,0 +1,341 @@
+:root {
+  --bg: #161F29;
+  --bg-dark: #0F151C;
+  --bg-panel: #1C2733;
+  --bg-panel-2: #2A333D;
+  --cream: #ECE6D8;
+  --cream-soft: rgba(236, 230, 216, 0.72);
+  --mustard: #E0B03C;
+  --sky: #5AA9C2;
+  --orange: #D2691E;
+  --font-display: 'Anton', sans-serif;
+  --font-heading: 'Oswald', sans-serif;
+  --font-body: 'Arvo', serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--cream);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+h1, h2, h3 { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.01em; margin: 0 0 12px; }
+h4 { font-family: var(--font-heading); margin: 0 0 6px; }
+a { color: var(--sky); }
+p { margin: 0 0 12px; }
+
+.hidden { display: none !important; }
+
+/* ---------------- HEADER / FOOTER ---------------- */
+.site-header {
+  background: var(--bg);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+/* Wordmark, matched to the live site: three colour-block "stickers" —
+   mustard / sky / orange — each with dark text and a slight rotation,
+   rather than a plain text logo. */
+.brand { display: flex; gap: 4px; font-family: var(--font-display); font-size: 18px; text-transform: uppercase; }
+.brand span {
+  display: inline-block;
+  padding: 4px 9px;
+  color: var(--bg-dark);
+  transform: rotate(-2deg);
+}
+.brand span:nth-child(1) { background: var(--mustard); }
+.brand span:nth-child(2) { background: var(--sky); transform: rotate(1.5deg); }
+.brand span:nth-child(3) { background: var(--orange); transform: rotate(-1.5deg); }
+.brand-sub { font-family: var(--font-heading); font-size: 12px; color: var(--cream-soft); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.site-footer {
+  padding: 24px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--cream-soft);
+}
+
+/* ---------------- LAYOUT ---------------- */
+.wizard { max-width: 760px; margin: 0 auto; padding: 32px 20px 60px; }
+.panel { background: var(--bg-panel); border: 1px solid var(--bg-panel-2); padding: 28px; margin-bottom: 24px; }
+.panel-intro { color: var(--cream-soft); font-size: 14px; }
+
+/* ---------------- FORMS ---------------- */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+label { display: flex; flex-direction: column; font-family: var(--font-heading); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--cream-soft); gap: 6px; position: relative; margin-bottom: 10px; }
+input[type="text"], input[type="email"], textarea {
+  background: var(--bg-dark);
+  border: 1px solid var(--bg-panel-2);
+  color: var(--cream);
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  border-radius: 0;
+}
+input[type="text"]:focus, input[type="email"]:focus, textarea:focus { outline: 1px solid var(--sky); }
+textarea { resize: vertical; width: 100%; margin-top: 6px; }
+input[type="file"] { color: var(--cream-soft); font-size: 13px; }
+
+.upload-block { margin-bottom: 22px; }
+.upload-or { font-size: 12px; color: var(--cream-soft); font-style: italic; margin: 8px 0; }
+
+/* Simple CSS-only tooltip: hover/focus the "?" trigger to reveal the box. */
+.tooltip-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--bg-panel-2);
+  color: var(--sky);
+  font-size: 11px;
+  margin-left: 6px;
+  cursor: help;
+  position: relative;
+}
+.tooltip-box {
+  display: none;
+  position: absolute;
+  bottom: 130%;
+  left: 0;
+  width: 240px;
+  background: var(--bg-dark);
+  border: 1px solid var(--sky);
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 10px;
+  z-index: 5;
+  line-height: 1.45;
+}
+.tooltip-trigger:hover .tooltip-box,
+.tooltip-trigger:focus .tooltip-box { display: block; }
+
+/* ---------------- BUTTONS ----------------
+   Matched directly to the live site's computed styles: solid orange
+   button (#D2691E bg, dark navy text) and an outline cream button —
+   Oswald 600, uppercase, 1px letter-spacing, sharp corners, no radius. */
+.btn-primary, .btn-secondary {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 13px;
+  padding: 16px 32px;
+  border-radius: 0;
+  cursor: pointer;
+}
+.btn-primary { background: var(--orange); color: var(--bg-dark); border: 2px solid var(--orange); }
+.btn-primary:hover { background: var(--mustard); border-color: var(--mustard); }
+.btn-secondary { background: transparent; color: var(--cream); border: 2px solid var(--cream); margin-right: 10px; }
+.btn-secondary:hover { border-color: var(--sky); color: var(--sky); }
+
+.status-line { font-size: 12px; color: var(--cream-soft); font-style: italic; margin-top: 10px; }
+.step-nav { margin-top: 20px; display: flex; align-items: center; gap: 10px; }
+
+/* ---------------- STEP 2: STAR + QUESTIONS ---------------- */
+.star-guide-callout {
+  background: var(--bg-panel-2);
+  border-left: 3px solid var(--mustard);
+  padding: 16px 18px;
+  margin-bottom: 22px;
+  font-size: 14px;
+}
+.audio-consent { font-size: 12px; color: var(--cream-soft); font-style: italic; margin-top: 8px; }
+
+.qa-card { background: var(--bg-panel-2); padding: 16px; margin-bottom: 14px; }
+.qa-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.record-btn {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  background: var(--bg-dark);
+  color: var(--orange);
+  border: 1px solid var(--orange);
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.record-btn.recording { background: var(--orange); border-color: var(--orange); color: var(--bg-dark); }
+.qa-status { font-size: 12px; color: var(--cream-soft); font-family: var(--font-body); font-style: italic; }
+.qa-based-on {
+  font-size: 12px;
+  color: var(--sky);
+  font-family: var(--font-body);
+  margin: -6px 0 10px;
+}
+.qa-based-on span { font-style: italic; color: var(--cream-soft); }
+
+/* ---------------- STEP 3: REPORT ---------------- */
+.cover-banner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  background: var(--bg-dark);
+}
+.cover-banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-banner-text {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 22px 24px;
+  background: linear-gradient(to top, rgba(15,21,28,0.88), rgba(15,21,28,0));
+}
+.cover-banner-title {
+  font-family: var(--font-display);
+  color: var(--cream);
+  font-size: clamp(18px, 3vw, 26px);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+.cover-banner-brand {
+  font-family: var(--font-heading);
+  color: var(--orange);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-style: italic;
+  margin-top: 2px;
+  margin-bottom: 10px;
+}
+.cover-banner-name {
+  font-family: var(--font-display);
+  color: var(--cream);
+  font-size: clamp(22px, 4vw, 34px);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+.cover-banner-sub {
+  font-family: var(--font-heading);
+  color: var(--mustard);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+.report-sources-all { margin-top: 8px; }
+.report-sources-all h4 { margin-top: 14px; }
+.report-sources-all ul { font-size: 12.5px; }
+.report-sources-all a { color: var(--sky); word-break: break-all; }
+.gen-progress {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--cream-soft);
+  font-style: italic;
+}
+.gen-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(236, 230, 216, 0.12);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 10px 0 6px;
+}
+.gen-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--orange);
+  border-radius: 3px;
+  transition: width 0.6s ease-out;
+}
+.gen-countdown {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--cream-soft);
+  font-style: italic;
+  margin: 0 0 16px;
+}
+
+.report-block { margin-bottom: 24px; }
+.report-block h3 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  color: var(--mustard);
+  border-bottom: 2px solid var(--mustard);
+  padding-bottom: 5px;
+  font-size: 22px;
+  letter-spacing: 0.01em;
+}
+.report-block h4 { font-family: var(--font-heading); color: var(--sky); margin-bottom: 4px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.02em; }
+.report-block p { line-height: 1.55; font-size: 14px; }
+.report-block ul { margin: 4px 0 14px; padding-left: 20px; }
+.report-block li { line-height: 1.55; font-size: 14px; margin-bottom: 6px; }
+
+.skills-match { margin: 6px 0 16px; }
+.skills-match-label { font-size: 13px; margin-bottom: 6px; }
+.skills-match svg { display: block; }
+
+.upgrade-flag {
+  background: rgba(224, 176, 60, 0.12);
+  border: 1px solid rgba(224, 176, 60, 0.5);
+  color: var(--mustard);
+  font-size: 12.5px;
+  padding: 9px 11px;
+  margin: 6px 0;
+  font-family: var(--font-body);
+}
+.report-sources {
+  font-size: 11.5px;
+  color: var(--cream-soft);
+  font-family: var(--font-body);
+  opacity: 0.85;
+  margin: 4px 0 10px;
+  line-height: 1.5;
+}
+.report-sources a { color: var(--sky); text-decoration: none; }
+.report-sources a:hover { text-decoration: underline; }
+
+.info-note {
+  background: rgba(236, 230, 216, 0.06);
+  border-left: 2px solid var(--cream-soft);
+  color: var(--cream-soft);
+  font-size: 12.5px;
+  font-style: italic;
+  padding: 9px 11px;
+  margin: 10px 0;
+}
+
+.star-line { font-size: 14px; margin-bottom: 6px; }
+.star-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+.star-item { background: var(--bg-panel-2); padding: 10px 12px; font-size: 13px; }
+
+/* ---------------- COACHING ADD-ON ---------------- */
+.addon-card {
+  background: var(--bg-panel-2);
+  border: 1px solid var(--sky);
+  padding: 20px;
+  margin: 24px 0;
+}
+.booking-panel { margin-top: 14px; }
+.slot-list { margin-bottom: 14px; }
+.slot-day h4 { margin-top: 12px; }
+.slot-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.slot-btn {
+  background: var(--bg-dark);
+  color: var(--cream);
+  border: 1px solid var(--bg-panel-2);
+  padding: 8px 12px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  cursor: pointer;
+}
+.slot-btn:hover { border-color: var(--sky); }
+.slot-btn.selected { background: var(--sky); color: var(--bg-dark); border-color: var(--sky); }
+.paywall-note { font-size: 11.5px; color: var(--cream-soft); font-style: italic; margin-top: 14px; }
+
+@media (max-width: 600px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .star-grid { grid-template-columns: 1fr; }
+}

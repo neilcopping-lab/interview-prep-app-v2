@@ -13,6 +13,7 @@ const { selectQuestions } = require("./lib/questionBank");
 const { getAvailableSlots, bookSlot } = require("./lib/booking");
 const { recordConsent } = require("./lib/consent");
 const { hasOpenAI, getOpenAI, TRANSCRIBE_MODEL } = require("./lib/aiClients");
+const { hasStripe, createCheckoutSession, verifyPaidSession, markSessionConsumed, REPORT_PRICE_GBP } = require("./lib/payments");
 
 const app = express();
 
@@ -156,8 +157,21 @@ app.post("/api/transcribe", upload.single("audio"), async (req, res) => {
 
 // -------------------------------------------------------------------------
 // Generate the report as JSON (used by the frontend to render a preview).
+//
+// Gated behind a confirmed paid Stripe session: the frontend sends the
+// session_id it got back from Stripe's redirect, and this re-checks it
+// directly with Stripe (never trusting a client-side "paid" flag) before
+// spending any AI credit generating the report. If Stripe isn't configured
+// yet (no STRIPE_SECRET_KEY), the gate is skipped entirely so local dev and
+// the current prototype keep working without a payment setup.
 // -------------------------------------------------------------------------
 app.post("/api/report", async (req, res) => {
+  const { stripeSessionId } = req.body || {};
+  if (hasStripe()) {
+    const check = await verifyPaidSession(stripeSessionId);
+    if (!check.paid) return res.status(402).json({ error: check.error || "Payment required." });
+    markSessionConsumed(stripeSessionId);
+  }
   try {
     const report = await generateReport(req.body);
     res.json(report);
@@ -179,6 +193,20 @@ app.post("/api/report", async (req, res) => {
 // -------------------------------------------------------------------------
 app.post("/api/report/docx", async (req, res) => {
   try {
+    // If a report object was already supplied, it came from a /api/report
+    // call that already passed the payment gate above — no need to check
+    // again, this is just formatting the same paid-for content as a .docx.
+    // Only the "regenerate from scratch" path (no report supplied) needs
+    // its own check, since it would otherwise let anyone skip the gate by
+    // calling this endpoint directly.
+    if (!req.body || !req.body.report) {
+      const { stripeSessionId } = req.body || {};
+      if (hasStripe()) {
+        const check = await verifyPaidSession(stripeSessionId);
+        if (!check.paid) return res.status(402).json({ error: check.error || "Payment required." });
+        markSessionConsumed(stripeSessionId);
+      }
+    }
     const report = req.body && req.body.report ? req.body.report : await generateReport(req.body);
     const buffer = await buildReportDocx(report);
     const filename = `Interview_Prep_${(report.companyName || "report").replace(/[^a-z0-9]/gi, "_")}_${uuid().slice(0, 8)}.docx`;
@@ -196,7 +224,7 @@ app.post("/api/report/docx", async (req, res) => {
 // To go live: replace this stub with a real Stripe Checkout session
 // (stripe.checkout.sessions.create) and only allow /api/report* once a
 // session has been confirmed paid (e.g. via a webhook + short-lived token).
-// Two line items to support: the £45 report, and the optional £29 coaching
+// Two line items to support: the £25 report, and the optional £45 coaching
 // add-on — /api/booking/book below should also check for a confirmed
 // payment on that specific slot before accepting it.
 // -------------------------------------------------------------------------
@@ -214,15 +242,39 @@ app.post("/api/consent", (req, res) => {
   res.json(result);
 });
 
-app.post("/api/checkout", (req, res) => {
-  res.json({
-    url: null,
-    message: "Payment is not wired up in this prototype. Add STRIPE_SECRET_KEY and create a real Checkout session here — see README.md.",
-  });
+// -------------------------------------------------------------------------
+// PAYMENT — real Stripe Checkout. The frontend calls this right before
+// report generation (after the intake form, consent and competency
+// questions are all done), gets back a Stripe-hosted checkout URL, and
+// redirects the whole page there. Falls back to a clear "not configured"
+// message if STRIPE_SECRET_KEY isn't set yet, rather than erroring out.
+// -------------------------------------------------------------------------
+app.post("/api/checkout", async (req, res) => {
+  if (!hasStripe()) {
+    return res.json({
+      url: null,
+      message: "Payment isn't configured yet — add STRIPE_SECRET_KEY in Render's Environment tab. See README.md.",
+    });
+  }
+  const origin = `${req.protocol}://${req.get("host")}`;
+  const { candidateEmail, companyName } = req.body || {};
+  const result = await createCheckoutSession({ origin, candidateEmail, companyName });
+  if (!result.ok) return res.status(500).json({ url: null, message: result.error });
+  res.json({ url: result.url });
+});
+
+// Called by the frontend right after Stripe redirects back, to confirm the
+// session actually shows as paid before generating anything. Kept as a
+// separate check (rather than only checking inside /api/report) so the
+// frontend can show a clear "payment confirmed" state immediately on
+// return, before kicking off the (much longer) report generation call.
+app.get("/api/checkout/verify", async (req, res) => {
+  const result = await verifyPaidSession(req.query.session_id);
+  res.json(result);
 });
 
 // -------------------------------------------------------------------------
-// COACHING ADD-ON BOOKING (£29) — real slot generation and double-booking
+// COACHING ADD-ON BOOKING (£45) — real slot generation and double-booking
 // prevention, no payment gate yet (see PAYMENT note above and README).
 // -------------------------------------------------------------------------
 app.get("/api/booking/slots", (req, res) => {

@@ -31,6 +31,83 @@ function showPanel(n) {
 }
 showPanel(1);
 
+// ---------------- PAYMENT (Stripe Checkout) ----------------
+// Stripe's hosted checkout is a full page redirect away from this app and
+// back — there's no way to keep the candidate's in-memory `state` (their
+// CV, job description, recorded answers) alive across that round trip
+// without persisting it somewhere first. localStorage is the simple,
+// correct tool for that here (this is a real production page, not a
+// throwaway preview) — it survives the redirect to Stripe's domain and
+// back, and is cleared right after a successful restore so a stale copy
+// can't leak into a later, unrelated session on the same browser.
+const PENDING_STATE_KEY = "interviewPrep.pendingState";
+
+function savePendingState() {
+  try {
+    localStorage.setItem(PENDING_STATE_KEY, JSON.stringify(state));
+  } catch (err) {
+    console.error("[payment] could not save state before redirecting to checkout:", err);
+  }
+}
+
+function restorePendingState() {
+  try {
+    const raw = localStorage.getItem(PENDING_STATE_KEY);
+    if (!raw) return false;
+    const saved = JSON.parse(raw);
+    Object.assign(state, saved);
+    localStorage.removeItem(PENDING_STATE_KEY);
+    return true;
+  } catch (err) {
+    console.error("[payment] could not restore saved state after checkout:", err);
+    return false;
+  }
+}
+
+// Runs once on page load. Three cases: fresh visit (neither param set —
+// does nothing, normal step-1 start); back from a successful Stripe
+// payment (?paid=1&session_id=...); or back from a cancelled/abandoned
+// checkout (?canceled=1). Either way, the query string is cleaned off the
+// URL immediately after so refreshing the page doesn't re-trigger this.
+async function handleCheckoutReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const paid = params.get("paid");
+  const canceled = params.get("canceled");
+  const sessionId = params.get("session_id");
+  if (!paid && !canceled) return;
+
+  window.history.replaceState({}, "", window.location.pathname);
+
+  if (canceled) {
+    if (!restorePendingState()) return; // nothing to restore, was probably a stray param
+    renderQuestions();
+    showPanel(2);
+    if ($("questionStatus")) $("questionStatus").textContent = "Checkout was cancelled — you haven't been charged. Ready to try again whenever you are.";
+    return;
+  }
+
+  if (paid && sessionId) {
+    if (!restorePendingState()) return;
+    renderQuestions();
+    showPanel(3);
+    if ($("genStatus")) $("genStatus").textContent = "Payment confirmed — generating your report…";
+    try {
+      const res = await fetch(`/api/checkout/verify?session_id=${encodeURIComponent(sessionId)}`);
+      const check = await res.json();
+      if (!check.paid) {
+        if ($("genStatus")) $("genStatus").textContent = check.error || "Could not confirm payment — please go back and try again.";
+        showPanel(2);
+        return;
+      }
+      await generateAndShowReport(sessionId);
+    } catch (err) {
+      console.error(err);
+      if ($("genStatus")) $("genStatus").textContent = "Could not confirm payment — please go back and try again.";
+      showPanel(2);
+    }
+  }
+}
+
 // ---------------- STEP 1 ----------------
 async function extractFileText(file) {
   const fd = new FormData();
@@ -341,11 +418,12 @@ function startGenerationProgress() {
   };
 }
 
-on("toStep3", "click", async () => {
-  state.answers.forEach((a, idx) => {
-    a.transcript = ($(`qa-text-${idx}`)?.value || "").trim();
-  });
-  showPanel(3);
+// Does the actual report generation + render — shared by both the normal
+// "no payment configured yet" path and the "just came back from a
+// successful Stripe payment" path, so there's exactly one place this logic
+// lives. stripeSessionId is undefined when Stripe isn't configured (the
+// server-side gate skips the check entirely in that case — see server.js).
+async function generateAndShowReport(stripeSessionId) {
   if ($("reportPreview")) $("reportPreview").innerHTML = "";
   const stopProgress = startGenerationProgress();
 
@@ -353,7 +431,7 @@ on("toStep3", "click", async () => {
     const res = await fetch("/api/report", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(state),
+      body: JSON.stringify({ ...state, stripeSessionId }),
     });
     const report = await res.json();
     if (!res.ok) throw new Error(report.error || "Could not generate report");
@@ -374,9 +452,51 @@ on("toStep3", "click", async () => {
   } catch (err) {
     console.error(err);
     stopProgress();
-    if ($("genStatus")) $("genStatus").textContent = "Something went wrong generating the report — please go back and try again.";
+    if ($("genStatus")) $("genStatus").textContent = err.message && err.message.includes("Payment")
+      ? err.message
+      : "Something went wrong generating the report — please go back and try again.";
+  }
+}
+
+on("toStep3", "click", async () => {
+  state.answers.forEach((a, idx) => {
+    a.transcript = ($(`qa-text-${idx}`)?.value || "").trim();
+  });
+
+  if ($("toStep3")) { $("toStep3").disabled = true; $("toStep3").textContent = "Please wait…"; }
+  try {
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ candidateEmail: state.candidateEmail, companyName: state.companyName }),
+    });
+    const data = await res.json();
+    if (data.url) {
+      // Off to Stripe's hosted checkout page — save everything collected
+      // so far, since this is a full navigation away from the app and this
+      // script's in-memory `state` won't survive it. handleCheckoutReturn()
+      // picks it back up when Stripe sends the candidate back.
+      savePendingState();
+      window.location.href = data.url;
+      return;
+    }
+    // Stripe isn't configured yet (no STRIPE_SECRET_KEY set) — fall back
+    // to generating the report directly, same as before payment existed,
+    // rather than blocking the whole app on a payment setup that isn't
+    // done yet.
+    console.warn("[payment] Stripe not configured, generating report without payment:", data.message);
+    showPanel(3);
+    await generateAndShowReport();
+  } catch (err) {
+    console.error("[payment] could not start checkout, generating report without payment:", err);
+    showPanel(3);
+    await generateAndShowReport();
+  } finally {
+    if ($("toStep3")) { $("toStep3").disabled = false; $("toStep3").textContent = "Pay & generate my report"; }
   }
 });
+
+handleCheckoutReturn();
 
 on("back2", "click", () => showPanel(2));
 

@@ -14,6 +14,7 @@ const { getAvailableSlots, bookSlot } = require("./lib/booking");
 const { recordConsent } = require("./lib/consent");
 const { hasOpenAI, getOpenAI, TRANSCRIBE_MODEL } = require("./lib/aiClients");
 const { hasStripe, createCheckoutSession, verifyPaidSession, markSessionConsumed, REPORT_PRICE_GBP } = require("./lib/payments");
+const { sendBookingNotificationToOwner, sendBookingConfirmationToCandidate } = require("./lib/email");
 
 const app = express();
 
@@ -220,15 +221,6 @@ app.post("/api/report/docx", async (req, res) => {
 });
 
 // -------------------------------------------------------------------------
-// PAYMENT — not wired up in this prototype.
-// To go live: replace this stub with a real Stripe Checkout session
-// (stripe.checkout.sessions.create) and only allow /api/report* once a
-// session has been confirmed paid (e.g. via a webhook + short-lived token).
-// Two line items to support: the £25 report, and the optional £45 coaching
-// add-on — /api/booking/book below should also check for a confirmed
-// payment on that specific slot before accepting it.
-// -------------------------------------------------------------------------
-// -------------------------------------------------------------------------
 // GDPR consent + optional marketing sign-up. Called once, right when the
 // candidate moves past the intake step — before any report generation
 // happens — so there's a real record of who agreed to the Privacy & Data
@@ -243,9 +235,10 @@ app.post("/api/consent", (req, res) => {
 });
 
 // -------------------------------------------------------------------------
-// PAYMENT — real Stripe Checkout. The frontend calls this right before
-// report generation (after the intake form, consent and competency
-// questions are all done), gets back a Stripe-hosted checkout URL, and
+// PAYMENT — real Stripe Checkout, shared by both paid products. The
+// frontend calls this right before report generation (£25) and right
+// before confirming a coaching booking (£45), passing `product: "report"`
+// or `product: "coaching"` — gets back a Stripe-hosted checkout URL, and
 // redirects the whole page there. Falls back to a clear "not configured"
 // message if STRIPE_SECRET_KEY isn't set yet, rather than erroring out.
 // -------------------------------------------------------------------------
@@ -257,8 +250,8 @@ app.post("/api/checkout", async (req, res) => {
     });
   }
   const origin = `${req.protocol}://${req.get("host")}`;
-  const { candidateEmail, companyName } = req.body || {};
-  const result = await createCheckoutSession({ origin, candidateEmail, companyName });
+  const { candidateEmail, companyName, product } = req.body || {};
+  const result = await createCheckoutSession({ origin, candidateEmail, companyName, product });
   if (!result.ok) return res.status(500).json({ url: null, message: result.error });
   res.json({ url: result.url });
 });
@@ -275,19 +268,33 @@ app.get("/api/checkout/verify", async (req, res) => {
 
 // -------------------------------------------------------------------------
 // COACHING ADD-ON BOOKING (£45) — real slot generation and double-booking
-// prevention, no payment gate yet (see PAYMENT note above and README).
+// prevention, now gated behind a confirmed paid Stripe session (same
+// pattern as /api/report) and followed by real emails: one to Neil so a
+// booking is never silently lost even though the underlying storage is
+// just a file on Render's disk (see lib/booking.js), and a real
+// confirmation to the candidate — the app used to just claim one would
+// arrive without ever actually sending it.
 // -------------------------------------------------------------------------
 app.get("/api/booking/slots", (req, res) => {
   res.json({ slots: getAvailableSlots() });
 });
 
-app.post("/api/booking/book", (req, res) => {
-  const { slot, name, email, companyName } = req.body || {};
+app.post("/api/booking/book", async (req, res) => {
+  const { slot, name, email, companyName, stripeSessionId } = req.body || {};
   if (!slot || !name || !email) {
     return res.status(400).json({ error: "Slot, name and email are required." });
   }
+  if (hasStripe()) {
+    const check = await verifyPaidSession(stripeSessionId);
+    if (!check.paid) return res.status(402).json({ error: check.error || "Payment required." });
+    markSessionConsumed(stripeSessionId);
+  }
   const result = bookSlot({ slot, name, email, companyName });
   if (!result.ok) return res.status(409).json(result);
+  // Best-effort — a booking is already confirmed and saved at this point;
+  // an email hiccup shouldn't turn that into an error for the candidate.
+  sendBookingNotificationToOwner({ slot, name, email, companyName }).catch(() => {});
+  sendBookingConfirmationToCandidate({ slot, name, email }).catch(() => {});
   res.json(result);
 });
 

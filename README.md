@@ -51,22 +51,20 @@ Payment is the one piece still fully stubbed out:
 | Payment (£25 report) | ✅ Live — real Stripe Checkout when `STRIPE_SECRET_KEY` is set. Candidate is redirected to Stripe's hosted checkout, then straight back; `/api/report` and `/api/report/docx` re-verify the session is genuinely paid directly with Stripe before generating anything. Without the key set, falls back to generating for free (so local dev/testing still works). | Add `STRIPE_SECRET_KEY` in Render's Environment tab — see the Stripe setup section below |
 | Docx export | ✅ Working, auto-downloads the moment the report finishes generating | — |
 | Visual design | ✅ Matched to the-common-people.com (Anton/Oswald/Arvo fonts, navy/mustard/sky-blue/orange palette pulled from the live site) | — |
-| Coaching call add-on (£45) | ✅ Real booking system — generates genuine availability, prevents double-booking (`lib/booking.js`) | Add payment gate (see Payment row) so slots are only bookable after the £45 is confirmed paid. Also move off local-disk storage before real launch — see the ⚠️ note below. |
+| Coaching call add-on (£45) | ✅ Real booking system (`lib/booking.js`) generates genuine availability and prevents double-booking, gated behind the same Stripe Checkout pattern as the report, and now sends real emails on a successful booking (see below) | — |
+| Booking/report notification emails | ✅ Live — via Resend (`lib/email.js`) when `RESEND_API_KEY` is set. Every coaching booking emails both Neil (`BOOKING_NOTIFY_EMAIL`) and the candidate a real confirmation. Without the key set, bookings still work, they just don't email anyone. | Add `RESEND_API_KEY` and `BOOKING_NOTIFY_EMAIL` — see the Resend setup section below |
 | Privacy & data notice | ✅ Draft published at `/privacy.html`, linked from the app | Have this reviewed properly (by a solicitor if budget allows) before real users' data flows through it |
 
-The remaining stubbed spot (payment) is marked `AI UPGRADE POINT` / clearly commented in
-`server.js` so it's easy to find.
+## ⚠️ Before relying on this at real volume
 
-## ⚠️ Before taking real bookings or payments
-
-- **Booking storage is not production-safe yet.** `lib/booking.js` stores bookings in a
-  plain JSON file on local disk. On Render's free tier, local disk does **not** persist
-  across restarts or redeploys — bookings could be silently lost. Move to Render's paid
-  persistent disk, or better, a real database, before this goes live.
-- **The £25 report payment is live; the £45 coaching add-on booking still isn't
-  gated.** Anyone can currently book a coaching slot without paying the £45 — the
-  same Stripe pattern used for the report (see below) needs applying to
-  `/api/booking/book` before that's real.
+- **Booking/consent storage is not production-safe yet.** `lib/booking.js` and
+  `lib/consent.js` store their records in plain JSON files on local disk. On Render's
+  free tier, local disk does **not** persist across restarts or redeploys — those
+  records could be silently lost. The email notification on every booking (see above)
+  is a safety net against that for bookings specifically — Neil gets a real email the
+  moment someone books, so it isn't only sitting in a file that could vanish — but it's
+  still worth moving to Render's paid persistent disk, or better, a real database,
+  before relying on this at real volume.
 - **A Stripe session can currently only be "spent" once in memory.** `lib/payments.js`
   tracks used sessions in a plain in-memory `Set`, which resets on every server
   restart/redeploy. Fine for a low-volume prototype; move to something persistent
@@ -96,35 +94,59 @@ credit, rate limited, etc.) rather than failing silently.
 ## Setting up Stripe (£25 report payment)
 
 1. Create a free account at [stripe.com](https://stripe.com) if you don't have one.
-2. In the Stripe dashboard, make sure you're in **Test mode** first (toggle top-right)
-   — this lets you run through a whole payment with a fake card before ever touching
-   real money.
+2. Get into a test environment before touching real money. Older accounts have a
+   simple **Test mode** toggle near the top-left. Newer accounts instead default to
+   **Sandboxes** — click your business name (top-left) → **Switch to sandbox** →
+   open the sandbox Stripe created for you automatically. Either way, you end up
+   somewhere that only accepts fake test cards.
 3. Go to **Developers → API keys** and copy the **Secret key** (starts `sk_test_...`
-   in test mode, `sk_live_...` once you switch to live mode).
+   whether you're in test mode or a sandbox; `sk_live_...` once you switch to your
+   real, live account).
 4. In Render: your service → **Environment** tab → add a new variable named
    `STRIPE_SECRET_KEY` with that value → save (Render redeploys automatically).
 5. Test it: run through the app, and on the "Pay & generate my report" step you should
    land on a real Stripe checkout page. Use Stripe's test card `4242 4242 4242 4242`,
    any future expiry date, any 3-digit CVC, any postcode — it'll complete as a
    successful test payment and bring you straight back to your generated report.
-6. When you're ready to take real payments, switch Stripe to **Live mode**, copy the
-   live secret key (`sk_live_...`) from the same API keys page, and replace the value
-   in Render's Environment tab with it. That's the only change needed to go from test
-   to real payments.
+6. When you're ready to take real payments, switch to your main **Live** account,
+   copy the live secret key (`sk_live_...`) from the same API keys page, and replace
+   the value in Render's Environment tab with it. That's the only change needed to
+   go from test to real payments.
+
+## Setting up Resend (booking notification + confirmation emails)
+
+1. Create a free account at [resend.com](https://resend.com).
+2. Go to **API Keys** in the Resend dashboard, create a key, and copy it.
+3. In Render: your service → **Environment** tab → add `RESEND_API_KEY` with that
+   value, and add a second variable `BOOKING_NOTIFY_EMAIL` set to whichever inbox you
+   want new-booking alerts sent to (e.g. your own address) → save.
+4. That's enough to work immediately — emails will send from Resend's shared
+   `onboarding@resend.dev` address, which needs no setup but may land in spam more
+   often. To send from your own address instead (e.g. `bookings@thecommonpeople.co.uk`),
+   verify that domain under **Domains** in Resend (it'll give you DNS records to add
+   in Cloudflare, same place you manage the site's other DNS), then set a third
+   variable, `RESEND_FROM_EMAIL`, to something like
+   `The Com'mon People <bookings@thecommonpeople.co.uk>`.
+5. Test it: book a coaching slot through the app (with a real email address of your
+   own) and confirm both the candidate-side confirmation and your own notification
+   actually arrive.
 
 ## Next steps to go live
 
 1. ✅ ~~Add `ANTHROPIC_API_KEY` and `OPENAI_API_KEY`~~ — done, report generation and
    transcription are live.
-2. ✅ ~~Add `STRIPE_SECRET_KEY`, wire up a real Checkout session, gate report
-   generation~~ — done for the £25 report (see the setup steps above). Still to do:
-   apply the same gate to the £45 coaching add-on booking (see the ⚠️ note above).
-3. Review the privacy notice at `/privacy.html` (draft included) and get it properly
+2. ✅ ~~Add `STRIPE_SECRET_KEY`, wire up a real Checkout session, gate report and
+   coaching booking generation~~ — done for both the £25 report and the £45 coaching
+   add-on (see the setup steps above).
+3. ✅ ~~Add real email notifications so a booking is never silently lost~~ — done via
+   Resend (see the setup steps above).
+4. Review the privacy notice at `/privacy.html` (draft included) and get it properly
    checked before real users' data flows through the app — see the Legal, Data and
    Trust section of the concept document for the full list of what needs covering.
-4. Move booking storage, consent records, and the Stripe used-session tracking off
-   local disk/memory (see the warnings above) before relying on this at real volume.
-5. Link to it from the relevant Com'mon People guide pages — see "Attaching this to
+5. Move booking storage, consent records, and the Stripe used-session tracking off
+   local disk/memory (see the warnings above) before relying on this at real volume —
+   the email safety net covers bookings for now, but isn't a full substitute for this.
+6. Link to it from the relevant Com'mon People guide pages — see "Attaching this to
    the-common-people.com" below.
 
 ## Attaching this to the-common-people.com

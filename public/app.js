@@ -64,19 +64,57 @@ function restorePendingState() {
   }
 }
 
-// Runs once on page load. Three cases: fresh visit (neither param set —
-// does nothing, normal step-1 start); back from a successful Stripe
-// payment (?paid=1&session_id=...); or back from a cancelled/abandoned
-// checkout (?canceled=1). Either way, the query string is cleaned off the
-// URL immediately after so refreshing the page doesn't re-trigger this.
+// Runs once on page load. `type` (added to both success_url and cancel_url
+// server-side) tells this apart: "report" is the normal £25-report flow
+// (also the default, for safety, if it's ever missing); "coaching" is
+// returning from paying the £45 for a coaching slot, which needs a much
+// lighter landing — there's no report state to restore or regenerate here,
+// just a booking to finalize and confirm. Either way the query string is
+// cleaned off the URL immediately after so refreshing doesn't re-trigger this.
 async function handleCheckoutReturn() {
   const params = new URLSearchParams(window.location.search);
   const paid = params.get("paid");
   const canceled = params.get("canceled");
   const sessionId = params.get("session_id");
+  const type = params.get("type") || "report";
   if (!paid && !canceled) return;
 
   window.history.replaceState({}, "", window.location.pathname);
+
+  if (type === "coaching") {
+    const booking = restorePendingBooking();
+    if (!booking) return; // nothing to restore, was probably a stray param
+
+    showPanel(3);
+    if ($("reportPreview")) $("reportPreview").innerHTML = "";
+    if ($("genStatus")) $("genStatus").textContent = "This page only needed to confirm your coaching booking below — your report was already generated and downloaded earlier.";
+    renderAddonCard();
+    if ($("bookingPanel")) $("bookingPanel").classList.remove("hidden");
+    if ($("bookingForm")) $("bookingForm").classList.remove("hidden");
+    if ($("bookingName")) $("bookingName").value = booking.name || "";
+    if ($("bookingEmail")) $("bookingEmail").value = booking.email || "";
+    chosenSlot = booking.slot;
+    const statusEl = $("bookingStatus");
+
+    if (canceled) {
+      if (statusEl) statusEl.textContent = "Checkout was cancelled — you haven't been charged. Pick a time and try again whenever you're ready.";
+      return;
+    }
+    if (statusEl) statusEl.textContent = "Payment confirmed — booking your slot…";
+    try {
+      const res = await fetch(`/api/checkout/verify?session_id=${encodeURIComponent(sessionId)}`);
+      const check = await res.json();
+      if (!check.paid) {
+        if (statusEl) statusEl.textContent = check.error || "Could not confirm payment — please go back and try again.";
+        return;
+      }
+      await finalizeBooking({ ...booking, stripeSessionId: sessionId }, statusEl);
+    } catch (err) {
+      console.error(err);
+      if (statusEl) statusEl.textContent = "Could not confirm payment — please go back and try again.";
+    }
+    return;
+  }
 
   if (canceled) {
     if (!restorePendingState()) return; // nothing to restore, was probably a stray param
@@ -727,6 +765,58 @@ on("showBooking", "click", async () => {
   }
 });
 
+// Same reasoning as savePendingState/restorePendingState above — a booking
+// payment is also a full redirect away to Stripe and back, so whatever was
+// picked (slot, name, email) needs to survive that round trip. Kept as a
+// separate localStorage key from the report's pending state since a
+// candidate could plausibly still have one in flight when starting the
+// other (e.g. two tabs), and they shouldn't clobber each other.
+const PENDING_BOOKING_KEY = "interviewPrep.pendingBooking";
+
+function savePendingBooking() {
+  try {
+    localStorage.setItem(PENDING_BOOKING_KEY, JSON.stringify({
+      slot: chosenSlot,
+      name: $("bookingName")?.value.trim() || "",
+      email: $("bookingEmail")?.value.trim() || "",
+      companyName: state.companyName,
+    }));
+  } catch (err) {
+    console.error("[payment] could not save booking before redirecting to checkout:", err);
+  }
+}
+
+function restorePendingBooking() {
+  try {
+    const raw = localStorage.getItem(PENDING_BOOKING_KEY);
+    if (!raw) return null;
+    localStorage.removeItem(PENDING_BOOKING_KEY);
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error("[payment] could not restore saved booking after checkout:", err);
+    return null;
+  }
+}
+
+// Actually books the slot — called either right away (Stripe not
+// configured, so there's nothing to pay through yet) or after returning
+// from a confirmed Stripe payment.
+async function finalizeBooking({ slot, name, email, companyName, stripeSessionId }, statusEl) {
+  if (statusEl) statusEl.textContent = "Confirming your booking…";
+  try {
+    const res = await fetch("/api/booking/book", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slot, name, email, companyName, stripeSessionId }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || "Could not book that slot");
+    if (statusEl) statusEl.textContent = `Booked ✓ — ${slot.replace("T", " ")}. A confirmation email is on its way.`;
+  } catch (err) {
+    if (statusEl) statusEl.textContent = err.message || "Could not book that slot — please try another time.";
+  }
+}
+
 on("confirmBooking", "click", async () => {
   const statusEl = $("bookingStatus");
   if (!chosenSlot) {
@@ -739,17 +829,25 @@ on("confirmBooking", "click", async () => {
     if (statusEl) statusEl.textContent = "Please add your name and email.";
     return;
   }
-  if (statusEl) statusEl.textContent = "Booking…";
+
+  if (statusEl) statusEl.textContent = "Please wait…";
   try {
-    const res = await fetch("/api/booking/book", {
+    const res = await fetch("/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ slot: chosenSlot, name, email, companyName: state.companyName }),
+      body: JSON.stringify({ candidateEmail: email, companyName: state.companyName, product: "coaching" }),
     });
     const data = await res.json();
-    if (!res.ok || !data.ok) throw new Error(data.error || "Could not book that slot");
-    if (statusEl) statusEl.textContent = `Booked ✓ — ${chosenSlot.replace("T", " ")}. A confirmation will follow by email.`;
+    if (data.url) {
+      savePendingBooking();
+      window.location.href = data.url;
+      return;
+    }
+    // Stripe not configured yet — book directly, same as before payment existed.
+    console.warn("[payment] Stripe not configured, booking without payment:", data.message);
+    await finalizeBooking({ slot: chosenSlot, name, email, companyName: state.companyName }, statusEl);
   } catch (err) {
-    if (statusEl) statusEl.textContent = err.message || "Could not book that slot — please try another time.";
+    console.error("[payment] could not start checkout, booking without payment:", err);
+    await finalizeBooking({ slot: chosenSlot, name, email, companyName: state.companyName }, statusEl);
   }
 });

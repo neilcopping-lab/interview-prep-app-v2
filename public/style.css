@@ -156,6 +156,8 @@ input[type="file"] { color: var(--cream-soft); font-size: 13px; }
   font-size: 14px;
 }
 .audio-consent { font-size: 12px; color: var(--cream-soft); font-style: italic; margin-top: 8px; }
+.promo-note { color: var(--mustard); font-style: normal; }
+.promo-note strong { font-family: var(--font-heading); letter-spacing: 0.03em; }
 
 /* Step 1: GDPR / marketing consent checkboxes, right before Continue */
 .consent-block { margin: 20px 0; padding: 16px 18px; background: var(--bg-panel-2); border-left: 3px solid var(--sky); }

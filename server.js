@@ -13,8 +13,9 @@ const { selectQuestions } = require("./lib/questionBank");
 const { getAvailableSlots, bookSlot } = require("./lib/booking");
 const { recordConsent } = require("./lib/consent");
 const { hasOpenAI, getOpenAI, TRANSCRIBE_MODEL } = require("./lib/aiClients");
-const { hasStripe, createCheckoutSession, verifyPaidSession, markSessionConsumed, REPORT_PRICE_GBP } = require("./lib/payments");
-const { sendBookingNotificationToOwner, sendBookingConfirmationToCandidate, sendConsentNotificationToOwner } = require("./lib/email");
+const { hasStripe, createCheckoutSession, verifyPaidSession, markSessionConsumed, REPORT_BUNDLES } = require("./lib/payments");
+const { getBalance, grantCreditsForSession, consumeCredit } = require("./lib/credits");
+const { sendBookingNotificationToOwner, sendBookingConfirmationToCandidate, sendConsentNotificationToOwner, sendCreditNotificationToOwner } = require("./lib/email");
 
 const app = express();
 
@@ -157,21 +158,57 @@ app.post("/api/transcribe", upload.single("audio"), async (req, res) => {
 });
 
 // -------------------------------------------------------------------------
+// Shared gate for both /api/report and the "regenerate from scratch" path
+// of /api/report/docx below. Report bundles (1/3/5, see lib/payments.js)
+// mean a single Stripe payment can unlock more than one report generation,
+// so this isn't a one-shot "is this session paid" check any more — there
+// are two ways in:
+//
+//  1. Fresh back from Stripe, with a stripeSessionId: verify it's genuinely
+//     paid, then grant that bundle's credits to the candidate's email
+//     (idempotent per session — see lib/credits.js — so refreshing the
+//     success page can't grant the same bundle twice for free).
+//  2. No session at all, just an email that already has credits left from
+//     an earlier purchase (report 2 of a 5-pack, or coming back another
+//     day) — nothing to verify with Stripe, the balance already proves it
+//     was paid for.
+//
+// Either way this always finishes by spending exactly one credit — that's
+// what actually gates generation now, not the Stripe session on its own.
+// -------------------------------------------------------------------------
+async function ensureReportCredit({ stripeSessionId, candidateEmail }) {
+  if (stripeSessionId) {
+    const check = await verifyPaidSession(stripeSessionId);
+    if (!check.paid) return { ok: false, error: check.error || "Payment required." };
+    const email = candidateEmail || (check.session.metadata && check.session.metadata.candidateEmail);
+    const creditsInSession = Number((check.session.metadata && check.session.metadata.credits) || 1);
+    const grant = grantCreditsForSession({ sessionId: stripeSessionId, email, amount: creditsInSession });
+    // Fire-and-forget durable backup — see the comment on this function in
+    // lib/email.js. Only fires on the actual grant, not on a re-verify of
+    // an already-credited session, so one purchase means one email.
+    if (grant.granted) {
+      sendCreditNotificationToOwner({ email, credits: creditsInSession, balance: grant.balance, sessionId: stripeSessionId }).catch(() => {});
+    }
+    markSessionConsumed(stripeSessionId);
+    return consumeCredit(email);
+  }
+  return consumeCredit(candidateEmail);
+}
+
+// -------------------------------------------------------------------------
 // Generate the report as JSON (used by the frontend to render a preview).
 //
-// Gated behind a confirmed paid Stripe session: the frontend sends the
-// session_id it got back from Stripe's redirect, and this re-checks it
-// directly with Stripe (never trusting a client-side "paid" flag) before
-// spending any AI credit generating the report. If Stripe isn't configured
-// yet (no STRIPE_SECRET_KEY), the gate is skipped entirely so local dev and
-// the current prototype keep working without a payment setup.
+// Gated behind ensureReportCredit above rather than a raw Stripe check, so
+// bundle purchases (3 or 5 reports) can be spent one at a time. If Stripe
+// isn't configured yet (no STRIPE_SECRET_KEY), the gate is skipped entirely
+// so local dev and the current prototype keep working without a payment
+// setup.
 // -------------------------------------------------------------------------
 app.post("/api/report", async (req, res) => {
-  const { stripeSessionId } = req.body || {};
+  const { stripeSessionId, candidateEmail } = req.body || {};
   if (hasStripe()) {
-    const check = await verifyPaidSession(stripeSessionId);
-    if (!check.paid) return res.status(402).json({ error: check.error || "Payment required." });
-    markSessionConsumed(stripeSessionId);
+    const gate = await ensureReportCredit({ stripeSessionId, candidateEmail });
+    if (!gate.ok) return res.status(402).json({ error: gate.error || "Payment required." });
   }
   try {
     const report = await generateReport(req.body);
@@ -180,6 +217,14 @@ app.post("/api/report", async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Could not generate report" });
   }
+});
+
+// Lets the frontend check, before showing the £15/£20/£25 paywall, whether
+// this email already has report credits left over from an earlier bundle
+// purchase — if so it can skip straight to generating the report instead
+// of sending the candidate to Stripe to pay again.
+app.get("/api/credits/balance", (req, res) => {
+  res.json({ balance: getBalance(req.query.email) });
 });
 
 // -------------------------------------------------------------------------
@@ -201,11 +246,10 @@ app.post("/api/report/docx", async (req, res) => {
     // its own check, since it would otherwise let anyone skip the gate by
     // calling this endpoint directly.
     if (!req.body || !req.body.report) {
-      const { stripeSessionId } = req.body || {};
+      const { stripeSessionId, candidateEmail } = req.body || {};
       if (hasStripe()) {
-        const check = await verifyPaidSession(stripeSessionId);
-        if (!check.paid) return res.status(402).json({ error: check.error || "Payment required." });
-        markSessionConsumed(stripeSessionId);
+        const gate = await ensureReportCredit({ stripeSessionId, candidateEmail });
+        if (!gate.ok) return res.status(402).json({ error: gate.error || "Payment required." });
       }
     }
     const report = req.body && req.body.report ? req.body.report : await generateReport(req.body);

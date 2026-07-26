@@ -1,6 +1,8 @@
 const path = require("path");
 const fs = require("fs");
 const express = require("express");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 const multer = require("multer");
 const mammoth = require("mammoth");
 const pdfParse = require("pdf-parse");
@@ -18,6 +20,51 @@ const { getBalance, grantCreditsForSession, consumeCredit } = require("./lib/cre
 const { sendBookingNotificationToOwner, sendBookingConfirmationToCandidate, sendConsentNotificationToOwner, sendCreditNotificationToOwner } = require("./lib/email");
 
 const app = express();
+
+// Security headers. Default helmet() ships a strict Content-Security-Policy
+// that would break this specific site (it loads Google Fonts from a CDN and
+// privacy.html has an inline <style> block), so the CSP is spelled out
+// explicitly here instead of turned off wholesale — everything else
+// helmet sets (HSTS, X-Content-Type-Options, X-Frame-Options, etc.) is left
+// at its safe defaults.
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", "data:"],
+        connectSrc: ["'self'"],
+        frameSrc: ["'none'"],
+      },
+    },
+  })
+);
+
+// Rate limiting. Two tiers:
+//  - generalApiLimiter: a broad backstop on every /api/ route.
+//  - costlyActionLimiter: a much tighter limit specifically on the routes
+//    that either call paid AI APIs (Anthropic, OpenAI) or create a Stripe
+//    Checkout Session — without this, someone scripting repeated calls
+//    could run up a real API bill, or spam Stripe session creation, without
+//    ever having to pay for anything.
+const generalApiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests — please wait a few minutes and try again." },
+});
+const costlyActionLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 15,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests — please wait a few minutes and try again." },
+});
+app.use("/api/", generalApiLimiter);
 
 // Git doesn't track empty folders, so a fresh repo upload (or a clean
 // clone) can easily arrive without uploads/ even existing — and multer
@@ -102,7 +149,7 @@ app.post("/api/extract-cv", upload.single("cv"), async (req, res) => {
 // Falls back to keyword-matching a fixed question bank if no key / a call
 // fails.
 // -------------------------------------------------------------------------
-app.post("/api/questions", async (req, res) => {
+app.post("/api/questions", costlyActionLimiter, async (req, res) => {
   const { jobDescription, count } = req.body;
   if (!jobDescription || !jobDescription.trim()) {
     return res.status(400).json({ error: "Job description is required to select questions." });
@@ -123,7 +170,7 @@ app.post("/api/questions", async (req, res) => {
 // network), it degrades the same way rather than erroring out — the
 // candidate can always just type instead.
 // -------------------------------------------------------------------------
-app.post("/api/transcribe", upload.single("audio"), async (req, res) => {
+app.post("/api/transcribe", costlyActionLimiter, upload.single("audio"), async (req, res) => {
   const filePath = req.file && req.file.path;
   if (!hasOpenAI()) {
     if (filePath) fs.unlink(filePath, () => {});
@@ -204,7 +251,7 @@ async function ensureReportCredit({ stripeSessionId, candidateEmail }) {
 // so local dev and the current prototype keep working without a payment
 // setup.
 // -------------------------------------------------------------------------
-app.post("/api/report", async (req, res) => {
+app.post("/api/report", costlyActionLimiter, async (req, res) => {
   const { stripeSessionId, candidateEmail } = req.body || {};
   if (hasStripe()) {
     const gate = await ensureReportCredit({ stripeSessionId, candidateEmail });
@@ -237,7 +284,7 @@ app.get("/api/credits/balance", (req, res) => {
 // every AI call (and the OpenAI cover image) a second time. Only
 // regenerates from scratch if a report wasn't supplied.
 // -------------------------------------------------------------------------
-app.post("/api/report/docx", async (req, res) => {
+app.post("/api/report/docx", costlyActionLimiter, async (req, res) => {
   try {
     // If a report object was already supplied, it came from a /api/report
     // call that already passed the payment gate above — no need to check
@@ -290,7 +337,7 @@ app.post("/api/consent", (req, res) => {
 // redirects the whole page there. Falls back to a clear "not configured"
 // message if STRIPE_SECRET_KEY isn't set yet, rather than erroring out.
 // -------------------------------------------------------------------------
-app.post("/api/checkout", async (req, res) => {
+app.post("/api/checkout", costlyActionLimiter, async (req, res) => {
   if (!hasStripe()) {
     return res.json({
       url: null,

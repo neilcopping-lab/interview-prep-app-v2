@@ -14,7 +14,7 @@ const { getAvailableSlots, bookSlot } = require("./lib/booking");
 const { recordConsent } = require("./lib/consent");
 const { hasOpenAI, getOpenAI, TRANSCRIBE_MODEL } = require("./lib/aiClients");
 const { hasStripe, createCheckoutSession, verifyPaidSession, markSessionConsumed, REPORT_PRICE_GBP } = require("./lib/payments");
-const { sendBookingNotificationToOwner, sendBookingConfirmationToCandidate } = require("./lib/email");
+const { sendBookingNotificationToOwner, sendBookingConfirmationToCandidate, sendConsentNotificationToOwner } = require("./lib/email");
 
 const app = express();
 
@@ -231,6 +231,10 @@ app.post("/api/consent", (req, res) => {
   const { name, email, companyName, agreedToPrivacy, marketingOptIn } = req.body || {};
   const result = recordConsent({ name, email, companyName, agreedToPrivacy, marketingOptIn });
   if (!result.ok) return res.status(400).json(result);
+  // Fire-and-forget durable backup — see the comment on this function in
+  // lib/email.js for why: consents.json alone isn't safe against Render's
+  // free-tier disk getting wiped on restart/redeploy.
+  sendConsentNotificationToOwner(result.record).catch(() => {});
   res.json(result);
 });
 

@@ -159,6 +159,32 @@ input[type="file"] { color: var(--cream-soft); font-size: 13px; }
 .promo-note { color: var(--mustard); font-style: normal; }
 .promo-note strong { font-family: var(--font-heading); letter-spacing: 0.03em; }
 
+/* Report bundle picker — 1/3/5 report tiers, shown right before the
+   paywall button so the price shown matches whatever's selected. */
+.pricing-block { margin: 20px 0; padding: 16px 18px; background: var(--bg-panel-2); border-left: 3px solid var(--mustard); }
+.pricing-block h3 { font-size: 14px; margin-bottom: 12px; }
+.bundle-options { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 4px; }
+.bundle-option {
+  flex: 1 1 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 10px;
+  background: var(--bg-panel);
+  border: 2px solid var(--bg-panel-2);
+  cursor: pointer;
+  text-align: center;
+}
+.bundle-option:hover { border-color: var(--sky); }
+.bundle-option input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+/* :has() covers modern browsers; .selected (toggled in app.js) is the
+   fallback for anything older so the picker still shows a choice. */
+.bundle-option:has(input:checked), .bundle-option.selected { border-color: var(--mustard); background: var(--bg-panel-2); }
+.bundle-name { font-family: var(--font-heading); text-transform: uppercase; font-size: 12px; letter-spacing: 0.04em; color: var(--cream); }
+.bundle-price { font-family: var(--font-display); font-size: 20px; color: var(--mustard); }
+.bundle-per-report { font-size: 11px; color: var(--cream-soft); }
+
 /* Step 1: GDPR / marketing consent checkboxes, right before Continue */
 .consent-block { margin: 20px 0; padding: 16px 18px; background: var(--bg-panel-2); border-left: 3px solid var(--sky); }
 .consent-row { display: flex; flex-direction: row; align-items: flex-start; gap: 10px; font-family: var(--font-body); font-size: 13px; text-transform: none; letter-spacing: normal; color: var(--cream); margin-bottom: 10px; }

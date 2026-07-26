@@ -242,6 +242,7 @@ on("toStep2", "click", async () => {
     renderQuestions();
     if ($("questionStatus")) $("questionStatus").textContent = "";
     showPanel(2);
+    checkCreditBalance();
   } catch (err) {
     console.error(err);
     if ($("questionStatus")) $("questionStatus").textContent = "Something went wrong picking questions — please try again.";
@@ -249,6 +250,48 @@ on("toStep2", "click", async () => {
 });
 
 // ---------------- STEP 2 ----------------
+
+// Report bundles (1/3/5, see lib/payments.js) mean a candidate might
+// already have reports paid for from an earlier visit — e.g. report 2 of a
+// 5-pack, or coming back another day on the same email. This checks that
+// balance as soon as Step 2 loads, so the pricing picker can be swapped
+// out for "you already have credit, just carry on" instead of asking them
+// to pay again.
+async function checkCreditBalance() {
+  const note = $("creditBalanceNote");
+  const block = $("pricingBlock");
+  if (!state.candidateEmail) return;
+  try {
+    const res = await fetch(`/api/credits/balance?email=${encodeURIComponent(state.candidateEmail)}`);
+    const data = await res.json();
+    state.creditBalance = data.balance || 0;
+    if (state.creditBalance > 0) {
+      if (block) block.classList.add("hidden");
+      if (note) {
+        note.classList.remove("hidden");
+        note.textContent = `You already have ${state.creditBalance} report${state.creditBalance === 1 ? "" : "s"} paid for on this email — no need to pay again, just hit "Generate my report" below.`;
+      }
+      if ($("toStep3")) $("toStep3").textContent = "Generate my report";
+    } else {
+      if (block) block.classList.remove("hidden");
+      if (note) note.textContent = "";
+      if ($("toStep3")) $("toStep3").textContent = "Pay & generate my report";
+    }
+  } catch (err) {
+    console.error("[credits] could not check balance (continuing to show pricing):", err);
+  }
+}
+
+// Visual selection state for the bundle picker — kept in sync with the
+// radio inputs themselves (which remain the source of truth) so this is
+// purely cosmetic and never blocks submission if it fails for any reason.
+document.querySelectorAll('input[name="reportBundle"]').forEach((input) => {
+  input.addEventListener("change", () => {
+    document.querySelectorAll(".bundle-option").forEach((opt) => opt.classList.remove("selected"));
+    input.closest(".bundle-option")?.classList.add("selected");
+  });
+});
+
 function renderQuestions() {
   const container = $("questionList");
   if (!container) return;
@@ -501,12 +544,31 @@ on("toStep3", "click", async () => {
     a.transcript = ($(`qa-text-${idx}`)?.value || "").trim();
   });
 
+  const wasAlreadyCredited = (state.creditBalance || 0) > 0;
+  const originalLabel = $("toStep3")?.textContent || "Pay & generate my report";
   if ($("toStep3")) { $("toStep3").disabled = true; $("toStep3").textContent = "Please wait…"; }
+
+  // Already has report credit on this email from an earlier bundle
+  // purchase — skip Stripe entirely and spend a credit directly. The
+  // pricing picker is hidden in this case (see checkCreditBalance), so
+  // there's no bundle selection to read.
+  if (wasAlreadyCredited) {
+    try {
+      showPanel(3);
+      await generateAndShowReport();
+    } finally {
+      if ($("toStep3")) { $("toStep3").disabled = false; $("toStep3").textContent = originalLabel; }
+    }
+    return;
+  }
+
+  const selectedBundle = document.querySelector('input[name="reportBundle"]:checked')?.value || "report_1";
+
   try {
     const res = await fetch("/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ candidateEmail: state.candidateEmail, companyName: state.companyName }),
+      body: JSON.stringify({ candidateEmail: state.candidateEmail, companyName: state.companyName, product: selectedBundle }),
     });
     const data = await res.json();
     if (data.url) {
@@ -530,7 +592,7 @@ on("toStep3", "click", async () => {
     showPanel(3);
     await generateAndShowReport();
   } finally {
-    if ($("toStep3")) { $("toStep3").disabled = false; $("toStep3").textContent = "Pay & generate my report"; }
+    if ($("toStep3")) { $("toStep3").disabled = false; $("toStep3").textContent = originalLabel; }
   }
 });
 

@@ -1,80 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Privacy &amp; Data Notice — The Com'mon People</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600&family=Arvo:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<style>
-  .legal { max-width: 760px; margin: 0 auto; padding: 32px 20px 60px; font-size: 14px; }
-  .legal h2 { margin-top: 32px; }
-  .legal table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 13px; }
-  .legal th, .legal td { text-align: left; padding: 8px 10px; border: 1px solid var(--bg-panel-2); }
-  .legal th { background: var(--bg-panel-2); font-family: var(--font-heading); text-transform: uppercase; font-size: 11px; letter-spacing: 0.04em; }
-  .legal ul { padding-left: 20px; }
-  .legal li { margin-bottom: 6px; }
-  .last-updated { color: var(--cream-soft); font-style: italic; font-size: 12px; }
-</style>
+<meta name="description" content="How The Com'mon People collects, uses and protects your data: newsletter signups, the Interview Prep Report and CV Rewrite apps, coaching bookings and payments.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="cp2.css">
 </head>
 <body>
-<header class="site-header">
-  <div class="brand">The Com'mon People</div>
-  <div class="brand-sub">Privacy &amp; Data Notice</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="burger" viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h18v2.2H3V6Zm0 5h18v2.2H3V11Zm0 5h18v2.2H3V16Z"/></symbol></svg>
+<header class="nav">
+  <div class="wrap row">
+    <a class="plates" href="index.html" aria-label="The Com'mon People — home"><span class="plate p1">The</span><span class="plate p2">Com'mon</span><span class="plate p3">People</span></a>
+    <nav class="links" id="cpnav" aria-label="Primary"><a href="guides.html">Guides</a><a href="dispatches.html">Dispatches</a><a href="loudspeaker.html">Loudspeaker</a><a href="apprenticeships.html">Apprenticeships</a><a href="about.html">About</a><a href="prep-report.html">Prep Report</a><a href="https://cv.the-common-people.com">CV Rewrite</a></nav>
+    <div class="nav-actions"><a class="btn orange nav-book" href="https://cal.com/the-common-people.com/interviewcoaching" target="_blank" rel="noopener">Book a coaching call</a><a class="btn ghost nav-explore" href="resources.html">Explore resources</a><button class="burger" id="cpburger" type="button" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><use href="#burger"/></svg></button></div>
+  </div>
 </header>
 
-<main class="legal">
-  <p class="last-updated">This is a draft notice for a prototype product. It has not had a formal legal review — get it checked (ideally by a solicitor) before real customer data flows through this app.</p>
+<section class="band-navy" style="padding:64px 0 56px">
+  <div class="wrap">
+    <span class="eyebrow" style="color:var(--teal)">Privacy &amp; Data</span>
+    <h1 style="font-size:clamp(38px,5.6vw,64px);color:var(--cream);margin:12px 0 16px">Privacy &amp; Data Notice.</h1>
+    <p style="color:#C6CFD8;font-size:19px;max-width:720px;border-left:3px solid var(--orange);padding-left:20px;line-height:1.65;margin:0">Plainly: we collect as little as we can, we never sell your data, and everything on the free side of this site works without you handing over anything at all. This notice explains what we do collect, why, and the rights you have over it.</p>
+    <p style="font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8E99A4;margin-top:18px">Last updated: 13 August 2026</p>
+  </div>
+</section>
 
-  <h2>Who we are</h2>
-  <p>The Com'mon People Interview Prep Report is a service that generates a personalised interview preparation report from the job description and CV you provide, optionally including a recorded practice answer and a paid coaching add-on.</p>
+<!-- CONFIRM BEFORE PUBLISHING:
+     1) Data controller line below: if The Com'mon People is a limited company, replace with the
+        registered company name, company number and registered office address. If sole trader, a
+        contact address is still recommended.
+     2) ICO registration: most UK organisations processing personal data must register with the ICO
+        and pay the data protection fee. Confirm your registration and add the reference here.
+     3) Name your actual providers where marked [provider] once chosen (email/newsletter platform),
+        and confirm the current list of processors (Stripe, Cal.com, Render, Cloudflare, AI provider).
+     4) This is a solid working draft, not legal advice. Have it reviewed, or use the ICO's free
+        privacy-notice guidance at ico.org.uk, before relying on it. -->
 
-  <h2>What we collect</h2>
-  <table>
-    <tr><th>Data</th><th>Why we collect it</th></tr>
-    <tr><td>Your name, email address, and the company/role you're applying for</td><td>To personalise your report and pitch, and to keep a record of your agreement to this notice before we generate anything</td></tr>
-    <tr><td>Your CV and the job description (uploaded file or pasted text)</td><td>To generate the gap analysis, pitch and tailored questions</td></tr>
-    <tr><td>Spoken answers to competency questions (audio, then transcribed to text)</td><td>To draft your STAR answers — audio is sent to our transcription provider and not retained by us afterwards</td></tr>
-    <tr><td>Whether you've opted in to marketing communications</td><td>This is a separate, optional tick-box — kept distinct from your agreement to this notice, which is required to use the service. You can withdraw marketing consent at any time.</td></tr>
-    <tr><td>Email address, and name (if you book a coaching call)</td><td>To arrange and confirm your coaching session</td></tr>
-  </table>
+<section>
+  <div class="wrap prose" style="margin:0 auto">
+    <h2>Who we are</h2>
+    <p>The Com'mon People is a free resource centre for people on both sides of recruitment, operated by Neil Copping trading as The Com'mon People. For anything to do with your data, we are the "data controller", and you can reach us at <a href="mailto:neil.copping@thecommonpeople.co.uk">neil.copping@thecommonpeople.co.uk</a>.</p>
+    <h2>The short version</h2>
+    <p>Reading the guides, dispatches and Loudspeaker web editions needs nothing from you. We only hold personal data when you choose to give it: when you subscribe to the newsletter, buy an Interview Prep Report or CV Rewrite, or book a coaching call. We use it to do the thing you asked for, and nothing else. We don't sell it, and we don't send you marketing you didn't ask for.</p>
+    <h2>What we collect, and why</h2>
+    <p><strong>Newsletter signups.</strong> When you subscribe to the Loudspeaker or the Dispatch email, we collect your email address (and your name, if you give it). We use it only to send you the newsletter and to let you know about the free resources. Our lawful basis is your consent, which you can withdraw at any time using the unsubscribe link in every email.</p>
+    <p><strong>Interview Prep Report and CV Rewrite.</strong> To build these for you, the apps process the CV text and job advert or job description you provide, plus any answers you give, and your email address so we can deliver the result. This content can include personal data about you and, if your CV mentions them, other people. We process it to deliver the paid service you have bought (our lawful basis is performance of a contract). Uploaded files are deleted from our servers as soon as the text has been extracted from them.</p>
+    <p><strong>Payments.</strong> Card payments are handled by our payment provider, Stripe. We do not see or store your full card details; Stripe processes them and gives us a confirmation and a record of the transaction.</p>
+    <p><strong>Coaching bookings.</strong> When you book a call, our booking provider, Cal.com, collects your name, email and the time you choose so we can hold the session and send reminders.</p>
+    <p><strong>Emails you send us.</strong> If you email us, we keep that correspondence so we can reply and keep a record of the conversation.</p>
+    <p><strong>Website use.</strong> Our host may log basic technical information (such as IP address and browser type) to keep the site secure and working. If we add analytics or any non-essential cookies, we will name them in the Cookies section below and ask for your consent where required.</p>
+    <h2>Who we share it with</h2>
+    <p>We do not sell your data or share it for anyone else's marketing. We do use a small number of trusted providers who process data on our behalf, under contract, only to run the service:</p>
+    <ul>
+      <li><strong>Our email and newsletter provider</strong> [confirm provider], to store subscribers and send emails.</li>
+      <li><strong>Stripe</strong>, to take payments securely.</li>
+      <li><strong>Cal.com</strong>, to manage coaching bookings.</li>
+      <li><strong>Our app and website hosts</strong> (Render and Cloudflare), to run the tools and serve the site.</li>
+      <li><strong>Our AI and web-research provider</strong>, used only to generate your report from the information you provide.</li>
+    </ul>
+    <p>We may also disclose information if the law requires it.</p>
+    <h2>How long we keep it</h2>
+    <p>Uploaded CV and job-advert files are deleted as soon as the text is extracted. Newsletter subscriber details are kept until you unsubscribe or ask us to remove them. Records we need for our accounts, such as proof of a transaction, are kept for as long as the law requires (generally six years for UK tax records). Otherwise we keep personal data only as long as we need it for the purpose we collected it.</p>
+    <h2>Where your data is processed</h2>
+    <p>Some of our providers are based outside the UK, including in the United States. Where data is transferred outside the UK, we rely on the safeguards those providers offer, such as approved data transfer agreements, to keep your data protected to UK standards.</p>
+    <h2>Your rights</h2>
+    <p>Under UK data protection law you have the right to ask us to give you a copy of your data, correct it, delete it, restrict how we use it, or provide it in a portable form. You can object to certain processing, and you can withdraw consent to marketing emails at any time. To exercise any of these, email <a href="mailto:neil.copping@thecommonpeople.co.uk">neil.copping@thecommonpeople.co.uk</a> and we will respond within one month.</p>
+    <h2>Cookies</h2>
+    <p>The core site runs without non-essential cookies. If we add anything that tracks you, such as analytics or embedded content, we will list it here and, where the rules require it, ask for your consent first.</p>
+    <h2>Complaints</h2>
+    <p>If you are unhappy with how we have handled your data, please tell us first and we will try to put it right. You also have the right to complain to the Information Commissioner's Office (ICO), the UK regulator, at <a href="https://ico.org.uk" target="_blank" rel="noopener">ico.org.uk</a>.</p>
+    <h2>Changes to this notice</h2>
+    <p>We may update this notice as the service changes. When we do, we will change the "last updated" date at the top, and for significant changes we will say so more clearly.</p>
+  </div>
+</section>
 
-  <h2>How long we keep it</h2>
-  <ul>
-    <li>Uploaded CV/JD files are deleted from our server immediately after the text is extracted.</li>
-    <li>Recorded audio is deleted immediately after transcription.</li>
-    <li>Report content generated for you is not stored after it's returned to your browser, other than what's needed to build your downloadable document in the same request.</li>
-    <li>Your name, email, and record of agreeing to this notice (plus whether you opted in to marketing) are kept so we have evidence of consent — you can ask us to delete this at any time (see "Your rights" below).</li>
-    <li>Coaching booking details (name, email, chosen time) are kept until the session has taken place, plus a short period afterwards for any follow-up.</li>
-  </ul>
-
-  <h2>Who we share data with</h2>
-  <p>We use the following third-party processors to provide the service. None of them are permitted to use your data for their own purposes beyond providing the service to us.</p>
-  <table>
-    <tr><th>Processor</th><th>What they see</th></tr>
-    <tr><td>Anthropic (Claude API)</td><td>Your job description and CV text, to generate research, analysis and drafted answers</td></tr>
-    <tr><td>OpenAI</td><td>Your spoken answers (for transcription) and a description of the role (to generate cover artwork)</td></tr>
-    <tr><td>Stripe</td><td>Payment details, when payment is enabled — we do not see or store your card details ourselves</td></tr>
-    <tr><td>Render (hosting)</td><td>Standard hosting-level access to run the application</td></tr>
-  </table>
-
-  <h2>Your rights</h2>
-  <p>Under UK GDPR you have the right to access, correct, or ask us to delete the personal data we hold about you, and the right to object to or restrict certain processing. Contact us if you'd like to exercise any of these. If you're unhappy with how we've handled your data, you can also complain to the Information Commissioner's Office (ico.org.uk).</p>
-
-  <h2>Security</h2>
-  <p>Uploaded files are size- and type-restricted before they're accepted, and are deleted from our server as soon as they've been processed. Access to hosting and third-party accounts is restricted to those who need it to run the service.</p>
-
-  <h2>Cookies</h2>
-  <p>This app does not currently use tracking or advertising cookies.</p>
-
-  <h2>Changes to this notice</h2>
-  <p>We may update this notice as the service develops. Material changes will be reflected here with an updated date.</p>
-</main>
-
-<footer class="site-footer">
-  <a href="/">Back to the app</a>
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div><a class="plates" href="index.html"><span class="plate p1 sm">The</span><span class="plate p2 sm">Com'mon</span><span class="plate p3 sm">People</span></a><p class="fabout">A free resource centre for marketing, HR, finance, events and operations people. Built on mutual aid.</p><span class="sticker orange" style="margin-top:16px">Free, always</span></div>
+      <div><h6>Guides</h6><a href="guide-cv.html">The CV that gets read</a><a href="guide-video-intro.html">The intro video</a><a href="guide-interview-prep.html">Interview prep</a><a href="guide-linkedin.html">LinkedIn, properly</a><a href="guide-05-evp.html">The EVP field guide</a></div>
+      <div><h6>Dispatches</h6><a href="dispatch-embed-apprenticeships.html">Embed apprenticeships in HR</a><a href="dispatch-apprenticeship-paradox.html">The Apprenticeship Paradox</a><a href="dispatch-recruitment-rethink.html">The recruitment rethink</a><a href="dispatch-eu-ai-act.html">The EU AI Act</a><a href="dispatch-report-hertfordshire.html">The Commons Report</a></div>
+      <div><h6>Loudspeaker</h6><a href="loudspeaker.html">The archive</a><a href="loudspeaker-edition-01.html">Edition 01 · May 2026</a><a href="loudspeaker-edition-02.html">Edition 02 · July 2026</a><a href="loudspeaker-edition-03.html">Edition 03 · August 2026</a></div>
+    </div>
+    <div class="fbottom"><span>© 2026 The Com'mon People. Built on mutual aid.</span><span><a href="privacy.html" style="color:#7C8791">Privacy</a> · Free, always.</span></div>
+  </div>
 </footer>
+<script>(function(){var b=document.getElementById("cpburger"),n=document.getElementById("cpnav");if(b&&n)b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});})();</script>
 </body>
 </html>

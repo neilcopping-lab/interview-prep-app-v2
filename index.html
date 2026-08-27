@@ -1,191 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interview Prep Report — The Com'mon People</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Com'mon People — The Free Resource Centre</title>
+<meta name="description" content="A free resource centre for marketing, HR, finance, events and operations people. Field guides, dispatches, apprenticeship guidance and a monthly Loudspeaker email. No paywall on knowledge.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600&family=Arvo:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="cp2.css">
 </head>
 <body>
-<header class="site-header">
-  <div class="brand"><span>The</span><span>Com'mon</span><span>People</span></div>
-  <div class="brand-sub">Interview Prep Report</div>
+
+<!-- icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mega" viewBox="0 0 24 24"><path fill="currentColor" d="M3 10v4a1 1 0 0 0 1 1h2l3.2 3.6a1 1 0 0 0 1.8-.66V6.06a1 1 0 0 0-1.8-.66L6 9H4a1 1 0 0 0-1 1Z"/><path fill="currentColor" d="M15.5 8.5c1 1 1 4 0 5l1.3 1.3c1.7-1.7 1.7-5.9 0-7.6L15.5 8.5Zm2.4-2.4c2.3 2.3 2.3 8 0 10.3l1.3 1.3c3-3 3-9.9 0-12.9l-1.3 1.3Z"/></symbol>
+  <symbol id="book" viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h7a2 2 0 0 1 2 2v14a3 3 0 0 0-2-.8H4V4Zm16 0h-7a2 2 0 0 0-2 2v14a3 3 0 0 1 2-.8h7V4Z"/></symbol>
+  <symbol id="doc" viewBox="0 0 24 24"><path fill="currentColor" d="M6 2h8l4 4v16H6V2Zm8 1.5V7h3.5L14 3.5ZM8 11h8v1.6H8V11Zm0 3.4h8V16H8v-1.6Z"/></symbol>
+  <symbol id="cv" viewBox="0 0 24 24"><path fill="currentColor" d="M5 3h14v18H5V3Zm3 4h8v1.6H8V7Zm0 3.4h8V12H8v-1.6ZM8 14h5v1.6H8V14Z"/></symbol>
+  <symbol id="chart" viewBox="0 0 24 24"><path fill="currentColor" d="M4 20V4h1.6v14.4H20V20H4Zm3-3 4-5 3 3 5-6 1.2 1L14 18l-3-3-3 3.6L7 17Z"/></symbol>
+  <symbol id="fist" viewBox="0 0 24 24"><path fill="currentColor" d="M7 10V6a1.4 1.4 0 0 1 2.8 0V9h.6V5a1.4 1.4 0 0 1 2.8 0v4h.6V6a1.4 1.4 0 0 1 2.8 0v6c0 3.3-2.2 6-5.4 6C8 18 6 15.5 6 12v-2H7Z"/></symbol>
+  <symbol id="ghost" viewBox="0 0 24 24"><path fill="currentColor" d="M5 20V11a7 7 0 0 1 14 0v9l-2.3-1.6L14.4 20 12 18.4 9.6 20 7.3 18.4 5 20Zm4-10a1.3 1.3 0 1 0 2.6 0A1.3 1.3 0 0 0 9 10Zm4.4 0a1.3 1.3 0 1 0 2.6 0 1.3 1.3 0 0 0-2.6 0Z"/></symbol>
+  <symbol id="star" viewBox="0 0 24 24"><path fill="currentColor" d="m12 2 2.6 6.3L21 9l-4.7 4.3L17.8 21 12 17.3 6.2 21l1.5-7.7L3 9l6.4-.7L12 2Z"/></symbol>
+  <symbol id="burger" viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h18v2.2H3V6Zm0 5h18v2.2H3V11Zm0 5h18v2.2H3V16Z"/></symbol>
+</svg>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap row">
+    <a class="plates" href="index.html" aria-label="The Com'mon People — home"><span class="plate p1">The</span><span class="plate p2">Com'mon</span><span class="plate p3">People</span></a>
+    <nav class="links" id="cpnav" aria-label="Primary">
+      <a href="guides.html">Guides</a><a href="dispatches.html">Dispatches</a><a href="loudspeaker.html">Loudspeaker</a>
+      <a href="apprenticeships.html">Apprenticeships</a><a href="about.html">About</a>
+      <a href="prep-report.html">Prep Report</a><a href="https://cv.the-common-people.com">CV Rewrite</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn orange nav-book" href="https://cal.com/the-common-people.com/interviewcoaching" target="_blank" rel="noopener">Book a coaching call</a>
+      <a class="btn ghost nav-explore" href="resources.html">Explore resources</a>
+      <button class="burger" id="cpburger" type="button" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><use href="#burger"/></svg></button>
+    </div>
+  </div>
 </header>
 
-<main class="wizard">
-
-  <!-- STEP 1: INTAKE -->
-  <section id="panel1" class="panel">
-    <h2>Tell us about the interview</h2>
-    <p class="panel-intro">Add the job description and your CV, and we'll build your personalised prep report from them.</p>
-
-    <div class="pricing-block">
-      <h3>Pricing</h3>
-      <div class="bundle-options bundle-options-static">
-        <div class="bundle-option bundle-option-static">
-          <span class="bundle-tier" style="display:block;font-family:'Anton',sans-serif;text-transform:uppercase;color:#e0b03c;font-size:15px;margin-bottom:2px;">The Warm-Up</span><span class="bundle-name">1 report</span>
-          <span class="bundle-price">£15</span>
-        </div>
-        <div class="bundle-option bundle-option-static">
-          <span class="bundle-tier" style="display:block;font-family:'Anton',sans-serif;text-transform:uppercase;color:#e0b03c;font-size:15px;margin-bottom:2px;">The Campaign</span><span class="bundle-name">3 reports</span>
-          <span class="bundle-price">£20</span>
-          <span class="bundle-per-report">~£6.67 each</span>
-        </div>
-        <div class="bundle-option bundle-option-static">
-          <span class="bundle-tier" style="display:block;font-family:'Anton',sans-serif;text-transform:uppercase;color:#e0b03c;font-size:15px;margin-bottom:2px;">The Full Arsenal</span><span class="bundle-name">5 reports</span>
-          <span class="bundle-price">£25</span>
-          <span class="bundle-per-report">£5 each</span>
-        </div>
-      </div>
-      <p class="audio-consent">You'll choose how many reports and pay after you've added your questions below — nothing is charged yet. Buy more than one and the spares stay on your email for whenever you're ready.</p>
-      <p class="audio-consent promo-note">Trying us out this week? Enter code <strong>TRY4FREE</strong> at checkout to get your first report free — offer ends after one week.</p>
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap grid">
+    <div>
+      <span class="eyebrow">Knowledge shouldn't cost a thing</span>
+      <h1>The <span class="mark-underline">Free</span> Resource Centre.</h1>
+      <p class="lead">A free resource centre for marketing, HR, finance, events and operations people, on both sides of recruitment. Field guides, dispatches, plain-English apprenticeship guidance and a monthly Loudspeaker email, written by people who've spent twenty years in the industry. No subscription. No premium tier. No catch.</p>
+      <p class="lead two">Free resources for everyone, always — from CVs and interviews to making apprenticeships work for your business. Now with a paid AI-built prep report for anyone who wants the shortcut.</p>
+      <div class="cta"><a class="btn lg orange" href="resources.html">Explore the resources</a><a class="btn ghost lg" href="guides.html" style="color:var(--hero-ink);border-color:currentColor">Browse the field guides</a></div>
+      <div class="trust"><span><b>20</b>years in the industry</span><span><b>Free</b>always, no catch</span><span><b>976</b>on the Loudspeaker</span></div>
     </div>
-
-    <div class="form-grid">
-      <label>
-        Your name
-        <input type="text" id="candidateName" placeholder="e.g. Neil Copping">
-      </label>
-      <label>
-        Your email
-        <input type="email" id="candidateEmail" placeholder="e.g. neil@example.com">
-      </label>
-      <label class="form-grid-full">
-        Company you're interviewing with
-        <input type="text" id="companyName" placeholder="e.g. Driver Require">
-      </label>
-      <label>
-        A personal detail to open with
-        <span class="tooltip-trigger">?
-          <span class="tooltip-box"><b>Bread 1 — Connect.</b> 10–15 seconds of the human you — a detail that builds rapport. Not a CV recap.<br><br>Template: "A bit about me — I'm [X], based in [Y] and outside work I'm into [interest]."</span>
-        </span>
-        <div class="input-with-record">
-          <input type="text" id="connectDetail" placeholder="e.g. based just outside Leeds, into trail running">
-          <button type="button" class="record-btn record-btn-inline" data-target="connectDetail">● Record</button>
-        </div>
-        <span id="connectDetail-status" class="status-line status-line-small"></span>
-      </label>
-      <label>
-        Your top values at work
-        <span class="tooltip-trigger">?
-          <span class="tooltip-box"><b>Bread 2 — Values.</b> Two values, and what they look like in how you work — not generic buzzwords.<br><br>Template: "In how I work, I value [value 1] and [value 2] — which means you'll get someone who [behaviour]."</span>
-        </span>
-        <div class="input-with-record">
-          <input type="text" id="values" placeholder="e.g. honesty, curiosity">
-          <button type="button" class="record-btn record-btn-inline" data-target="values">● Record</button>
-        </div>
-        <span id="values-status" class="status-line status-line-small"></span>
-      </label>
+    <div class="art gold hero-art poster" style="background-image:url('img/poster-28.jpg')">
+      <span class="cap">The Com'mon People</span>
+      <svg class="ico" viewBox="0 0 24 24"><use href="#mega"/></svg>
+      <svg class="ico-lead" viewBox="0 0 24 24"><use href="#fist"/></svg>
+      <span class="sticker s1">Free, always</span>
+      <span class="sticker navy s2">Built on mutual aid</span>
     </div>
-    <p class="audio-consent">Recording uses your microphone and sends the audio to our transcription provider to convert it to text — see our <a href="/privacy.html" target="_blank">privacy notice</a> for details. Typing instead skips this entirely.</p>
+  </div>
+</section>
 
-    <div class="upload-block">
-      <h3>Job description</h3>
-      <input type="file" id="jdFile" accept=".pdf,.docx,.txt">
-      <p class="upload-or">or paste it below</p>
-      <textarea id="jobDescription" rows="6" placeholder="Paste the job description here"></textarea>
+<!-- PUNK TICKER -->
+<div class="ticker" aria-hidden="true"><div class="track">
+  <div class="seg"><span>Free, Always</span><i>✊</i><span>Built On Mutual Aid</span><i>★</i><span>No Paywall On Knowledge</span><i>✊</i><span>Knowledge Shouldn't Cost A Thing</span><i>★</i><span>Free, Always</span><i>✊</i><span>Built On Mutual Aid</span><i>★</i><span>No Paywall On Knowledge</span><i>✊</i><span>Knowledge Shouldn't Cost A Thing</span><i>★</i></div>
+  <div class="seg"><span>Free, Always</span><i>✊</i><span>Built On Mutual Aid</span><i>★</i><span>No Paywall On Knowledge</span><i>✊</i><span>Knowledge Shouldn't Cost A Thing</span><i>★</i><span>Free, Always</span><i>✊</i><span>Built On Mutual Aid</span><i>★</i><span>No Paywall On Knowledge</span><i>✊</i><span>Knowledge Shouldn't Cost A Thing</span><i>★</i></div>
+</div></div>
+
+<!-- PILLARS -->
+<section class="band-tint tight">
+  <div class="wrap">
+    <div class="head"><span class="eyebrow">What's inside</span><h2>Everything we know, given away.</h2><p>Field guides and dispatches, free forever. Plus two paid AI tools for anyone who'd rather we just did it.</p></div>
+    <div class="cards">
+      <article class="card"><a class="top art teal poster" style="background-image:url('img/poster-14.jpg')" href="guides.html"><svg class="ico" viewBox="0 0 24 24"><use href="#book"/></svg></a><div class="in"><h3>Field Guides</h3><p>Practical, personal guides to every stage of the job-search process, from CV architecture to interview prep. Written from inside the process, not above it.</p><div class="foot"><span class="tag free">Free</span><a class="go" href="guides.html">Read the guides →</a></div></div></article>
+      <article class="card"><a class="top art navy photo" style="background-image:url('img/poster-13.jpg')" href="dispatches.html"><svg class="ico" viewBox="0 0 24 24"><use href="#doc"/></svg></a><div class="in"><h3>Dispatches</h3><p>Opinion, data and explainers — AI CVs, the EU AI Act, and why the recruitment model is overdue a rethink.</p><div class="foot"><span class="tag free">Free</span><a class="go" href="dispatches.html">Read the dispatches →</a></div></div></article>
+      <article class="card"><a class="top art gold poster" style="background-image:url('img/poster-28.jpg')" href="loudspeaker.html"><svg class="ico" viewBox="0 0 24 24"><use href="#mega"/></svg></a><div class="in"><h3>The Loudspeaker</h3><p>A monthly email from the recruitment frontline, with an editor's view. Free to subscribe, free to share.</p><div class="foot"><span class="tag free">Free</span><a class="go" href="loudspeaker.html">Subscribe →</a></div></div></article>
+      <article class="card"><a class="top art orange photo" style="background-image:url('img/poster-01.jpg')" href="prep-report.html"><svg class="ico" viewBox="0 0 24 24"><use href="#star"/></svg></a><div class="in"><h3>Interview Prep Report</h3><p>Paste your CV and the job spec. Get back a fully researched, tailored interview prep report — ready in minutes.</p><div class="foot"><span class="tag paid">£15</span><a class="go" href="prep-report.html">Get the report →</a></div></div></article>
+      <article class="card"><a class="top art teal photo" style="background-image:url('img/poster-05.jpg')" href="https://cv.the-common-people.com"><svg class="ico" viewBox="0 0 24 24"><use href="#cv"/></svg></a><div class="in"><h3>CV Rewrite</h3><p>Paste your CV and the advert. Get back a rewritten, honesty-checked CV in a design you choose — ready in minutes.</p><div class="foot"><span class="tag paid">From £5</span><a class="go" href="https://cv.the-common-people.com">Rewrite my CV →</a></div></div></article>
+      <article class="card" style="background:var(--navy);color:var(--cream);border-color:var(--navy)"><div class="in" style="justify-content:center;gap:14px"><span class="eyebrow" style="color:var(--gold)">Our promise</span><h3 style="color:var(--cream);font-size:27px">No paywall on knowledge.</h3><p style="color:#C6CFD8">We give it away because the whole process works better when both sides understand each other.</p><span class="sticker orange" style="align-self:flex-start">Free, always</span></div></article>
     </div>
+  </div>
+</section>
 
-    <div class="upload-block">
-      <h3>Your CV</h3>
-      <input type="file" id="cvFile" accept=".pdf,.docx,.txt">
-      <p class="upload-or">or paste it below</p>
-      <textarea id="cvText" rows="6" placeholder="Paste your CV here"></textarea>
+<!-- SCROLLING DISPATCH COVERS -->
+<section class="tight">
+  <div class="wrap"><div class="head" style="margin-bottom:24px"><span class="eyebrow">Straight from the frontline</span><h2>Hot off the press.</h2></div></div>
+  <div class="scroller" aria-label="Recent dispatches and editions">
+    <div class="strip">
+      <a class="cover art navy poster" style="background-image:url('img/poster-39.jpg')" href="dispatch-apprenticeship-paradox.html"><span class="cover-tag">Dispatch</span><svg class="ico" viewBox="0 0 24 24"><use href="#doc"/></svg><h4>The Apprenticeship Paradox</h4></a>
+      <a class="cover art orange poster" style="background-image:url('img/poster-12.jpg')" href="dispatch-embed-apprenticeships.html"><span class="cover-tag">New · For HR</span><svg class="ico" viewBox="0 0 24 24"><use href="#book"/></svg><h4>Embed Apprenticeships In HR</h4></a>
+      <a class="cover art teal poster" style="background-image:url('img/poster-25.jpg')" href="dispatch-report-hertfordshire.html"><span class="cover-tag">The Commons Report</span><svg class="ico" viewBox="0 0 24 24"><use href="#chart"/></svg><h4>The View From Outside The Glass</h4></a>
+      <a class="cover art gold photo" style="background-image:url('img/poster-09.jpg')" href="dispatch-eu-ai-act.html"><span class="cover-tag">Law &amp; Governance</span><svg class="ico" viewBox="0 0 24 24"><use href="#doc"/></svg><h4>The EU AI Act</h4></a>
+      <a class="cover art red photo" style="background-image:url('img/poster-02.jpg')" href="dispatch-stop-ghosting.html"><span class="cover-tag">Campaign</span><svg class="ico" viewBox="0 0 24 24"><use href="#ghost"/></svg><h4>Stop Ghosting Job Seekers</h4></a>
+      <a class="cover art navy poster" style="background-image:url('img/poster-28.jpg')" href="loudspeaker-edition-03.html"><span class="cover-tag">Loudspeaker</span><svg class="ico" viewBox="0 0 24 24"><use href="#mega"/></svg><h4>Edition 03 · August</h4></a>
+      <a class="cover art navy poster" style="background-image:url('img/poster-39.jpg')" href="dispatch-apprenticeship-paradox.html" aria-hidden="true" tabindex="-1"><span class="cover-tag">Dispatch</span><svg class="ico" viewBox="0 0 24 24"><use href="#doc"/></svg><h4>The Apprenticeship Paradox</h4></a>
+      <a class="cover art orange poster" style="background-image:url('img/poster-12.jpg')" href="dispatch-embed-apprenticeships.html" aria-hidden="true" tabindex="-1"><span class="cover-tag">New · For HR</span><svg class="ico" viewBox="0 0 24 24"><use href="#book"/></svg><h4>Embed Apprenticeships In HR</h4></a>
+      <a class="cover art teal poster" style="background-image:url('img/poster-25.jpg')" href="dispatch-report-hertfordshire.html" aria-hidden="true" tabindex="-1"><span class="cover-tag">The Commons Report</span><svg class="ico" viewBox="0 0 24 24"><use href="#chart"/></svg><h4>The View From Outside The Glass</h4></a>
+      <a class="cover art gold photo" style="background-image:url('img/poster-09.jpg')" href="dispatch-eu-ai-act.html" aria-hidden="true" tabindex="-1"><span class="cover-tag">Law &amp; Governance</span><svg class="ico" viewBox="0 0 24 24"><use href="#doc"/></svg><h4>The EU AI Act</h4></a>
+      <a class="cover art red photo" style="background-image:url('img/poster-02.jpg')" href="dispatch-stop-ghosting.html" aria-hidden="true" tabindex="-1"><span class="cover-tag">Campaign</span><svg class="ico" viewBox="0 0 24 24"><use href="#ghost"/></svg><h4>Stop Ghosting Job Seekers</h4></a>
+      <a class="cover art navy poster" style="background-image:url('img/poster-28.jpg')" href="loudspeaker-edition-03.html" aria-hidden="true" tabindex="-1"><span class="cover-tag">Loudspeaker</span><svg class="ico" viewBox="0 0 24 24"><use href="#mega"/></svg><h4>Edition 03 · August</h4></a>
     </div>
+  </div>
+</section>
 
-    <div class="consent-block">
-      <label class="consent-row">
-        <input type="checkbox" id="agreePrivacy">
-        <span>I've read and agree to the <a href="/privacy.html" target="_blank">Privacy &amp; Data Notice</a> — required to generate a report.</span>
-      </label>
-      <label class="consent-row">
-        <input type="checkbox" id="marketingOptIn">
-        <span>Yes, keep me posted on future guides, tools and offers from The Com'mon People (optional — you can unsubscribe any time).</span>
-      </label>
-      <p id="consentStatus" class="status-line"></p>
+<!-- PREP REPORT -->
+<section>
+  <div class="wrap feature">
+    <div class="txt">
+      <span class="eyebrow">New from The Com'mon People</span>
+      <h2>Want us to just do it for you?</h2>
+      <p>Everything above is free, and always will be. But if you've got an interview coming up and want it handled properly — company research, sharp questions, a tailored pitch, the lot — we'll build it for you. £15 a report, less in a pack, most of the way there in minutes.</p>
+      <div class="prices"><div class="price"><div class="l">1 report</div><div class="v">£15</div><div class="s">one report</div></div><div class="price"><div class="l">3 reports</div><div class="v">£20</div><div class="s">~£6.67 each</div></div><div class="price"><div class="l">5 reports</div><div class="v">£25</div><div class="s">£5 each</div></div></div>
+      <div class="cta"><a class="btn lg orange" href="prep-report.html">Get your prep report — £15</a><span class="sticker navy">Ready in minutes</span></div>
     </div>
+    <a class="art orange photo" style="background-image:url('img/poster-01.jpg')" href="prep-report.html"><span class="cap">Interview, handled</span><svg class="ico" viewBox="0 0 24 24"><use href="#star"/></svg><svg class="ico-lead" viewBox="0 0 24 24"><use href="#doc"/></svg></a>
+  </div>
+</section>
 
-    <button type="button" id="toStep2" class="btn-primary">Continue</button>
-    <p id="questionStatus" class="status-line"></p>
-  </section>
-
-  <!-- STEP 2: COMPETENCY QUESTIONS -->
-  <section id="panel2" class="panel hidden">
-    <h2>Your competency questions</h2>
-
-    <div class="star-guide-callout">
-      <h3>Answering with STAR Stories</h3>
-      <p>Predict likely questions from the job spec, then prepare 2–3 versatile stories that cover most scenarios. Tell each one in four parts: <b>S</b>ituation (the context, briefly), <b>T</b>ask (what you were responsible for), <b>A</b>ction (what you did — the actual steps, say "I," not "we"), <b>R</b>esult (measurable outcomes, numbers if you can). Record your answer out loud, or just type it — either way, we'll tidy it into a clean STAR structure for your report.</p>
-      <p class="info-note">These are a sample of the type of competency questions this role is likely to attract, based on the job description — not a guaranteed or exhaustive list of what you'll actually be asked. Build versatile stories that can flex to cover whatever comes up.</p>
-      <p class="audio-consent">Recording uses your microphone and sends the audio to our transcription provider to convert it to text — see our <a href="/privacy.html" target="_blank">privacy notice</a> for details. Typing instead skips this entirely.</p>
+<!-- CV REWRITE -->
+<section class="band-navy">
+  <div class="wrap feature alt">
+    <div class="txt">
+      <span class="eyebrow">New · The CV Rewrite app</span>
+      <h2>A CV that fits the job. Not a template with your name in it.</h2>
+      <p>Paste your CV and the advert. We rewrite it to that exact role, in your own words, pulling out the real things you've done that make you right for it. A hard honesty check means nothing is invented, and the usual AI cliches are stripped out. Then you pick from 21 designs and download as Word or PDF. From £5 for 4 CVs. No subscription.</p>
+      <p style="color:#AEBAC6;font-size:15px">I built it after nine years in recruitment, when I found myself on the other side of the desk. One tool to rewrite my CV, one to prep for the interview. A week later, I'd landed the job. Same tools. Your turn.</p>
+      <div class="prices two"><div class="price"><div class="l">4 CVs</div><div class="v">£5</div><div class="s">about £1.25 each</div></div><div class="price"><div class="l">10 CVs</div><div class="v">£10</div><div class="s">£1 each · best value</div></div></div>
+      <div class="cta"><a class="btn on-color lg" href="https://cv.the-common-people.com">Rewrite my CV →</a></div>
     </div>
+    <a class="art teal photo" style="background-image:url('img/founder.jpg')" href="https://cv.the-common-people.com"><span class="cap">Neil Copping · Founder</span><svg class="ico-lead" viewBox="0 0 24 24"><use href="#cv"/></svg></a>
+  </div>
+</section>
 
-    <div id="questionList"></div>
-
-    <div class="pricing-block" id="pricingBlock">
-      <h3>Choose how many reports</h3>
-      <div class="bundle-options">
-        <label class="bundle-option selected">
-          <input type="radio" name="reportBundle" value="report_1" checked>
-          <span class="bundle-tier" style="display:block;font-family:'Anton',sans-serif;text-transform:uppercase;color:#e0b03c;font-size:15px;margin-bottom:2px;">The Warm-Up</span><span class="bundle-name">1 report</span>
-          <span class="bundle-price">£15</span>
-        </label>
-        <label class="bundle-option">
-          <input type="radio" name="reportBundle" value="report_3">
-          <span class="bundle-tier" style="display:block;font-family:'Anton',sans-serif;text-transform:uppercase;color:#e0b03c;font-size:15px;margin-bottom:2px;">The Campaign</span><span class="bundle-name">3 reports</span>
-          <span class="bundle-price">£20</span>
-          <span class="bundle-per-report">~£6.67 each</span>
-        </label>
-        <label class="bundle-option">
-          <input type="radio" name="reportBundle" value="report_5">
-          <span class="bundle-tier" style="display:block;font-family:'Anton',sans-serif;text-transform:uppercase;color:#e0b03c;font-size:15px;margin-bottom:2px;">The Full Arsenal</span><span class="bundle-name">5 reports</span>
-          <span class="bundle-price">£25</span>
-          <span class="bundle-per-report">£5 each</span>
-        </label>
-      </div>
-      <p class="audio-consent">Paid securely via Stripe — you'll be taken to Stripe's checkout page and brought straight back here afterwards. Your answers above are kept while you're away. If you buy more than one report, the spares stay attached to your email — come back whenever you're ready and they'll be recognised automatically, no need to pay again.</p>
-      <p class="audio-consent promo-note">Trying us out this week? Enter code <strong>TRY4FREE</strong> at checkout to get your first report free — offer ends after one week.</p>
-      <p id="creditBalanceNote" class="status-line status-line-small hidden"></p>
+<!-- 1:1 COACHING -->
+<section id="coaching">
+  <div class="wrap feature alt">
+    <div class="txt">
+      <span class="eyebrow">1:1 with Neil · Human coaching</span>
+      <h2>Rather have a real person in your corner?</h2>
+      <p>The apps are for speed. But if you'd rather talk it through — your CV, an interview you're dreading, or which roles to even go for — book a one-to-one coaching call. Nine years in recruitment, on both sides of the desk. We'll prep your interview or rework your CV together, live.</p>
+      <div class="cta"><a class="btn lg orange" href="https://cal.com/the-common-people.com/interviewcoaching" target="_blank" rel="noopener">Book an interview / CV coaching session →</a><span class="sticker navy">£45 · one hour</span></div>
     </div>
+    <a class="art teal photo" style="background-image:url('img/founder.jpg')" href="https://cal.com/the-common-people.com/interviewcoaching" target="_blank" rel="noopener"><span class="cap">1:1 coaching with Neil</span><svg class="ico-lead" viewBox="0 0 24 24"><use href="#mega"/></svg></a>
+  </div>
+</section>
 
-    <div class="step-nav">
-      <button type="button" id="back1" class="btn-secondary">Back</button>
-      <button type="button" id="toStep3" class="btn-primary">Pay & generate my report</button>
+<!-- FEATURED COMMONS REPORT -->
+<section class="band-tint">
+  <div class="wrap feature">
+    <a class="art navy poster" style="background-image:url('img/poster-25.jpg')" href="dispatch-report-hertfordshire.html"><span class="cap">The Commons Report · Issue N°01</span><svg class="ico" viewBox="0 0 24 24"><use href="#chart"/></svg><svg class="ico-lead" viewBox="0 0 24 24"><use href="#chart"/></svg></a>
+    <div class="txt"><span class="eyebrow">Featured dispatch</span><h2>The View From Outside The Glass</h2><p>Why Home Counties businesses are struggling to recruit in 2026 — 280 applications per role, an 8-week time-to-hire, and every claim referenced across 28 sources.</p><div class="cta"><a class="btn lg orange" href="dispatch-report-hertfordshire.html">Read the dispatch →</a></div></div>
+  </div>
+</section>
+
+<!-- APPRENTICESHIPS -->
+<section>
+  <div class="wrap feature alt">
+    <div class="txt"><span class="eyebrow">New dispatch · for HR leaders</span><h2>How to embed apprenticeships into your HR strategy.</h2><p>Stop treating apprenticeships as a programme filed three folders deep under "Early Careers". The four barriers, how to beat each one, the 2025 and 2026 funding changes and the business case. And why the bold ones already have.</p><p style="font-family:var(--label);font-weight:600;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">7 min read · 6 sources cited · Free, always</p><div class="cta"><a class="btn lg orange" href="dispatch-embed-apprenticeships.html">Read the full dispatch →</a></div></div>
+    <a class="art gold poster" style="background-image:url('img/poster-12.jpg')" href="dispatch-embed-apprenticeships.html"><span class="cap">The Skills Issue · 7 min read</span><svg class="ico" viewBox="0 0 24 24"><use href="#book"/></svg><svg class="ico-lead" viewBox="0 0 24 24"><use href="#book"/></svg></a>
+  </div>
+</section>
+
+<!-- WHO WE ARE -->
+<section class="band-teal">
+  <div class="wrap feature">
+    <a class="art navy photo" style="background-image:url('img/poster-32.jpg')" href="about.html"><span class="cap">Free, always</span><svg class="ico" viewBox="0 0 24 24"><use href="#fist"/></svg><svg class="ico-lead" viewBox="0 0 24 24"><use href="#fist"/></svg></a>
+    <div class="txt"><span class="eyebrow">Who we are</span><h2>Free. Without exception.</h2><p>We're a free resource centre for the people on both sides of recruitment. We give away everything we know because we think the whole process works better when both sides understand each other. No subscription, no premium tier, no upsell.</p><div class="cta"><a class="btn navy lg" href="about.html">Read our story</a></div></div>
+  </div>
+</section>
+
+<!-- STOP GHOSTING -->
+<section class="band-tint">
+  <div class="wrap feature alt">
+    <div class="txt"><span class="eyebrow">A Com'mon People campaign</span><h2>Stop ghosting job seekers.</h2><p>65% of UK job seekers have been ghosted by a recruiter. 86% say it left them depressed. Our dispatch on why the silence does more damage than the rejection ever could, and what actually needs to change.</p><p style="color:var(--muted);font-size:15px">Wear the badge. Share the hashtag. Download it free and add it to your email signature.</p><div class="cta"><a class="btn red lg" href="dispatch-stop-ghosting.html">Read the dispatch</a><a class="btn ghost lg" href="stop-ghosting-badge-300.png" download="stop-ghosting-badge.png">Download the badge ↓</a></div></div>
+    <a class="art red photo" style="background-image:url('img/poster-02.jpg')" href="dispatch-stop-ghosting.html"><span class="cap" style="color:rgba(255,255,255,.85)">#StopGhostingJobSeekers</span><svg class="ico" viewBox="0 0 24 24"><use href="#ghost"/></svg><svg class="ico-lead" viewBox="0 0 24 24" style="color:#fff"><use href="#ghost"/></svg></a>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="band-navy">
+  <div class="wrap news">
+    <span class="eyebrow" style="color:var(--gold)">The monthly dispatch</span>
+    <h2 style="color:var(--cream);font-size:clamp(30px,4.6vw,50px);margin-top:12px">Guides, insight and dispatches. Free, for jobseekers and hirers alike.</h2>
+    <form id="cp-subscribe">
+      <input type="email" name="email" required placeholder="you@email.com" aria-label="Email address">
+      <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px">
+      <button class="btn orange lg" type="submit">Subscribe</button>
+    </form>
+    <label class="consent"><input type="checkbox" name="consent" required> <span>Yes, send me the monthly Loudspeaker. I've read the <a href="privacy.html">Privacy Notice</a>. Unsubscribe any time.</span></label>
+    <p id="cp-subscribe-msg" role="status" aria-live="polite" style="font-size:13px;color:#AEBAC6;margin:14px 0 0;min-height:18px"></p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div><a class="plates" href="index.html"><span class="plate p1 sm">The</span><span class="plate p2 sm">Com'mon</span><span class="plate p3 sm">People</span></a><p class="fabout">A free resource centre for marketing, HR, finance, events and operations people. Built on mutual aid.</p><span class="sticker orange" style="margin-top:16px">Free, always</span></div>
+      <div><h6>Guides</h6><a href="guide-cv.html">The CV that gets read</a><a href="guide-video-intro.html">The intro video</a><a href="guide-interview-prep.html">Interview prep</a><a href="guide-linkedin.html">LinkedIn, properly</a><a href="guide-05-evp.html">The EVP field guide</a></div>
+      <div><h6>Dispatches</h6><a href="dispatch-embed-apprenticeships.html">Embed apprenticeships in HR</a><a href="dispatch-apprenticeship-paradox.html">The Apprenticeship Paradox</a><a href="dispatch-recruitment-rethink.html">The recruitment rethink</a><a href="dispatch-eu-ai-act.html">The EU AI Act</a><a href="dispatch-report-hertfordshire.html">The Commons Report</a></div>
+      <div><h6>Loudspeaker</h6><a href="loudspeaker.html">The archive</a><a href="loudspeaker-edition-01.html">Edition 01 · May 2026</a><a href="loudspeaker-edition-02.html">Edition 02 · July 2026</a><a href="loudspeaker-edition-03.html">Edition 03 · August 2026</a></div>
     </div>
-  </section>
-
-  <!-- STEP 3: REPORT -->
-  <section id="panel3" class="panel hidden">
-    <h2>Your Interview Prep Report</h2>
-    <p id="genStatus" class="status-line"></p>
-    <div id="genProgressBar" class="gen-progress-bar hidden"><div id="genProgressFill" class="gen-progress-fill"></div></div>
-    <p id="genCountdown" class="gen-countdown"></p>
-
-    <div id="reportPreview"></div>
-
-    <button type="button" id="downloadDocx" class="btn-primary">Download as Word document</button>
-
-    <div id="addonCard" class="addon-card hidden">
-      <h3>Want a 20-minute coaching call tailored to your report?</h3>
-      <p>£45 add-on — a real person walks through your report with you, focused on the areas most likely to trip you up.</p>
-      <a href="https://cal.com/the-common-people.com/interviewcoaching" target="_blank" rel="noopener" class="btn-secondary" style="display:inline-block;text-decoration:none;">Book your £45 coaching call &rarr;</a>
-      <p class="paywall-note">Opens our Cal.com booking page in a new tab. Pick a time and pay the £45 securely there.</p>
-    </div>
-
-    <div class="step-nav">
-      <button type="button" id="back2" class="btn-secondary">Back</button>
-    </div>
-  </section>
-
-</main>
-
-<footer class="site-footer">
-  <a href="/privacy.html" target="_blank">Privacy &amp; data notice</a>
+    <div class="fbottom"><span>© 2026 The Com'mon People. Built on mutual aid.</span><span><a href="privacy.html" style="color:#7C8791">Privacy</a> · Free, always.</span></div>
+  </div>
 </footer>
 
-<script src="app.js"></script>
+<script>
+(function(){
+  var burger=document.getElementById("cpburger"),nav=document.getElementById("cpnav");
+  if(burger&&nav){burger.addEventListener("click",function(){var o=nav.classList.toggle("open");burger.setAttribute("aria-expanded",o?"true":"false");});}
+  var f=document.getElementById("cp-subscribe"),m=document.getElementById("cp-subscribe-msg");
+  if(f){f.addEventListener("submit",async function(e){
+    e.preventDefault();m.style.color="#AEBAC6";m.textContent="One moment...";
+    try{
+      var r=await fetch("https://cv.the-common-people.com/api/subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:f.email.value.trim(),company:f.company.value})});
+      var d=await r.json().catch(function(){return {};});
+      if(r.ok){f.reset();m.style.color="#7bbf9e";m.textContent=d.message||"You're on the list.";}
+      else{m.style.color="#F0B27A";m.textContent=d.error||"Something went wrong. Please try again.";}
+    }catch(err){m.style.color="#F0B27A";m.textContent="Something went wrong. Please try again.";}
+  });}
+})();
+</script>
 </body>
 </html>

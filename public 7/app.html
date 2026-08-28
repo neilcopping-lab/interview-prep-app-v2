@@ -1,0 +1,220 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rewrite My CV - The Com'mon People</title>
+<link rel="icon" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+</head><body>
+
+<header class="site"><nav class="nav">
+  <a class="cp-logo" href="/" aria-label="The Com'mon People"><span class="blk b1">The</span><span class="blk b2">Com&#39;mon</span><span class="blk b3">People</span></a>
+  <div class="links">
+    <a href="https://the-common-people.com/guide-cv.html">CV Guide</a>
+    <a href="https://the-common-people.com/prep-report.html">Interview Prep Report</a>
+    <a class="active" href="/">CV Rewrite</a>
+  <a class="cp-book" href="https://cal.com/the-common-people.com/interviewcoaching" target="_blank" rel="noopener">Book coaching</a></div>
+</nav></header>
+
+<main><section style="border:none"><div class="wrap">
+  <div class="eyebrow">CV Rewrite &middot; £5 = 4 CVs &middot; £10 = 10 CVs</div>
+
+  <!-- Account bar -->
+  <div id="accountBar" class="notice" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+    <span id="accountState">Loading…</span>
+    <span id="accountAction"></span>
+  </div>
+
+  <!-- Optional sign-in at the start (returning customers). Hidden until the Sign in button is clicked. -->
+  <div id="topSigninBox" class="notice hidden" style="margin-top:10px">
+    <strong>Welcome back.</strong> Sign in to load your saved CV credits.
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px">
+      <input type="email" id="topSigninEmail" placeholder="you@email.com" style="max-width:280px">
+      <button class="btn accent" id="topSigninBtn" style="padding:10px 18px">Email me a sign-in code</button>
+    </div>
+    <p style="margin-top:8px"><span id="topSigninMsg" class="muted"></span></p>
+  </div>
+
+  <div class="steps">
+    <div class="s active" data-step="1">1 &middot; Paste</div>
+    <div class="s" data-step="2">2 &middot; The gaps</div>
+    <div class="s" data-step="3">3 &middot; Review and check</div>
+    <div class="s" data-step="4">4 &middot; Design and download</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="panel active" id="p1">
+    <h2>Paste your CV and the job advert</h2>
+    <p class="muted">Upload a file (PDF or Word) or paste the text. Either works. Files are deleted from our server the moment we've read them.</p>
+    <label>Your current CV</label>
+    <input type="file" id="cvFile" accept=".pdf,.docx,.txt">
+    <textarea id="cvText" placeholder="…or paste your CV text here"></textarea>
+    <label>The job advert</label>
+    <input type="file" id="advertFile" accept=".pdf,.docx,.txt">
+    <input type="url" id="advertUrl" placeholder="…or paste a link to the live listing" style="margin-top:8px">
+    <textarea id="advertText" placeholder="…or paste the advert text here"></textarea>
+
+    <details style="margin-top:16px">
+      <summary style="cursor:pointer;font-family:var(--font-label);text-transform:uppercase;letter-spacing:.06em;font-size:13px;color:var(--gold);padding:6px 0">Add links and a photo (optional)</summary>
+      <label>Your links - shown as clickable links on your CV (great for the Creative design)</label>
+      <input type="url" id="linkLinkedin" placeholder="LinkedIn URL">
+      <input type="url" id="linkPortfolio" placeholder="Portfolio URL" style="margin-top:8px">
+      <input type="url" id="linkWebsite" placeholder="Website URL" style="margin-top:8px">
+      <input type="url" id="linkGithub" placeholder="GitHub URL" style="margin-top:8px">
+      <input type="url" id="linkYoutube" placeholder="YouTube intro video URL" style="margin-top:8px">
+      <p class="muted" style="font-size:13px;margin:6px 0 0">Only add links you're happy to appear on your CV. We show them exactly as you type them.</p>
+      <label>Photo (optional) - appears on the designed CV, never on the ATS version</label>
+      <input type="file" id="photoFile" accept="image/*">
+    </details>
+
+    <label style="margin-top:16px">How should your CV be written?</label>
+    <select id="writingStyle" style="width:100%;max-width:420px;padding:11px 12px;background:var(--panel);color:var(--cream);border:1px solid var(--line);border-radius:6px;font-family:var(--font-body);font-size:15px">
+      <option value="professional">Professional &amp; polished - clear and recruiter-friendly</option>
+      <option value="warm">Warm &amp; personable - friendly and human</option>
+      <option value="concise">Concise &amp; punchy - short and high-impact</option>
+      <option value="senior">Confident &amp; senior - authoritative and strategic</option>
+    </select>
+    <details style="margin-top:12px">
+      <summary style="cursor:pointer;font-family:var(--font-label);text-transform:uppercase;letter-spacing:.06em;font-size:13px;color:var(--gold);padding:6px 0">Or match my own writing style (optional)</summary>
+      <p class="muted" style="font-size:13px;margin:6px 0">Paste a paragraph or two you've written yourself - a bio, a cover letter, anything - and we'll mirror your voice (your tone, not your content).</p>
+      <textarea id="styleSample" placeholder="Paste some of your own writing here…"></textarea>
+    </details>
+
+    <p style="margin-top:18px"><button class="btn accent" id="go1">Find the gaps →</button> <span id="s1" class="muted"></span></p>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="panel" id="p2">
+    <h2>Answer a few questions</h2>
+    <p class="muted">We compared the advert against your CV. These are the only things we couldn't already see. Short answers are fine. Type, or record and we'll transcribe.</p>
+    <div id="gapNote" class="notice hidden"></div>
+    <div id="reqSummary"></div>
+    <div id="questions"></div>
+    <p style="margin-top:18px"><button class="btn accent" id="go2">Write my CV →</button> <span id="s2" class="muted"></span></p>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="panel" id="p3">
+    <h2>Your rewritten CV</h2>
+
+    <!-- Soft email step: shown once, just before revealing the CV -->
+    <div id="softEmailGate" class="notice hidden" style="margin-bottom:16px">
+      <strong>Your CV is ready.</strong> Pop your email in and we'll save your place and send you a link to download it whenever you're ready.
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <input type="email" id="softEmail" placeholder="you@email.com" style="max-width:300px">
+        <button class="btn accent" id="softEmailBtn">Show my CV →</button>
+      </div>
+      <p style="margin-top:8px"><a href="#" id="softSkip" class="muted" style="text-decoration:underline">No thanks, just show it</a> <span id="softMsg" class="muted" style="margin-left:10px"></span></p>
+    </div>
+
+    <div id="draftContent" class="hidden">
+      <div id="checkBanner" class="notice"></div>
+      <div class="notice" style="border-color:var(--teal)"><strong style="color:var(--teal)">✓ Honesty checked.</strong> Every figure, employer and claim below is traced back to what you told us - nothing invented, no inflated numbers. Written in plain English, with the usual AI clichés stripped out.</div>
+      <div id="missingBox"></div>
+      <div id="reviewBox"></div>
+      <div class="previewbox nocopy" id="draftPreview"></div>
+      <p class="muted" style="font-size:13px;margin:6px 0 0">This is a watermarked preview. Choose a design and download to get the clean, full CV.</p>
+      <p style="margin-top:18px"><button class="btn accent" id="go3">Choose a design →</button> <button class="btn ghost" id="regen">Regenerate</button> <span id="s3" class="muted"></span></p>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="panel" id="p4">
+    <h2>Choose a design</h2>
+    <div style="display:flex;gap:8px;margin:6px 0 4px;flex-wrap:wrap">
+      <button class="btn ghost" id="tplWord" style="padding:8px 14px">Word / ATS templates</button>
+      <button class="btn ghost" id="tplDesigner" style="padding:8px 14px">Designer templates (PDF)</button>
+    </div>
+    <p class="muted" id="tplNote" style="margin:4px 0 10px"><strong style="color:var(--cream)">Word / ATS</strong> - fully editable, best for online application portals. Downloads as Word, PDF and an ATS-safe version.</p>
+    <div class="filters" id="designFilters"></div>
+    <div class="design-grid" id="designGrid"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap">
+      <h3 style="margin:0">Preview</h3>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="btn ghost" id="prevDesign" style="padding:6px 12px">‹ Previous</button>
+        <span id="designCaption" class="muted" style="min-width:150px;text-align:center;font-size:14px"></span>
+        <button class="btn ghost" id="nextDesign" style="padding:6px 12px">Next ›</button>
+      </div>
+    </div>
+    <div class="previewbox nocopy" id="livePreview"></div>
+
+    <!-- Buy credits (shown when signed in with 0 credits) -->
+    <div id="buyBox" class="notice hidden" style="margin-top:22px">
+      <strong>Choose a pack.</strong> One credit = one finished CV to download (all file formats of that CV included). Nothing recurring.
+      <div class="dlrow" style="margin-top:12px">
+        <button class="btn accent" data-pack="5">£5 - 4 CVs</button>
+        <button class="btn accent" data-pack="10">£10 - 10 CVs</button>
+      </div>
+      <label style="display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-family:var(--font-body);text-transform:none;letter-spacing:normal;font-weight:400;font-size:14px;color:var(--cream)">
+        <input type="checkbox" id="agree" style="width:auto;margin-top:4px">
+        <span>I agree to the <a href="/terms.html" target="_blank" style="color:var(--teal);text-decoration:underline">Terms</a> and <a href="/privacy.html" target="_blank" style="color:var(--teal);text-decoration:underline">Privacy Policy</a>, and I consent to immediate delivery of my CV, waiving the 14-day right to cancel.</span>
+      </label>
+      <p style="margin-top:8px"><span id="s4" class="muted"></span></p>
+    </div>
+
+    <!-- Sign-in prompt (shown when not signed in) -->
+    <div id="signinBox" class="notice hidden" style="margin-top:22px">
+      <strong>Sign in to download.</strong> We'll email you a 6-digit code - type it in below and you'll stay right here, nothing lost. Your credits are saved to your account.
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <input type="email" id="signinEmail" placeholder="you@email.com" style="max-width:300px">
+        <button class="btn accent" id="signinBtn">Email me a sign-in code</button>
+      </div>
+      <p style="margin-top:8px"><span id="signinMsg" class="muted"></span></p>
+    </div>
+
+    <!-- Downloads (shown when signed in with credits) -->
+    <div id="downloads" class="hidden" style="margin-top:22px">
+      <div class="notice" style="border-color:var(--gold)"><strong id="dlBalance"></strong> Downloading a CV uses one credit. All formats of the same CV are free.</div>
+      <div class="dlrow">
+        <button class="btn" data-dl="docx">Download Word</button>
+        <button class="btn" data-dl="pdf">Download PDF</button>
+        <button class="btn ghost" data-dl="ats-pdf">ATS-safe PDF</button>
+      </div>
+      <p style="margin-top:8px"><span id="s4b" class="muted"></span></p>
+    </div>
+
+    <!-- Cover letter add-on (1 credit) -->
+    <div id="coverBox" style="margin-top:24px;border-top:1px solid var(--line);padding-top:18px">
+      <h3 style="margin:0 0 6px">Add a personalised cover letter</h3>
+      <p class="muted" style="margin:0 0 10px">Answer a few quick questions (all optional) and we'll write it in your voice, from your real reasons - not AI waffle. Uses 1 credit.</p>
+      <div id="coverQs" style="margin:0 0 12px"></div>
+      <button class="btn accent" id="coverBtn">Write my cover letter (1 credit)</button>
+      <span id="coverMsg" class="muted" style="margin-left:8px"></span>
+      <div id="coverPreview" class="previewbox hidden" style="margin-top:14px"></div>
+      <div id="coverDownloads" class="dlrow hidden" style="margin-top:10px">
+        <button class="btn" data-cover="docx">Download Word</button>
+        <button class="btn" data-cover="pdf">Download PDF</button>
+      </div>
+    </div>
+  </div>
+</div></section></main>
+
+<footer class="footer" style="padding:30px 0"><div class="wrap">
+  <p class="muted" style="font-family:var(--font-body);text-transform:none;letter-spacing:normal;font-size:13px">© 2026 The Com'mon People. Built on mutual aid. Uploaded files are deleted as soon as text is extracted. <a href="/privacy.html" style="text-transform:none;letter-spacing:normal">Privacy</a> · <a href="/terms.html" style="text-transform:none;letter-spacing:normal">Terms</a></p>
+</div></footer>
+
+<!-- Feedback pop-up (shown once after a download) -->
+<div id="feedbackModal" class="fbwrap hidden">
+  <div class="fbcard">
+    <button class="fbclose" id="fbClose" aria-label="Close">×</button>
+    <h3 style="margin:0 0 6px">How did we do?</h3>
+    <p class="muted" style="margin:0 0 14px">Your CV is downloaded. A quick rating helps us make this better for the next person.</p>
+    <div class="stars" id="fbStars" role="radiogroup" aria-label="Star rating">
+      <span data-star="1" role="radio" tabindex="0">★</span>
+      <span data-star="2" role="radio" tabindex="0">★</span>
+      <span data-star="3" role="radio" tabindex="0">★</span>
+      <span data-star="4" role="radio" tabindex="0">★</span>
+      <span data-star="5" role="radio" tabindex="0">★</span>
+    </div>
+    <textarea id="fbComment" placeholder="Anything you'd change, or that worked well? (optional)" style="margin-top:12px;min-height:90px"></textarea>
+    <div style="display:flex;gap:12px;align-items:center;margin-top:12px">
+      <button class="btn accent" id="fbSend">Send feedback</button>
+      <a href="#" id="fbSkip" class="muted" style="text-decoration:underline">No thanks</a>
+      <span id="fbMsg" class="muted"></span>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+</body></html>

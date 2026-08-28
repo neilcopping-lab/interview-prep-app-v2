@@ -390,3 +390,58 @@ input[type="file"] { color: var(--cream-soft); font-size: 13px; }
   .form-grid { grid-template-columns: 1fr; }
   .star-grid { grid-template-columns: 1fr; }
 }
+
+/* ================= 2026 LIGHT RE-THEME — matches the-common-people.com ================= */
+:root{
+  --ink:#1C2733; --paper:#FFFFFF; --surface:#FFFFFF; --tint:#EAF2F5; --line:#E3E7EA; --muted:#5E6B77;
+  --navy:#161F29; --gold:#E0B03C; --teal:#5AA9C2; --orange:#D2691E; --creamx:#ECE6D8;
+  --r:14px;
+  --font-body:'Hanken Grotesk','Helvetica Neue',Arial,sans-serif;
+}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body)}
+a{color:#2f7f97}
+h1,h2,h3{color:var(--ink)} h4{color:var(--ink)}
+p{color:var(--ink)}
+/* header + plate logo */
+.site-header{background:var(--paper);border-bottom:1px solid var(--line);padding:14px 24px}
+.brand{display:inline-flex;gap:4px;align-items:center}
+.brand span{font-family:'Anton',sans-serif;color:#14110E;-webkit-text-stroke:3px #FBF7EC;paint-order:stroke fill;font-size:18px;line-height:1;padding:6px 9px 7px;border-radius:7px;border:2.5px solid #14110E;letter-spacing:1px;text-transform:uppercase;box-shadow:0 3px 0 rgba(20,17,14,.5)}
+.brand span:nth-child(1){background:var(--gold);transform:rotate(-3deg)}
+.brand span:nth-child(2){background:var(--teal);transform:rotate(2deg)}
+.brand span:nth-child(3){background:var(--orange);transform:rotate(-2deg)}
+.brand-sub{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:13px;font-weight:600;color:var(--muted)}
+/* panels & cards */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;color:var(--ink);box-shadow:0 18px 44px -26px rgba(22,31,41,.4)}
+.panel-intro{color:var(--muted)}
+.pricing-block,.upload-block,.consent-block,.star-guide-callout,.qa-card,.addon-card,.booking-panel,.report-block,.skills-match,.cover-banner{background:var(--tint);border:1px solid var(--line);border-radius:var(--r);color:var(--ink)}
+.star-guide-callout{border-left:4px solid var(--gold)}
+.addon-card{border-left:4px solid var(--orange)}
+.info-note,.audio-consent,.upload-or,.paywall-note,.qa-based-on,.qa-status,.status-line,.status-line-small,.gen-countdown,.bundle-per-report{color:var(--muted)}
+/* forms */
+label{color:var(--ink)}
+input[type=text],input[type=email],input[type=file],textarea,select{background:#fff;color:var(--ink);border:1.5px solid var(--line);border-radius:10px}
+input[type=text]::placeholder,textarea::placeholder{color:#9aa4ac}
+input:focus,textarea:focus,select:focus{outline:3px solid var(--orange);outline-offset:1px;border-color:var(--orange)}
+/* pricing bundles */
+.bundle-option,.bundle-option-static{background:#fff;border:1.5px solid var(--line);color:var(--ink);border-radius:12px}
+.bundle-option.selected{border-color:var(--orange);box-shadow:0 0 0 2px rgba(210,105,30,.15)}
+.bundle-name{color:var(--ink)} .bundle-price{color:var(--orange)}
+/* buttons */
+.btn-primary{background:var(--orange);color:#fff;border:none;border-radius:999px;font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:14px 28px}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn-secondary{background:transparent;color:var(--ink);border:2px solid var(--line);border-radius:999px;font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:12px 24px}
+.btn-secondary:hover{border-color:var(--orange);color:var(--orange)}
+.record-btn,.record-btn-inline{background:var(--navy);color:var(--creamx);border:none;border-radius:999px}
+.slot-btn{background:#fff;border:1.5px solid var(--line);color:var(--ink);border-radius:8px}
+.slot-btn.selected{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+/* misc */
+.tooltip-box{background:var(--navy);color:var(--creamx);border-radius:10px}
+.tooltip-trigger{background:var(--tint);color:var(--muted);border:1px solid var(--line)}
+.gen-progress-bar{background:var(--line)} .gen-progress-fill{background:var(--orange)}
+.skills-match-label{color:var(--muted)}
+.report-sources,.report-sources-all{color:var(--muted)}
+.upgrade-flag{color:var(--orange)}
+.promo-note strong{color:var(--orange)}
+/* footer */
+.site-footer{background:var(--navy);color:#AAB4BE;border-top:none}
+.site-footer a{color:#CFC9BB}

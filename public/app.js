@@ -1,15 +1,15 @@
 // ---------------- HELPERS ----------------
 function $(id) { return document.getElementById(id); }
 
-// Safe listener attachment — logs a console warning instead of throwing
+// Safe listener attachment, logs a console warning instead of throwing
 // if the element isn't found. A partial deploy where index.html and
 // app.js fall out of sync used to crash the whole script on the first
 // missing element, silently killing every listener after it (including
-// the Continue button) — this stops that from happening again.
+// the Continue button), this stops that from happening again.
 function on(id, event, handler) {
   const el = $(id);
   if (el) el.addEventListener(event, handler);
-  else console.warn(`[app] element #${id} not found — listener for "${event}" not attached.`);
+  else console.warn(`[app] element #${id} not found, listener for "${event}" not attached.`);
 }
 
 const state = {
@@ -33,11 +33,11 @@ showPanel(1);
 
 // ---------------- PAYMENT (Stripe Checkout) ----------------
 // Stripe's hosted checkout is a full page redirect away from this app and
-// back — there's no way to keep the candidate's in-memory `state` (their
+// back, there's no way to keep the candidate's in-memory `state` (their
 // CV, job description, recorded answers) alive across that round trip
 // without persisting it somewhere first. localStorage is the simple,
 // correct tool for that here (this is a real production page, not a
-// throwaway preview) — it survives the redirect to Stripe's domain and
+// throwaway preview), it survives the redirect to Stripe's domain and
 // back, and is cleared right after a successful restore so a stale copy
 // can't leak into a later, unrelated session on the same browser.
 const PENDING_STATE_KEY = "interviewPrep.pendingState";
@@ -68,7 +68,7 @@ function restorePendingState() {
 // server-side) tells this apart: "report" is the normal £25-report flow
 // (also the default, for safety, if it's ever missing); "coaching" is
 // returning from paying the £45 for a coaching slot, which needs a much
-// lighter landing — there's no report state to restore or regenerate here,
+// lighter landing, there's no report state to restore or regenerate here,
 // just a booking to finalize and confirm. Either way the query string is
 // cleaned off the URL immediately after so refreshing doesn't re-trigger this.
 async function handleCheckoutReturn() {
@@ -87,7 +87,7 @@ async function handleCheckoutReturn() {
 
     showPanel(3);
     if ($("reportPreview")) $("reportPreview").innerHTML = "";
-    if ($("genStatus")) $("genStatus").textContent = "This page only needed to confirm your coaching booking below — your report was already generated and downloaded earlier.";
+    if ($("genStatus")) $("genStatus").textContent = "This page only needed to confirm your coaching booking below, your report was already generated and downloaded earlier.";
     renderAddonCard();
     if ($("bookingPanel")) $("bookingPanel").classList.remove("hidden");
     if ($("bookingForm")) $("bookingForm").classList.remove("hidden");
@@ -97,21 +97,21 @@ async function handleCheckoutReturn() {
     const statusEl = $("bookingStatus");
 
     if (canceled) {
-      if (statusEl) statusEl.textContent = "Checkout was cancelled — you haven't been charged. Pick a time and try again whenever you're ready.";
+      if (statusEl) statusEl.textContent = "Checkout was cancelled. You haven't been charged. Pick a time and try again whenever you're ready.";
       return;
     }
-    if (statusEl) statusEl.textContent = "Payment confirmed — booking your slot…";
+    if (statusEl) statusEl.textContent = "Payment confirmed, booking your slot…";
     try {
       const res = await fetch(`/api/checkout/verify?session_id=${encodeURIComponent(sessionId)}`);
       const check = await res.json();
       if (!check.paid) {
-        if (statusEl) statusEl.textContent = check.error || "Could not confirm payment — please go back and try again.";
+        if (statusEl) statusEl.textContent = check.error || "Could not confirm payment. Please go back and try again.";
         return;
       }
       await finalizeBooking({ ...booking, stripeSessionId: sessionId }, statusEl);
     } catch (err) {
       console.error(err);
-      if (statusEl) statusEl.textContent = "Could not confirm payment — please go back and try again.";
+      if (statusEl) statusEl.textContent = "Could not confirm payment. Please go back and try again.";
     }
     return;
   }
@@ -120,7 +120,7 @@ async function handleCheckoutReturn() {
     if (!restorePendingState()) return; // nothing to restore, was probably a stray param
     renderQuestions();
     showPanel(2);
-    if ($("questionStatus")) $("questionStatus").textContent = "Checkout was cancelled — you haven't been charged. Ready to try again whenever you are.";
+    if ($("questionStatus")) $("questionStatus").textContent = "Checkout was cancelled. You haven't been charged. Ready to try again whenever you are.";
     return;
   }
 
@@ -128,19 +128,19 @@ async function handleCheckoutReturn() {
     if (!restorePendingState()) return;
     renderQuestions();
     showPanel(3);
-    if ($("genStatus")) $("genStatus").textContent = "Payment confirmed — generating your report…";
+    if ($("genStatus")) $("genStatus").textContent = "Payment confirmed, generating your report…";
     try {
       const res = await fetch(`/api/checkout/verify?session_id=${encodeURIComponent(sessionId)}`);
       const check = await res.json();
       if (!check.paid) {
-        if ($("genStatus")) $("genStatus").textContent = check.error || "Could not confirm payment — please go back and try again.";
+        if ($("genStatus")) $("genStatus").textContent = check.error || "Could not confirm payment. Please go back and try again.";
         showPanel(2);
         return;
       }
       await generateAndShowReport(sessionId);
     } catch (err) {
       console.error(err);
-      if ($("genStatus")) $("genStatus").textContent = "Could not confirm payment — please go back and try again.";
+      if ($("genStatus")) $("genStatus").textContent = "Could not confirm payment. Please go back and try again.";
       showPanel(2);
     }
   }
@@ -163,7 +163,7 @@ on("jdFile", "change", async (e) => {
     const text = await extractFileText(file);
     if ($("jobDescription")) $("jobDescription").value = text;
   } catch (err) {
-    alert(err.message || "Could not read that file — please paste the job description instead.");
+    alert(err.message || "Could not read that file. Please paste the job description instead.");
   }
 });
 
@@ -174,7 +174,7 @@ on("cvFile", "change", async (e) => {
     const text = await extractFileText(file);
     if ($("cvText")) $("cvText").value = text;
   } catch (err) {
-    alert(err.message || "Could not read that file — please paste your CV instead.");
+    alert(err.message || "Could not read that file. Please paste your CV instead.");
   }
 });
 
@@ -194,7 +194,7 @@ on("toStep2", "click", async () => {
     return;
   }
   // A valid email and an explicit tick against the Privacy & Data Notice
-  // are both required before we generate anything — this is deliberately
+  // are both required before we generate anything, this is deliberately
   // checked here, not just left to the server, so the candidate sees a
   // clear reason immediately rather than a generic error.
   const emailLooksValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.candidateEmail);
@@ -209,7 +209,7 @@ on("toStep2", "click", async () => {
   if ($("consentStatus")) $("consentStatus").textContent = "";
 
   // Record the consent server-side before moving on. This is a genuine
-  // "best effort" — if logging it fails for some reason (network blip,
+  // "best effort", if logging it fails for some reason (network blip,
   // disk issue), that's an internal record-keeping problem, not something
   // that should block a candidate who's already agreed from getting the
   // report they're here for.
@@ -245,14 +245,14 @@ on("toStep2", "click", async () => {
     checkCreditBalance();
   } catch (err) {
     console.error(err);
-    if ($("questionStatus")) $("questionStatus").textContent = "Something went wrong picking questions — please try again.";
+    if ($("questionStatus")) $("questionStatus").textContent = "Something went wrong picking questions. Please try again.";
   }
 });
 
 // ---------------- STEP 2 ----------------
 
 // Report bundles (1/3/5, see lib/payments.js) mean a candidate might
-// already have reports paid for from an earlier visit — e.g. report 2 of a
+// already have reports paid for from an earlier visit, e.g. report 2 of a
 // 5-pack, or coming back another day on the same email. This checks that
 // balance as soon as Step 2 loads, so the pricing picker can be swapped
 // out for "you already have credit, just carry on" instead of asking them
@@ -278,7 +278,7 @@ async function checkCreditBalance() {
       if (block) block.classList.add("hidden");
       if (note) {
         note.classList.remove("hidden");
-        note.textContent = `You already have ${state.creditBalance} report${state.creditBalance === 1 ? "" : "s"} paid for on this email — no need to pay again, just hit "Generate my report" below.`;
+        note.textContent = `You already have ${state.creditBalance} report${state.creditBalance === 1 ? "" : "s"} paid for on this email, no need to pay again, just hit "Generate my report" below.`;
       }
       if ($("toStep3")) $("toStep3").textContent = "Generate my report";
     } else {
@@ -291,7 +291,7 @@ async function checkCreditBalance() {
   }
 }
 
-// Visual selection state for the bundle picker — kept in sync with the
+// Visual selection state for the bundle picker, kept in sync with the
 // radio inputs themselves (which remain the source of truth) so this is
 // purely cosmetic and never blocks submission if it fails for any reason.
 document.querySelectorAll('input[name="reportBundle"]').forEach((input) => {
@@ -316,7 +316,7 @@ function renderQuestions() {
       ${basedOnHtml}
       <div class="qa-controls">
         <button class="record-btn" data-idx="${idx}">● Record answer</button>
-        <span class="qa-status" id="qa-status-${idx}">Not recorded — you can also just type below</span>
+        <span class="qa-status" id="qa-status-${idx}">Not recorded, you can also just type below</span>
       </div>
       <textarea rows="3" id="qa-text-${idx}" placeholder="Type or paste your answer here"></textarea>
     `;
@@ -330,9 +330,9 @@ function renderQuestions() {
 
 let mediaRecorder, audioChunks = [], activeKey = null;
 
-// Works for two kinds of record buttons: STAR-answer buttons (data-idx —
+// Works for two kinds of record buttons: STAR-answer buttons (data-idx , 
 // text goes into the qa-text-N textarea) and plain field buttons
-// (data-target="someInputId" — text goes straight into that input, used
+// (data-target="someInputId", text goes straight into that input, used
 // for the "personal detail" and "top values" fields on step 1). Both share
 // the same recording/transcription plumbing, just a different place to put
 // the resulting text and status message.
@@ -356,13 +356,13 @@ async function toggleRecording(btn) {
     activeKey = key;
     audioChunks = [];
 
-    // Safari (and some other browsers) don't support 'audio/webm' at all —
+    // Safari (and some other browsers) don't support 'audio/webm' at all , 
     // if you force it as the MediaRecorder mimeType, recording silently
     // fails or falls back to whatever the browser actually supports (often
     // 'audio/mp4'), while the code used to hardcode the blob's type and
     // filename as "audio/webm" regardless. OpenAI then received a file
     // labelled webm that wasn't actually webm-encoded, rejected it, and
-    // transcription failed every time on Safari — this was the real bug
+    // transcription failed every time on Safari, this was the real bug
     // behind "Transcription hit a problem just now" persisting even after
     // the OpenAI billing/account issue was fixed. Ask the browser what it
     // actually supports and use that, both for recording and for the
@@ -392,7 +392,7 @@ async function toggleRecording(btn) {
         textEl.value = data.text;
         if (statusEl) statusEl.textContent = "Transcribed ✓";
       } else if (statusEl) {
-        statusEl.textContent = data.message || "Transcription unavailable — please type your answer.";
+        statusEl.textContent = data.message || "Transcription unavailable. Please type your answer.";
       }
     };
     mediaRecorder.start();
@@ -406,7 +406,7 @@ async function toggleRecording(btn) {
 
 // Step-1 record buttons (personal detail, top values) exist in the static
 // HTML from page load, unlike the STAR-answer buttons which are rendered
-// dynamically per question — so they're wired up once here rather than in
+// dynamically per question, so they're wired up once here rather than in
 // renderQuestions().
 document.querySelectorAll(".record-btn-inline").forEach((btn) => {
   btn.addEventListener("click", () => toggleRecording(btn));
@@ -415,13 +415,13 @@ document.querySelectorAll(".record-btn-inline").forEach((btn) => {
 on("back1", "click", () => showPanel(1));
 
 // Report generation now serialises its Claude calls one at a time (see
-// lib/aiClients.js — a deliberate trade-off for reliability against a low
+// lib/aiClients.js, a deliberate trade-off for reliability against a low
 // per-minute rate limit), so a report can realistically take anywhere
 // from ~30s to over 2 minutes depending on how much retrying is needed.
 // There's no real server-pushed progress, so this cycles through a
 // believable sequence of what the AI is actually doing at that point, one
 // step at a time, so the wait doesn't look frozen. Purely cosmetic timing
-// — it doesn't track real completion — but it's an honest description of
+//, it doesn't track real completion, but it's an honest description of
 // the actual work happening (the backend does genuinely read the CV, read
 // the JD, then research the company, reviews, etc., in roughly this order).
 const GENERATION_STEPS = [
@@ -441,17 +441,17 @@ const GENERATION_STEPS = [
 ];
 
 // A literal countdown that hits "0:00" and then just sits there while the
-// request is still running looks more broken than no countdown at all —
+// request is still running looks more broken than no countdown at all , 
 // and because real generation time varies a lot (rate limits, retries),
 // a fixed countdown WILL often run out before the report is actually
 // ready. So this decelerates as it approaches the estimate (classic
-// "fake progress bar" curve — fast at first, crawling near the end)
+// "fake progress bar" curve, fast at first, crawling near the end)
 // rather than ticking evenly to zero, and once it's essentially out of
 // runway it switches to an honest "taking longer than usual" message
 // instead of showing 0:00 or negative time.
 // Claude calls now run with some concurrency (2 at a time, see
 // lib/aiClients.js) rather than dead-serial, so this is well under the
-// old 100s estimate, but not as low as full concurrency would allow —
+// old 100s estimate, but not as low as full concurrency would allow , 
 // left some headroom for the occasional retry.
 const ESTIMATED_GENERATION_SECONDS = 70;
 
@@ -483,7 +483,7 @@ function startGenerationProgress() {
 
   const tickTimer = setInterval(() => {
     const elapsed = (Date.now() - startedAt) / 1000;
-    // Eases toward, but never quite reaches, 96% — decelerating curve so
+    // Eases toward, but never quite reaches, 96%, decelerating curve so
     // it feels like real progress rather than a linear bar that stalls.
     const fraction = 1 - Math.exp(-elapsed / (ESTIMATED_GENERATION_SECONDS * 0.6));
     const percent = Math.min(96, fraction * 96);
@@ -494,7 +494,7 @@ function startGenerationProgress() {
     if (remaining > 8) {
       countdownEl.textContent = `${formatRemaining(remaining)} remaining`;
     } else {
-      countdownEl.textContent = "Almost there — this can take a little longer than usual…";
+      countdownEl.textContent = "Almost there, this can take a little longer than usual…";
     }
   }, 1000);
 
@@ -508,11 +508,11 @@ function startGenerationProgress() {
   };
 }
 
-// Does the actual report generation + render — shared by both the normal
+// Does the actual report generation + render, shared by both the normal
 // "no payment configured yet" path and the "just came back from a
 // successful Stripe payment" path, so there's exactly one place this logic
 // lives. stripeSessionId is undefined when Stripe isn't configured (the
-// server-side gate skips the check entirely in that case — see server.js).
+// server-side gate skips the check entirely in that case, see server.js).
 async function generateAndShowReport(stripeSessionId) {
   if ($("reportPreview")) $("reportPreview").innerHTML = "";
   const stopProgress = startGenerationProgress();
@@ -529,13 +529,13 @@ async function generateAndShowReport(stripeSessionId) {
     renderReport(report);
     stopProgress();
     // aiPowered reflects whether a Claude call actually returned real
-    // content, not just whether a key is set — so this message stays
+    // content, not just whether a key is set, so this message stays
     // accurate even when a key is present but invalid/expired/rate-limited.
-    let aiTag = " (prototype mode — add ANTHROPIC_API_KEY for full AI generation)";
+    let aiTag = " (prototype mode, add ANTHROPIC_API_KEY for full AI generation)";
     if (report.aiPowered) aiTag = " (AI-powered)";
-    else if (report.aiKeyPresent) aiTag = " (prototype mode — an API key is set but calls aren't succeeding; check the key and Render logs)";
-    if ($("genStatus")) $("genStatus").textContent = `Generated for ${report.candidateName || "you"} — ${report.companyName || "this role"}${aiTag}`;
-    // Downloadable the moment it's ready — paid for it, get it immediately,
+    else if (report.aiKeyPresent) aiTag = " (prototype mode, an API key is set but calls aren't succeeding; check the key and Render logs)";
+    if ($("genStatus")) $("genStatus").textContent = `Generated for ${report.candidateName || "you"}, ${report.companyName || "this role"}${aiTag}`;
+    // Downloadable the moment it's ready, paid for it, get it immediately,
     // don't make them hunt for a button. The button stays too, for a re-download.
     downloadReportAsDocx();
     renderAddonCard();
@@ -544,7 +544,7 @@ async function generateAndShowReport(stripeSessionId) {
     stopProgress();
     if ($("genStatus")) $("genStatus").textContent = err.message && err.message.includes("Payment")
       ? err.message
-      : "Something went wrong generating the report — please go back and try again.";
+      : "Something went wrong generating the report. Please go back and try again.";
   }
 }
 
@@ -558,7 +558,7 @@ on("toStep3", "click", async () => {
   if ($("toStep3")) { $("toStep3").disabled = true; $("toStep3").textContent = "Please wait…"; }
 
   // Already has report credit on this email from an earlier bundle
-  // purchase — skip Stripe entirely and spend a credit directly. The
+  // purchase, skip Stripe entirely and spend a credit directly. The
   // pricing picker is hidden in this case (see checkCreditBalance), so
   // there's no bundle selection to read.
   if (wasAlreadyCredited) {
@@ -581,7 +581,7 @@ on("toStep3", "click", async () => {
     });
     const data = await res.json();
     if (data.url) {
-      // Off to Stripe's hosted checkout page — save everything collected
+      // Off to Stripe's hosted checkout page, save everything collected
       // so far, since this is a full navigation away from the app and this
       // script's in-memory `state` won't survive it. handleCheckoutReturn()
       // picks it back up when Stripe sends the candidate back.
@@ -589,7 +589,7 @@ on("toStep3", "click", async () => {
       window.location.href = data.url;
       return;
     }
-    // Stripe isn't configured yet (no STRIPE_SECRET_KEY set) — fall back
+    // Stripe isn't configured yet (no STRIPE_SECRET_KEY set), fall back
     // to generating the report directly, same as before payment existed,
     // rather than blocking the whole app on a payment setup that isn't
     // done yet.
@@ -619,7 +619,7 @@ function upgradeFlagIfNeeded(text) {
   }
   return `<p>${text}</p>`;
 }
-// Renders the "Sources:" line under a researched section — only appears
+// Renders the "Sources:" line under a researched section, only appears
 // when Claude's web search actually returned citations for that section.
 function sourcesHtml(sources) {
   if (!sources || !sources.length) return "";
@@ -627,7 +627,7 @@ function sourcesHtml(sources) {
   return `<div class="report-sources"><b>Sources:</b> ${links}</div>`;
 }
 // Renders a { headline, bullets, sources } research section as a real
-// bullet list — this is what replaced the old wall-of-prose paragraphs.
+// bullet list, this is what replaced the old wall-of-prose paragraphs.
 // Falls back to the upgrade-flag treatment if the AI call fell back
 // (bullets will be empty in that case).
 function researchBlock(title, section) {
@@ -637,7 +637,7 @@ function researchBlock(title, section) {
     : upgradeFlagIfNeeded(section.headline || "");
   return block(title, headline + bullets + sourcesHtml(section.sources));
 }
-// Small inline SVG bar showing how much of the JD the CV covers — a
+// Small inline SVG bar showing how much of the JD the CV covers, a
 // supporting visual next to the actual Cake + Cherry bullet analysis,
 // not a replacement for it.
 function skillsMatchSvg(skillsMatch) {
@@ -647,7 +647,7 @@ function skillsMatchSvg(skillsMatch) {
   const filledW = Math.round((w * pct) / 100);
   return `
     <div class="skills-match">
-      <div class="skills-match-label"><b>Skills Match: ${pct}%</b> — ${skillsMatch.matched} of ${skillsMatch.total} job requirements matched to your CV</div>
+      <div class="skills-match-label"><b>Skills Match: ${pct}%</b> · ${skillsMatch.matched} of ${skillsMatch.total} job requirements matched to your CV</div>
       <svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none" role="img" aria-label="Skills match ${pct} percent">
         <rect x="0" y="0" width="${w}" height="${h}" rx="4" fill="rgba(236,230,216,0.12)"></rect>
         <rect x="0" y="0" width="${filledW}" height="${h}" rx="4" fill="var(--mustard)"></rect>
@@ -655,10 +655,10 @@ function skillsMatchSvg(skillsMatch) {
     </div>
   `;
 }
-// Bespoke cover banner — the AI-generated abstract artwork (if it rendered
+// Bespoke cover banner, the AI-generated abstract artwork (if it rendered
 // successfully) with the candidate/company name overlaid as real HTML
 // text, not AI-rendered text. Omitted cleanly if no image came back (no
-// OPENAI_API_KEY, or the call failed) — never blocks the rest of the report.
+// OPENAI_API_KEY, or the call failed), never blocks the rest of the report.
 function coverBannerHtml(r) {
   const img = (r.cover && r.cover.base64) ? `<img src="data:image/png;base64,${r.cover.base64}" alt="Cover artwork" />` : "";
   return `
@@ -668,13 +668,13 @@ function coverBannerHtml(r) {
         <div class="cover-banner-title">Interview Preparation Report</div>
         <div class="cover-banner-brand">Produced by The Com'mon People AI</div>
         <div class="cover-banner-name">${r.candidateName || "Your"}</div>
-        <div class="cover-banner-sub">Interview Prep — ${r.companyName || "Your Role"}</div>
+        <div class="cover-banner-sub">Interview Prep: ${r.companyName || "Your Role"}</div>
       </div>
     </div>
   `;
 }
 
-// One consolidated "Sources & References" block at the end of the report —
+// One consolidated "Sources & References" block at the end of the report , 
 // every real citation gathered across all the research sections, grouped
 // by which section it backs, in addition to the inline "Sources:" line
 // already shown under each individual section.
@@ -705,25 +705,25 @@ function renderReport(r) {
   html += researchBlock("5. Market &amp; Sector Intelligence", r.marketIntelligence);
   html += researchBlock("6. Challenges You May Be Facing in This Role", r.roleChallenges);
 
-  html += block("7. Opening Pitch — The Pitch Sandwich", `
-    <h4>Bread 1 — Connect</h4>${upgradeFlagIfNeeded(r.pitch.bread1)}
-    <h4>Filling — Fit</h4>${upgradeFlagIfNeeded(r.pitch.filling)}
-    <h4>Bread 2 — Values</h4>${upgradeFlagIfNeeded(r.pitch.bread2)}
+  html += block("7. Opening Pitch: The Pitch Sandwich", `
+    <h4>Bread 1: Connect</h4>${upgradeFlagIfNeeded(r.pitch.bread1)}
+    <h4>Filling: Fit</h4>${upgradeFlagIfNeeded(r.pitch.filling)}
+    <h4>Bread 2: Values</h4>${upgradeFlagIfNeeded(r.pitch.bread2)}
   `);
 
   const matched = r.gapAnalysis.matchedStrengths.length
     ? `<p><b>Matched strengths:</b></p><ul>${r.gapAnalysis.matchedStrengths.map((m) => `<li>${m}</li>`).join("")}</ul>`
-    : `<p><b>Matched strengths:</b> none detected — check the CV genuinely covers this role.</p>`;
+    : `<p><b>Matched strengths:</b> none detected, check the CV genuinely covers this role.</p>`;
   const gaps = r.gapAnalysis.developmentAreas.map((d) =>
     `<div class="star-line"><b>Area:</b> ${d.area}</div><div class="upgrade-flag">⚠ ${d.cherry}</div>`
   ).join("");
-  html += block("8. Gap Analysis — the Cake + Cherry Method", skillsMatchSvg(r.skillsMatch) + matched + gaps);
+  html += block("8. Gap Analysis: the Cake + Cherry Method", skillsMatchSvg(r.skillsMatch) + matched + gaps);
 
   const guide = r.starGuide;
   const guideHtml = guide ? `
     <p>${guide.intro}</p>
     <div class="star-grid">
-      ${guide.steps.map((s) => `<div class="star-item"><b>${s.letter}</b> ${s.label} — ${s.explanation}</div>`).join("")}
+      ${guide.steps.map((s) => `<div class="star-item"><b>${s.letter}</b> ${s.label}: ${s.explanation}</div>`).join("")}
     </div>
     <ul>${guide.tips.map((t) => `<li>${t}</li>`).join("")}</ul>
     ${r.questionsFootnote ? `<div class="info-note">${r.questionsFootnote}</div>` : ""}
@@ -734,9 +734,9 @@ function renderReport(r) {
     <h4>${a.question}</h4>
     ${a.basedOn ? `<div class="qa-based-on">Based on: <span>"${a.basedOn}"</span> in the job description</div>` : ""}
     <div class="star-line"><b>Situation:</b> ${a.situation}</div>
-    <div class="star-line"><b>Task:</b> ${a.task || "—"}</div>
-    <div class="star-line"><b>Action:</b> ${a.action || "—"}</div>
-    <div class="star-line"><b>Result:</b> ${a.result || "—"}</div>
+    <div class="star-line"><b>Task:</b> ${a.task || "Not given"}</div>
+    <div class="star-line"><b>Action:</b> ${a.action || "Not given"}</div>
+    <div class="star-line"><b>Result:</b> ${a.result || "Not given"}</div>
     ${a.note ? `<div class="upgrade-flag">⚠ ${a.note}</div>` : ""}
   `).join("<hr style='border:none;border-top:1px solid rgba(236,230,216,0.15);margin:14px 0;'>");
   html += block("9. How to Answer, and Your STAR Answers", guideHtml + stars);
@@ -754,8 +754,8 @@ function renderReport(r) {
 async function downloadReportAsDocx() {
   try {
     // Reuse the report we already generated for the on-screen preview
-    // (state.generatedReport) instead of regenerating every AI call —
-    // and the cover image — a second time just to build the .docx.
+    // (state.generatedReport) instead of regenerating every AI call , 
+    // and the cover image, a second time just to build the .docx.
     const body = state.generatedReport ? { report: state.generatedReport } : state;
     const res = await fetch("/api/report/docx", {
       method: "POST",
@@ -772,7 +772,7 @@ async function downloadReportAsDocx() {
     URL.revokeObjectURL(url);
   } catch (err) {
     console.error(err);
-    alert("Could not build the document — use the Download button to try again.");
+    alert("Could not build the document, use the Download button to try again.");
   }
 }
 
@@ -791,7 +791,7 @@ function renderSlots(slots) {
   const el = $("slotList");
   if (!el) return;
   if (!slots.length) {
-    el.innerHTML = "<p>No slots available right now — please check back soon.</p>";
+    el.innerHTML = "<p>No slots available right now. Please check back soon.</p>";
     return;
   }
   const byDay = {};
@@ -832,11 +832,11 @@ on("showBooking", "click", async () => {
     const data = await res.json();
     renderSlots(data.slots || []);
   } catch (err) {
-    slotList.innerHTML = "Could not load available times — please try again shortly.";
+    slotList.innerHTML = "Could not load available times. Please try again shortly.";
   }
 });
 
-// Same reasoning as savePendingState/restorePendingState above — a booking
+// Same reasoning as savePendingState/restorePendingState above, a booking
 // payment is also a full redirect away to Stripe and back, so whatever was
 // picked (slot, name, email) needs to survive that round trip. Kept as a
 // separate localStorage key from the report's pending state since a
@@ -869,7 +869,7 @@ function restorePendingBooking() {
   }
 }
 
-// Actually books the slot — called either right away (Stripe not
+// Actually books the slot, called either right away (Stripe not
 // configured, so there's nothing to pay through yet) or after returning
 // from a confirmed Stripe payment.
 async function finalizeBooking({ slot, name, email, companyName, stripeSessionId }, statusEl) {
@@ -882,9 +882,9 @@ async function finalizeBooking({ slot, name, email, companyName, stripeSessionId
     });
     const data = await res.json();
     if (!res.ok || !data.ok) throw new Error(data.error || "Could not book that slot");
-    if (statusEl) statusEl.textContent = `Booked ✓ — ${slot.replace("T", " ")}. A confirmation email is on its way.`;
+    if (statusEl) statusEl.textContent = `Booked ✓ ${slot.replace("T", " ")}. A confirmation email is on its way.`;
   } catch (err) {
-    if (statusEl) statusEl.textContent = err.message || "Could not book that slot — please try another time.";
+    if (statusEl) statusEl.textContent = err.message || "Could not book that slot. Please try another time.";
   }
 }
 
@@ -914,7 +914,7 @@ on("confirmBooking", "click", async () => {
       window.location.href = data.url;
       return;
     }
-    // Stripe not configured yet — book directly, same as before payment existed.
+    // Stripe not configured yet, book directly, same as before payment existed.
     console.warn("[payment] Stripe not configured, booking without payment:", data.message);
     await finalizeBooking({ slot: chosenSlot, name, email, companyName: state.companyName }, statusEl);
   } catch (err) {

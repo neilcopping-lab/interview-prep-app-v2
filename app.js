@@ -257,9 +257,18 @@ on("toStep2", "click", async () => {
 // balance as soon as Step 2 loads, so the pricing picker can be swapped
 // out for "you already have credit, just carry on" instead of asking them
 // to pay again.
+// Reports are free, always (Sept 2026). The pricing picker stays hidden and
+// "Generate my report" goes straight to generating, no checkout.
+const FREE_REPORTS = true;
+
 async function checkCreditBalance() {
   const note = $("creditBalanceNote");
   const block = $("pricingBlock");
+  if (FREE_REPORTS) {
+    if (block) block.classList.add("hidden");
+    if ($("toStep3")) $("toStep3").textContent = "Generate my free report";
+    return;
+  }
   if (!state.candidateEmail) return;
   try {
     const res = await fetch(`/api/credits/balance?email=${encodeURIComponent(state.candidateEmail)}`);
@@ -544,7 +553,7 @@ on("toStep3", "click", async () => {
     a.transcript = ($(`qa-text-${idx}`)?.value || "").trim();
   });
 
-  const wasAlreadyCredited = (state.creditBalance || 0) > 0;
+  const wasAlreadyCredited = FREE_REPORTS || (state.creditBalance || 0) > 0;
   const originalLabel = $("toStep3")?.textContent || "Pay & generate my report";
   if ($("toStep3")) { $("toStep3").disabled = true; $("toStep3").textContent = "Please wait…"; }
 

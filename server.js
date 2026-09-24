@@ -17,6 +17,10 @@ const { recordConsent } = require("./lib/consent");
 const { hasOpenAI, getOpenAI, TRANSCRIBE_MODEL } = require("./lib/aiClients");
 const { hasStripe, createCheckoutSession, verifyPaidSession, markSessionConsumed, REPORT_BUNDLES } = require("./lib/payments");
 const { getBalance, grantCreditsForSession, consumeCredit } = require("./lib/credits");
+// FREE MODE (Sept 2026): Interview Prep Reports are free, always. Reports no
+// longer need a payment or a credit. Coaching bookings still go through Stripe.
+// Set FREE_REPORTS=off in Render to switch report payments back on.
+const FREE_REPORTS = process.env.FREE_REPORTS !== "off";
 const { sendBookingNotificationToOwner, sendBookingConfirmationToCandidate, sendConsentNotificationToOwner, sendCreditNotificationToOwner } = require("./lib/email");
 
 const app = express();
@@ -253,7 +257,7 @@ async function ensureReportCredit({ stripeSessionId, candidateEmail }) {
 // -------------------------------------------------------------------------
 app.post("/api/report", costlyActionLimiter, async (req, res) => {
   const { stripeSessionId, candidateEmail } = req.body || {};
-  if (hasStripe()) {
+  if (hasStripe() && !FREE_REPORTS) {
     const gate = await ensureReportCredit({ stripeSessionId, candidateEmail });
     if (!gate.ok) return res.status(402).json({ error: gate.error || "Payment required." });
   }
@@ -294,7 +298,7 @@ app.post("/api/report/docx", costlyActionLimiter, async (req, res) => {
     // calling this endpoint directly.
     if (!req.body || !req.body.report) {
       const { stripeSessionId, candidateEmail } = req.body || {};
-      if (hasStripe()) {
+      if (hasStripe() && !FREE_REPORTS) {
         const gate = await ensureReportCredit({ stripeSessionId, candidateEmail });
         if (!gate.ok) return res.status(402).json({ error: gate.error || "Payment required." });
       }

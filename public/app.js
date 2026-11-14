@@ -666,7 +666,7 @@ function coverBannerHtml(r) {
       ${img}
       <div class="cover-banner-text">
         <div class="cover-banner-title">Interview Preparation Report</div>
-        <div class="cover-banner-brand">Produced by The Com'mon People AI</div>
+        <div class="cover-banner-brand">Produced by Comquat Interview Prep</div>
         <div class="cover-banner-name">${r.candidateName || "Your"}</div>
         <div class="cover-banner-sub">Interview Prep: ${r.companyName || "Your Role"}</div>
       </div>

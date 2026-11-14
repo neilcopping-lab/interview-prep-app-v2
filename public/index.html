@@ -8,7 +8,7 @@
 <link rel="apple-touch-icon" href="/img/comquat-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600&family=Arvo:wght@400;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Anton&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style id="cp-2026-theme">
 /* ================= 2026 LIGHT RE-THEME - matches the-common-people.com ================= */
@@ -71,6 +71,45 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--orange);outline-
 select{background:#fff!important;color:var(--ink)!important;border:1.5px solid var(--line)!important;border-radius:8px!important}
 </style>
 <style id="comquat-brand">.cq-brand{display:inline-flex;align-items:center;gap:12px;text-decoration:none!important;line-height:1}.cq-brand img{height:34px;width:auto;display:block}.cq-brand .cq-feat{font-family:'DM Sans','Hanken Grotesk',system-ui,sans-serif;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:999px;white-space:nowrap}.cq-brand .cq-feat.cv{background:#17191C;color:#FFF3E2}.cq-brand .cq-feat.ip{background:#1F6B45;color:#FFF3E2}.cq-by{display:block;font-size:11px;color:#5B5F66;margin-top:4px;letter-spacing:.02em}</style>
+<style id="comquat-theme">
+/* Comquat Interview Prep theme (Nov 2026). Leaf green is the Interview Prep colour.
+   Tokens from the Comquat Brand design system: leaf #1F6B45, leaf-light #3E9A5F, kumquat #FF8A1F,
+   kumquat-text #B44E00, ink #17191C, peel #FFF3E2, pith #E9DCC8, muted #5B5F66.
+   Peel or white text on leaf (5.9:1 / 6.5:1). Ink text on kumquat (7.5:1). */
+:root{--ink:#17191C;--tint:#FFF3E2;--line:#E9DCC8;--muted:#5B5F66;--navy:#17191C;--gold:#FF8A1F;--teal:#1F6B45;--orange:#1F6B45;--creamx:#FFF3E2;
+  --mustard:#B44E00;--sky:#1F6B45;--cream:#17191C;
+  --font-display:'Bricolage Grotesque','DM Sans',system-ui,sans-serif;--font-heading:'DM Sans',system-ui,sans-serif;--font-body:'DM Sans',system-ui,sans-serif}
+body{font-family:'DM Sans',system-ui,sans-serif;color:#17191C}
+a{color:#1F6B45}
+h1,h2,h3{font-family:'Bricolage Grotesque','DM Sans',system-ui,sans-serif;font-weight:800;text-transform:none;letter-spacing:-.015em;color:#17191C}
+h4{font-family:'DM Sans',system-ui,sans-serif;font-weight:700}
+.star-guide-callout{border-left-color:#FF8A1F}
+.addon-card{border-left-color:#1F6B45}
+label,.bundle-name,.brand-sub{font-family:'DM Sans',system-ui,sans-serif;font-weight:700;letter-spacing:.06em}
+input:focus,textarea:focus,select:focus{outline:3px solid #3E9A5F;outline-offset:1px;border-color:#1F6B45}
+.bundle-option.selected{border-color:#1F6B45;box-shadow:0 0 0 2px rgba(31,107,69,.18)}
+.bundle-price{color:#1F6B45;font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-weight:800}
+.btn-primary{background:#1F6B45;color:#FFF3E2;font-family:'DM Sans',system-ui,sans-serif;font-weight:700;text-transform:none;letter-spacing:0;font-size:16px}
+.btn-primary:hover{background:#17573a;filter:none}
+.btn-primary:disabled{opacity:.55}
+.btn-secondary{font-family:'DM Sans',system-ui,sans-serif;font-weight:700;text-transform:none;letter-spacing:0;border-color:#E9DCC8}
+.btn-secondary:hover{border-color:#1F6B45;color:#1F6B45}
+.record-btn,.record-btn-inline{background:#17191C;color:#FFF3E2;font-family:'DM Sans',system-ui,sans-serif;font-weight:700}
+.slot-btn.selected{background:#FF8A1F;border-color:#FF8A1F;color:#17191C}
+.tooltip-box{background:#17191C;color:#FFF3E2}
+.gen-progress-fill{background:#1F6B45}
+.upgrade-flag,.promo-note strong{color:#1F6B45}
+.site-footer{background:#17191C;color:#E9DCC8}.site-footer a{color:#FFF3E2}
+.consent-row a{color:#1F6B45!important}
+.cover-banner{background:#1F6B45}
+.cover-banner-title{font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-weight:800;color:#FFF3E2;text-transform:none}
+.cover-banner-brand{font-family:'DM Sans',system-ui,sans-serif;font-weight:700;color:#FFC27A;letter-spacing:.08em}
+.cover-banner-name,.cover-banner-sub{color:#FFF3E2}
+.report-block h4{color:#1F6B45}
+.skills-match-label{color:#5B5F66}
+.cq-by{color:#5B5F66}
+.skills-match svg rect:first-child{fill:#FFF3E2}.skills-match svg rect:last-child{fill:#1F6B45}
+</style>
 </head>
 <body>
 <header class="site-header">
@@ -162,7 +201,7 @@ select{background:#fff!important;color:var(--ink)!important;border:1.5px solid v
     <h2>Your competency questions</h2>
 
     <div class="star-guide-callout">
-      <h3>Answering with STAR Stories</h3>
+      <h3>Answering with STAR stories</h3>
       <p>Predict likely questions from the job spec, then prepare 2–3 versatile stories that cover most scenarios. Tell each one in four parts: <b>S</b>ituation (the context, briefly), <b>T</b>ask (what you were responsible for), <b>A</b>ction (what you did: the actual steps, say "I," not "we"), <b>R</b>esult (measurable outcomes, numbers if you can). Record your answer out loud, or just type it, either way, we'll tidy it into a clean STAR structure for your report.</p>
       <p class="info-note">These are a sample of the type of competency questions this role is likely to attract, based on the job description, not a guaranteed or exhaustive list of what you'll actually be asked. Build versatile stories that can flex to cover whatever comes up.</p>
       <p class="audio-consent">Recording uses your microphone and sends the audio to our transcription provider to convert it to text, see our <a href="/privacy.html" target="_blank">privacy notice</a> for details. Typing instead skips this entirely.</p>
@@ -204,7 +243,7 @@ select{background:#fff!important;color:var(--ink)!important;border:1.5px solid v
 
   <!-- STEP 3: REPORT -->
   <section id="panel3" class="panel hidden">
-    <h2>Your Interview Prep Report</h2>
+    <h2>Your Interview Prep report</h2>
     <p id="genStatus" class="status-line"></p>
     <div id="genProgressBar" class="gen-progress-bar hidden"><div id="genProgressFill" class="gen-progress-fill"></div></div>
     <p id="genCountdown" class="gen-countdown"></p>

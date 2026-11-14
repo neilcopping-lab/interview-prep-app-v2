@@ -1,4 +1,4 @@
-/* The Com'mon People — 2026 redesign system (Option B).  One stylesheet, all pages. */
+/* The Com'mon People - 2026 redesign system (Option B).  One stylesheet, all pages. */
 :root{
   --navy:#161F29; --cream:#ECE6D8; --gold:#E0B03C; --teal:#5AA9C2; --orange:#D2691E; --red:#C0392B;
   --ink:#1C2733; --muted:#5E6B77;
@@ -274,13 +274,13 @@ aside .side-card{background:var(--card);border:1px solid var(--line);border-radi
 .cp-cta p{font-size:16px;line-height:1.6;margin:0 0 22px}
 .cp-cta .row{display:flex;flex-wrap:wrap;gap:14px}
 
-/* nav coaching CTA — keep both buttons on desktop/tablet, drop the secondary on phones */
+/* nav coaching CTA - keep both buttons on desktop/tablet, drop the secondary on phones */
 @media (max-width:600px){.nav-explore{display:none}}
 
 /* photo-backed art panels: a real image under a brand-colour duotone wash */
 .art.photo{background-size:cover;background-position:center}
 .art.photo .ico{display:none}
-.art.photo::before{content:"";position:absolute;inset:0;z-index:1;mix-blend-mode:multiply;opacity:.66}
+.art.photo::before{content:"";position:absolute;inset:0;z-index:1;mix-blend-mode:multiply;opacity:.44}
 /* solid fallback colour so a not-yet-loaded photo never shows through */
 .art.gold.photo{background-color:var(--orange)}.art.orange.photo{background-color:#a54a12}
 .art.navy.photo{background-color:var(--navy)}.art.red.photo{background-color:var(--red)}.art.teal.photo{background-color:#2f7f97}
@@ -291,7 +291,8 @@ aside .side-card{background:var(--card);border:1px solid var(--line);border-radi
 .art.teal.photo::before{background:linear-gradient(150deg,var(--teal),#2f7f97)}
 .art.photo .cap,.art.photo .ico-lead,.art.photo .sticker{z-index:3}
 /* small surfaces need a heavier wash so labels stay legible */
-.cover.photo::before,.card .top.photo::before{opacity:.76}
+.cover.photo::before,.card .top.photo::before{opacity:.58}
+.art.navy.photo::before{opacity:.40}
 .card .top.photo .ico{display:none}
 /* dark article header bands with an image behind the display type */
 .art-hero.photo{position:relative;background-size:cover;background-position:center}
@@ -300,8 +301,46 @@ aside .side-card{background:var(--card);border:1px solid var(--line);border-radi
 
 /* poster treatment: punk collages shown full-colour with only a legibility scrim */
 .art.poster{background-size:cover;background-position:center;background-color:var(--navy)}
-.art.poster::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(160deg,rgba(18,24,32,.5),rgba(18,24,32,0) 42%,rgba(18,24,32,.55))}
+.art.poster::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(160deg,rgba(18,24,32,.34),rgba(18,24,32,0) 45%,rgba(18,24,32,.36))}
 .art.poster .ico{display:none}
 .art.poster .cap,.art.poster .ico-lead,.art.poster .sticker,.art.poster h4,.art.poster .cover-tag{z-index:3}
 .cover.poster::before{background:linear-gradient(180deg,rgba(18,24,32,.25),rgba(18,24,32,.7))}
 .card .top.poster::before{background:linear-gradient(180deg,rgba(18,24,32,.15),rgba(18,24,32,.45))}
+
+/* Loudspeaker edition story cards (.case) - light, matches dispatch components */
+.case{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:var(--radius);padding:22px 24px;margin:24px 0;box-shadow:0 14px 34px -22px rgba(22,31,41,.4)}
+.case .cl{display:block;font-family:var(--label);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:11.5px;color:var(--muted);margin-bottom:10px}
+.case h4{font-size:22px;line-height:1.1;margin:0 0 12px;color:var(--ink);font-family:var(--display);text-transform:uppercase;letter-spacing:.3px}
+.case h4 span{color:var(--orange)!important}
+.case p{color:var(--ink);font-size:16px;line-height:1.66;margin:0 0 12px}
+.case a{color:var(--orange)!important}
+.note-box.amber{border-left-color:var(--gold)}.note-box.amber .bl{color:var(--gold)}
+.art-hero .art-lede a,.case .cl{color:inherit}
+
+/* fix: dark note-box/callout text stays light even when nested inside a .case story card */
+.case .note-box p,.note-box p,.note-box li{color:#C6CFD8}
+.case .note-box strong,.note-box strong{color:var(--cream)}
+.case .note-box .bl{color:var(--gold)}
+.case .note-box.teal .bl{color:var(--teal)}.case .note-box.coral .bl{color:var(--orange)}.case .note-box.purple .bl{color:#c3b7e6}
+
+/* fix: Loudspeaker edition header band - keep content off the black edges */
+div.art-hero{padding-left:clamp(22px,5vw,46px);padding-right:clamp(22px,5vw,46px)}
+
+/* nav: extra room for "The Commons" link on mid-size screens (Sept 2026) */
+@media (min-width:921px) and (max-width:1320px){.links{gap:15px;font-size:13px}.nav .row{gap:14px}.nav-actions .btn{padding:12px 18px;font-size:14px}}
+@media (min-width:921px) and (max-width:1120px){.nav-explore{display:none}}
+
+/* Lead-image lockups (Loudspeaker, Dispatch, Field Guide): show the image as designed, no tint or dot texture */
+.art.lockup::before,.art.lockup::after{display:none!important}
+.art.lockup{background-color:transparent}
+
+.feature .art.lockup{aspect-ratio:16/9;min-height:0;background-size:cover;background-position:center}
+
+/* Hot off the press (Nov 2026): faster scroll, and tiles styled to match each content type's lead image */
+.scroller .strip{animation-duration:36s}
+.cover.hot::before{background:linear-gradient(180deg,rgba(18,24,32,.05) 30%,rgba(18,24,32,.72))!important;opacity:1!important;mix-blend-mode:normal!important}
+.cover.hot .cover-tag{top:12px;left:12px;padding:5px 10px 4px;border-radius:999px;font-size:10.5px;letter-spacing:.09em;line-height:1.2}
+.cover.hot.t-ls .cover-tag{background:#D2691E;color:#FBF7EC}
+.cover.hot.t-dp .cover-tag{background:#E0B03C;color:#14110E}
+.cover.hot.t-cp .cover-tag{background:#ECE6D8;color:#14110E;border:2px solid #14110E;border-radius:8px;transform:rotate(-2deg)}
+.cover.hot.t-ls{border-bottom:6px solid #D2691E}.cover.hot.t-dp{border-bottom:6px solid #E0B03C}.cover.hot.t-cp{border-bottom:6px solid #D2691E}

@@ -110,10 +110,29 @@ input:focus,textarea:focus,select:focus{outline:3px solid #3E9A5F;outline-offset
 .cq-by{color:#5B5F66}
 .skills-match svg rect:first-child{fill:#FFF3E2}.skills-match svg rect:last-child{fill:#1F6B45}
 </style>
+<style id="cp-stack-nav">
+/* Logo on its own row, menu running beneath it. Same links and titles as the-common-people.com homepage. */
+.site-header{display:grid!important;grid-template-columns:minmax(0,1fr);row-gap:14px;position:relative}
+.site-header>div:first-child{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.cq-links{display:flex;align-items:center;gap:8px 16px;flex-wrap:nowrap;font-family:'DM Sans',system-ui,sans-serif;font-size:13.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.cq-links a{color:#5B5F66;text-decoration:none;white-space:nowrap}
+.cq-links a:hover,.cq-links a.active{color:#1F6B45}
+.cq-links a.cq-book{margin-left:auto;background:#FF8A1F;color:#17191C;font-weight:700;letter-spacing:.02em;padding:7px 16px;border-radius:999px;line-height:1.2}
+.cq-links a.cq-book:hover{background:#E2650B;color:#17191C}
+@media (max-width:1100px){.cq-links{flex-wrap:wrap}}
+@media (max-width:760px){
+  .cq-links{flex-wrap:nowrap;overflow-x:auto;gap:18px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .cq-links::-webkit-scrollbar{display:none}
+  .cq-links a.cq-book{position:absolute;top:16px;right:20px;margin:0;font-size:12px;padding:7px 12px}
+  .site-header .cq-by{display:none}
+}
+@media (max-width:480px){.site-header .cq-brand .cq-feat{display:none}}
+</style>
 </head>
 <body>
 <header class="site-header">
   <div><a class="cq-brand" href="https://the-common-people.com/prep-report.html" aria-label="Comquat Interview Prep, from The Com'mon People"><img src="/img/comquat-logo.svg" alt="Comquat" width="150" height="34"><span class="cq-feat ip">Interview Prep</span></a><span class="cq-by">from The Com'mon People</span></div>
+  <nav class="cq-links" aria-label="Primary"><a href="https://the-common-people.com/guides.html">Guides</a><a href="https://the-common-people.com/dispatches.html">Dispatches</a><a href="https://the-common-people.com/loudspeaker.html">Loudspeaker</a><a href="https://the-common-people.com/apprenticeships.html">Apprenticeships</a><a href="https://the-common-people.com/commons-family.html">The Commons</a><a href="https://the-common-people.com/about.html">About</a><a class="active" href="https://the-common-people.com/prep-report.html" aria-current="page">Prep Report</a><a href="https://cv.the-common-people.com">CV Rewrite</a><a class="cq-book" href="https://cal.com/the-common-people.com/interviewcoaching" target="_blank" rel="noopener">Book a coaching call</a></nav>
 </header>
 
 <main class="wizard">

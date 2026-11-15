@@ -49,10 +49,19 @@ async function sync(email, firstName, subs) {
   return { ok: true, topics: topics.length };
 }
 
+// When someone deletes their Comquat account we take them off the four Comquat
+// topics only. We don't delete their Resend contact, because they may have
+// signed up to other lists (such as The Loudspeaker on the website) separately,
+// and that was a separate choice. Every email still carries an unsubscribe link.
 async function remove(email) {
   if (!key()) return { skipped: "no RESEND_API_KEY" };
-  await call("DELETE", `/contacts/${encodeURIComponent(String(email).toLowerCase())}`);
-  return { ok: true };
+  const topics = Object.values(TOPIC_ENV)
+    .filter((env) => process.env[env])
+    .map((env) => ({ id: process.env[env], subscription: "opt_out" }));
+  if (!topics.length) return { skipped: "no topic ids set" };
+  const addr = encodeURIComponent(String(email).toLowerCase());
+  await call("PATCH", `/contacts/${addr}/topics`, topics);
+  return { ok: true, topics: topics.length };
 }
 
 module.exports = { sync, remove, TOPIC_ENV };

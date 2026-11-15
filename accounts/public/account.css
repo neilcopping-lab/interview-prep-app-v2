@@ -48,6 +48,14 @@ legend{font-weight:700;font-size:14px;margin:0 0 10px;padding:0}
 .kv{display:grid;grid-template-columns:120px 1fr;gap:6px 14px;margin:0 0 6px;font-size:15px}
 .kv dt{color:var(--muted)}.kv dd{margin:0;font-weight:500;word-break:break-all}
 .soon li{margin:0 0 6px}
+.docs{list-style:none;margin:14px 0 0;padding:0}
+.docs li{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 0;border-top:1px solid var(--pith)}
+.docs li:first-child{border-top:0;padding-top:4px}
+.docs .doc-kind{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--leaf);margin:0 0 2px}
+.docs .doc-title{display:block;font-weight:700;font-size:15.5px}
+.docs .doc-meta{display:block;font-size:13.5px;color:var(--muted)}
+.docs .doc-actions{display:flex;gap:10px;align-items:center}
+.docs .btn{padding:8px 14px;font-size:14px}
 .hidden{display:none!important}
 footer{text-align:center;font-size:13.5px;color:var(--muted);padding:0 20px 40px}
 @media (max-width:560px){.cq-head nav{display:none}.card{padding:20px}.tabs{width:100%}.tabs button{flex:1;padding:8px 10px}}

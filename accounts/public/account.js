@@ -122,6 +122,67 @@
       })
       .catch(function () { say("We couldn't load your account just now. Please refresh the page.", false); });
 
+    // ---- My documents
+    var docsList = document.getElementById("docs-list");
+    function el(tag, cls, text) {
+      var e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text != null) e.textContent = text;
+      return e;
+    }
+    function niceDate(iso) {
+      var d = new Date(iso);
+      return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) +
+        ", " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+    }
+    function showDocs(docs) {
+      document.getElementById("docs-loading").classList.add("hidden");
+      document.getElementById("docs-empty").classList.toggle("hidden", docs.length > 0);
+      docsList.textContent = "";
+      docs.forEach(function (d) {
+        var li = el("li");
+        var info = el("div");
+        info.appendChild(el("span", "doc-kind", d.kind_label));
+        var what = d.job_title && d.company ? d.job_title + " at " + d.company : (d.title || d.kind_label);
+        info.appendChild(el("span", "doc-title", what));
+        var fmt = /pdf/.test(d.mime_type) ? "PDF" : /word/.test(d.mime_type) ? "Word" : "File";
+        info.appendChild(el("span", "doc-meta", "Saved " + niceDate(d.created_at) + " · " + fmt));
+        var actions = el("div", "doc-actions");
+        var dl = el("a", "btn btn-ghost", "Download");
+        dl.href = "/api/account/documents/" + encodeURIComponent(d.id) + "/file";
+        dl.setAttribute("download", d.file_name);
+        var del = el("button", "btn btn-danger", "Delete");
+        del.type = "button";
+        // Two clicks to delete, so nothing goes by accident.
+        del.addEventListener("click", function () {
+          if (!del.dataset.sure) {
+            del.dataset.sure = "1";
+            del.textContent = "Delete for good?";
+            setTimeout(function () { if (del.isConnected) { delete del.dataset.sure; del.textContent = "Delete"; } }, 5000);
+            return;
+          }
+          del.disabled = true;
+          post("/api/account/documents/" + encodeURIComponent(d.id) + "/delete", {})
+            .then(function (j) { say(j.message, true); loadDocs(); })
+            .catch(function (err) { say(err.message, false); del.disabled = false; });
+        });
+        actions.appendChild(dl);
+        actions.appendChild(del);
+        li.appendChild(info);
+        li.appendChild(actions);
+        docsList.appendChild(li);
+      });
+    }
+    function loadDocs() {
+      fetch("/api/account/documents", { credentials: "same-origin", cache: "no-store" })
+        .then(function (r) { return r.json(); })
+        .then(function (j) { if (j.documents) showDocs(j.documents); else throw new Error(j.error); })
+        .catch(function () {
+          document.getElementById("docs-loading").textContent = "We couldn't load your documents just now. Please refresh the page.";
+        });
+    }
+    loadDocs();
+
     onSubmit("form-name", function (form, fd) {
       return post("/api/account/profile", { name: fd.get("name") }).then(function (j) {
         var first = (j.name || "").split(/\s+/)[0];

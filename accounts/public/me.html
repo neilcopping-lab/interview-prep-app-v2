@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/account/account.css">
+<link rel="stylesheet" href="/account/account.css?v=20261115-docs">
 </head>
 <body data-page="me">
 <header class="cq-head">
@@ -31,6 +31,14 @@
     </form>
   </section>
 
+  <section class="card" id="docs-card">
+    <h2>My documents</h2>
+    <p class="small">Every CV, cover letter and interview prep report you download while signed in is kept here, so you can grab it again whenever you need it. Only you can see them.</p>
+    <p class="small hidden" id="docs-empty">Nothing here yet. Your next download from <a href="https://cv.the-common-people.com/">CV Rewrite</a> or <a href="https://the-common-people.com/prep-report.html">Interview Prep</a> will appear here.</p>
+    <p class="small" id="docs-loading">Loading your documents…</p>
+    <ul class="docs" id="docs-list"></ul>
+  </section>
+
   <section class="card">
     <h2>What you'd like from us</h2>
     <p class="small">Tick what you want, untick what you don't, then save. You can change this whenever you like.</p>
@@ -46,7 +54,6 @@
   <section class="card">
     <h2>On the way to your account</h2>
     <ul class="soon">
-      <li><strong>Your saved CVs and prep reports</strong>, ready to download again whenever you need them.</li>
       <li><strong>Your profile</strong>, with a photo and the kind of work you're after. Private to you.</li>
       <li><strong>Your master CV</strong>, built from scratch with our help. For account holders only.</li>
     </ul>
@@ -62,7 +69,7 @@
 
   <section class="card">
     <h2>Your data</h2>
-    <p class="small">Download a copy of everything your account holds, or delete the lot. Deleting is permanent and can't be undone.</p>
+    <p class="small">Download a copy of everything your account holds, saved documents included, or delete the lot. Deleting is permanent and can't be undone.</p>
     <div class="row">
       <a class="btn btn-ghost" href="/api/account/export" download>Download my data</a>
       <button class="btn btn-danger" type="button" id="show-delete">Delete my account</button>
@@ -75,6 +82,6 @@
   </section>
 </main>
 <footer>Comquat is part of <a href="https://the-common-people.com/">The Com'mon People</a>, run by Comquat Ventures UK Ltd. <a href="/privacy.html">Privacy notice</a></footer>
-<script src="/account/account.js" defer></script>
+<script src="/account/account.js?v=20261115-docs" defer></script>
 </body>
 </html>

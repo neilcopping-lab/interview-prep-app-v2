@@ -100,6 +100,20 @@ const upload = multer({
 });
 
 app.use(express.json({ limit: "10mb" }));
+
+// Identity shield: every AI call made while handling this request has the
+// person's name, email, phone, address, links and date of birth swapped for
+// placeholders first (see lib/identityShield.js and lib/aiClients.js).
+const identityShield = require("./lib/identityShield");
+app.use((req, res, next) => identityShield.run(() => {
+  const b = req.body || {};
+  const answers = Array.isArray(b.answers) ? b.answers.map((a) => (a && typeof a === "object" ? Object.values(a).join("\n") : String(a || ""))) : [];
+  return {
+    texts: [b.cvText, ...answers],
+    names: [b.candidateName, b.name],
+    emails: [b.candidateEmail, b.email, req.user && req.user.email],
+  };
+}, next));
 app.use(express.static(path.join(__dirname, "public")));
 
 // Comquat accounts: one login for CV Rewrite + Interview Prep. Lives in

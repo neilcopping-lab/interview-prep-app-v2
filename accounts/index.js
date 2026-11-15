@@ -184,13 +184,13 @@ function mountAccounts(app, opts = {}) {
     return `${base}${pagesPath}/?next=${encodeURIComponent(safeNext(back, "/"))}`;
   }
 
-  // Where someone ends up after clicking the link in an email. Supabase puts
-  // this into the email as {{ .RedirectTo }}; the email itself always points at
-  // our /auth/confirm route (see supabase/email-templates).
+  // The link in every sign-in email comes back to our /auth/confirm route,
+  // carrying where the person should land afterwards. Supabase puts this into
+  // the email as {{ .RedirectTo }} (see supabase/email-templates).
   function confirmUrl(req, next) {
     const base = cfg().baseUrl || `${req.protocol}://${req.get("host")}`;
     const dest = safeNext(next);
-    return dest.startsWith("/") ? base + dest : dest;
+    return `${base}/auth/confirm?next=${encodeURIComponent(dest.startsWith("/") ? base + dest : dest)}`;
   }
 
   // ---- who am I ----------------------------------------------------------
@@ -358,11 +358,22 @@ function mountAccounts(app, opts = {}) {
     const type = String(req.query.type || "email");
     const allowed = ["email", "signup", "magiclink", "recovery", "invite", "email_change"];
     const tokenHash = String(req.query.token_hash || "");
+    const code = String(req.query.code || "");
     let next = safeNext(req.query.next);
-    if (!tokenHash || !allowed.includes(type)) return res.redirect(`${pagesPath}/?error=link`);
-    const { data, error } = await sb.auth.verifyOtp({ type, token_hash: tokenHash });
+    let result;
+    if (tokenHash && allowed.includes(type)) {
+      // Our own email templates: a one-time token that works on any device.
+      result = await sb.auth.verifyOtp({ type, token_hash: tokenHash });
+    } else if (code) {
+      // Supabase's default emails: a one-time code, which works in the same
+      // browser that asked for the email.
+      result = await sb.auth.exchangeCodeForSession(code);
+    } else {
+      return res.redirect(`${pagesPath}/?error=link`);
+    }
+    const { data, error } = result;
     if (error || !data || !data.user) return res.redirect(`${pagesPath}/?error=link`);
-    if (type === "recovery") next = `${pagesPath}/reset.html`;
+    if (type === "recovery" || /reset\.html/.test(next)) next = `${pagesPath}/reset.html`;
 
     // First confirmation: save the boxes they ticked on the sign-up form.
     const pending = data.user.user_metadata && data.user.user_metadata.pending_subscriptions;

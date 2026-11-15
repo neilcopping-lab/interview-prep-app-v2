@@ -24,6 +24,8 @@ const FREE_REPORTS = process.env.FREE_REPORTS !== "off";
 const { sendBookingNotificationToOwner, sendBookingConfirmationToCandidate, sendConsentNotificationToOwner, sendCreditNotificationToOwner } = require("./lib/email");
 
 const app = express();
+// Render sits behind a proxy: trust it so rate limits see each visitor's real IP.
+app.set("trust proxy", 1);
 
 // Security headers. Default helmet() ships a strict Content-Security-Policy
 // that would break this specific site (it loads Google Fonts from a CDN and
@@ -99,6 +101,11 @@ const upload = multer({
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.static(path.join(__dirname, "public")));
+
+// Comquat accounts: one login for CV Rewrite + Interview Prep. Lives in
+// ./accounts and stays switched off until the Supabase settings are added.
+const { mountAccounts } = require("./accounts");
+mountAccounts(app);
 
 async function extractTextFromFile(filePath, originalName) {
   const name = originalName.toLowerCase();

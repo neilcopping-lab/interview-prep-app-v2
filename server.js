@@ -99,6 +99,17 @@ const upload = multer({
   },
 });
 
+// People who arrive at the old Render address are sent to
+// prep.the-common-people.com, where their Comquat sign-in works (the sign-in
+// cookie belongs to the-common-people.com). Page visits only; API calls and
+// Render's own health checks are left alone.
+app.use((req, res, next) => {
+  if (req.method === "GET" && /\.onrender\.com$/i.test(req.hostname || "") && /text\/html/i.test(req.get("accept") || "")) {
+    return res.redirect(301, "https://prep.the-common-people.com" + req.originalUrl);
+  }
+  next();
+});
+
 app.use(express.json({ limit: "10mb" }));
 
 // Identity shield: every AI call made while handling this request has the
@@ -119,6 +130,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Comquat accounts: one login for CV Rewrite + Interview Prep. Lives in
 // ./accounts and stays switched off until the Supabase settings are added.
 const { mountAccounts } = require("./accounts");
+const { sourceKey: docKey } = require("./accounts/documents");
 mountAccounts(app);
 
 async function extractTextFromFile(filePath, originalName) {
@@ -329,6 +341,21 @@ app.post("/api/report/docx", costlyActionLimiter, async (req, res) => {
     const filename = `Interview_Prep_${(report.companyName || "report").replace(/[^a-z0-9]/gi, "_")}_${uuid().slice(0, 8)}.docx`;
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
     res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    // Comquat accounts: keep a copy in "My documents" for signed-in people.
+    // A failed save never stops the download.
+    if (req.user && typeof req.saveDocument === "function") {
+      const company = String(report.companyName || "").trim();
+      const saved = await req.saveDocument({
+        kind: "prep",
+        title: company ? `Interview prep for ${company}` : "Interview prep report",
+        company,
+        fileName: filename,
+        mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        data: buffer,
+        sourceKey: docKey("prep", report),
+      });
+      if (saved && saved.saved) res.setHeader("X-Comquat-Saved", "1");
+    }
     res.send(buffer);
   } catch (err) {
     console.error(err);

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign in or create your account | Comquat</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="/account/img/comquat-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/account/account.css">
+</head>
+<body data-page="signin">
+<header class="cq-head">
+  <a class="cq-brand" href="https://the-common-people.com/" aria-label="Comquat, from The Com'mon People"><img src="/account/img/comquat-logo.svg" alt="Comquat" width="140" height="32"><span class="cq-feat">Account</span></a>
+  <nav aria-label="Comquat apps"><a href="https://cv.the-common-people.com/">CV Rewrite</a><a href="https://the-common-people.com/prep-report.html">Interview Prep</a></nav>
+</header>
+
+<main>
+  <h1 id="title">Your Comquat account</h1>
+  <p class="lede" id="lede">One login for CV Rewrite and Interview Prep. Keep everything you make in one place, and build your master CV from scratch.</p>
+
+  <div class="tabs" role="tablist" aria-label="Sign in or create an account">
+    <button type="button" role="tab" id="tab-signin" aria-selected="true" aria-controls="panel-signin">Sign in</button>
+    <button type="button" role="tab" id="tab-signup" aria-selected="false" aria-controls="panel-signup">Create account</button>
+  </div>
+
+  <div class="msg" id="msg" role="status" aria-live="polite"></div>
+
+  <!-- SIGN IN -->
+  <section class="card" id="panel-signin" role="tabpanel" aria-labelledby="tab-signin">
+    <form id="form-login" novalidate>
+      <label>Email<input type="email" name="email" autocomplete="email" required></label>
+      <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+      <div class="row">
+        <button class="btn btn-primary" type="submit">Sign in</button>
+        <button class="linkbtn" type="button" id="show-forgot">Forgotten your password?</button>
+      </div>
+    </form>
+    <hr class="sep">
+    <h2>Or get a sign-in link</h2>
+    <p class="small">No password needed. We'll email you a link that signs you straight in.</p>
+    <form id="form-link" novalidate>
+      <label>Email<input type="email" name="email" autocomplete="email" required></label>
+      <button class="btn btn-ghost" type="submit">Email me a link</button>
+    </form>
+  </section>
+
+  <!-- FORGOTTEN PASSWORD -->
+  <section class="card hidden" id="panel-forgot">
+    <h2>Set a new password</h2>
+    <p class="small">Tell us your email and we'll send you a link to choose a new password.</p>
+    <form id="form-forgot" novalidate>
+      <label>Email<input type="email" name="email" autocomplete="email" required></label>
+      <div class="row">
+        <button class="btn btn-primary" type="submit">Send the link</button>
+        <button class="linkbtn" type="button" id="back-signin">Back to sign in</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- CREATE ACCOUNT -->
+  <section class="card hidden" id="panel-signup" role="tabpanel" aria-labelledby="tab-signup">
+    <form id="form-signup" novalidate>
+      <label>Your name<input type="text" name="name" autocomplete="name" maxlength="120" required></label>
+      <label>Email<input type="email" name="email" autocomplete="email" required></label>
+      <label>Password<span class="hint">At least 10 characters. A short phrase is easier to remember than a jumble.</span><input type="password" name="password" autocomplete="new-password" minlength="10" required></label>
+
+      <fieldset>
+        <legend>Want to hear from us? Tick what you'd like. You can change this any time.</legend>
+        <label class="check"><input type="checkbox" name="loudspeaker"><span><strong>The Loudspeaker.</strong> Our monthly email.</span></label>
+        <label class="check"><input type="checkbox" name="guides"><span><strong>Field Guides and Toolkit.</strong> Tell me when a new practical guide or free download goes live.</span></label>
+        <label class="check"><input type="checkbox" name="dispatches"><span><strong>Dispatches and campaigns.</strong> New opinion and research pieces, and campaign updates.</span></label>
+        <label class="check"><input type="checkbox" name="apprenticeships"><span><strong>Apprenticeships and early careers.</strong> News and guides for school leavers, career changers and parents.</span></label>
+      </fieldset>
+
+      <div class="note">
+        Only you can see your account. It's stored in the UK, in London, and you can download everything or delete it at any time from your account page.
+      </div>
+      <label class="check"><input type="checkbox" name="agree" required><span>I've read <a href="/privacy.html" target="_blank" rel="noopener">how Comquat looks after my data</a>.</span></label>
+
+      <button class="btn btn-primary" type="submit">Create my account</button>
+    </form>
+  </section>
+</main>
+<footer>Comquat is part of <a href="https://the-common-people.com/">The Com'mon People</a>, run by Comquat Ltd.</footer>
+<script src="/account/account.js" defer></script>
+</body>
+</html>

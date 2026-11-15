@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Choose a new password | Comquat</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="/account/img/comquat-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/account/account.css">
+</head>
+<body data-page="reset">
+<header class="cq-head">
+  <a class="cq-brand" href="https://the-common-people.com/" aria-label="Comquat, from The Com'mon People"><img src="/account/img/comquat-logo.svg" alt="Comquat" width="140" height="32"><span class="cq-feat">Account</span></a>
+</header>
+<main>
+  <h1>Choose a new password</h1>
+  <p class="lede">Pick something you'll remember. At least 10 characters.</p>
+  <div class="msg" id="msg" role="status" aria-live="polite"></div>
+  <section class="card">
+    <form id="form-reset" novalidate>
+      <label>New password<input type="password" name="password" autocomplete="new-password" minlength="10" required></label>
+      <label>Type it again<input type="password" name="password2" autocomplete="new-password" minlength="10" required></label>
+      <button class="btn btn-primary" type="submit">Save my new password</button>
+    </form>
+  </section>
+</main>
+<script src="/account/account.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My account | Comquat</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="/account/img/comquat-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/account/account.css">
+</head>
+<body data-page="me">
+<header class="cq-head">
+  <a class="cq-brand" href="https://the-common-people.com/" aria-label="Comquat, from The Com'mon People"><img src="/account/img/comquat-logo.svg" alt="Comquat" width="140" height="32"><span class="cq-feat">Account</span></a>
+  <nav aria-label="Comquat apps"><a href="https://cv.the-common-people.com/">CV Rewrite</a><a href="https://the-common-people.com/prep-report.html">Interview Prep</a><button class="linkbtn" type="button" id="signout">Sign out</button></nav>
+</header>
+
+<main class="wide">
+  <h1 id="hello">Your account</h1>
+  <p class="lede">Everything about your Comquat account, in one place.</p>
+  <div class="msg" id="msg" role="status" aria-live="polite"></div>
+
+  <section class="card">
+    <h2>Your details</h2>
+    <dl class="kv"><dt>Email</dt><dd id="email">…</dd><dt>Member since</dt><dd id="since">…</dd></dl>
+    <form id="form-name" novalidate>
+      <label>Your name<input type="text" name="name" autocomplete="name" maxlength="120" required></label>
+      <button class="btn btn-ghost" type="submit">Save name</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>What you'd like from us</h2>
+    <p class="small">Tick what you want, untick what you don't, then save. You can change this whenever you like.</p>
+    <form id="form-subs" novalidate>
+      <label class="check"><input type="checkbox" name="loudspeaker"><span><strong>The Loudspeaker.</strong> Our monthly email.</span></label>
+      <label class="check"><input type="checkbox" name="guides"><span><strong>Field Guides and Toolkit.</strong> Tell me when a new practical guide or free download goes live.</span></label>
+      <label class="check"><input type="checkbox" name="dispatches"><span><strong>Dispatches and campaigns.</strong> New opinion and research pieces, and campaign updates.</span></label>
+      <label class="check"><input type="checkbox" name="apprenticeships"><span><strong>Apprenticeships and early careers.</strong> News and guides for school leavers, career changers and parents.</span></label>
+      <button class="btn btn-primary" type="submit">Save my choices</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>On the way to your account</h2>
+    <ul class="soon">
+      <li><strong>Your saved CVs and prep reports</strong>, ready to download again whenever you need them.</li>
+      <li><strong>Your profile</strong>, with a photo and the kind of work you're after. Private to you.</li>
+      <li><strong>Your master CV</strong>, built from scratch with our help. For account holders only.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>Password</h2>
+    <form id="form-password" novalidate>
+      <label>New password<span class="hint">At least 10 characters.</span><input type="password" name="password" autocomplete="new-password" minlength="10" required></label>
+      <button class="btn btn-ghost" type="submit">Change password</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Your data</h2>
+    <p class="small">Download a copy of everything your account holds, or delete the lot. Deleting is permanent and can't be undone.</p>
+    <div class="row">
+      <a class="btn btn-ghost" href="/api/account/export" download>Download my data</a>
+      <button class="btn btn-danger" type="button" id="show-delete">Delete my account</button>
+    </div>
+    <form id="form-delete" class="hidden" novalidate>
+      <p>This deletes your account and everything in it straight away. To confirm, type <strong>DELETE</strong> below.</p>
+      <label>Type DELETE<input type="text" name="confirm" autocomplete="off" required></label>
+      <button class="btn btn-danger" type="submit">Delete my account for good</button>
+    </form>
+  </section>
+</main>
+<footer>Comquat is part of <a href="https://the-common-people.com/">The Com'mon People</a>, run by Comquat Ltd. <a href="/privacy.html">Privacy notice</a></footer>
+<script src="/account/account.js" defer></script>
+</body>
+</html>

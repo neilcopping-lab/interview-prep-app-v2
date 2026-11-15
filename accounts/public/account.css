@@ -1,0 +1,54 @@
+/* Comquat account pages. Tokens from the Comquat Brand design system:
+   leaf #1F6B45, leaf-light #3E9A5F, kumquat #FF8A1F, kumquat-text #B44E00,
+   ink #17191C, peel #FFF3E2, pith #E9DCC8, muted #5B5F66. */
+:root{--leaf:#1F6B45;--leaf2:#3E9A5F;--kq:#FF8A1F;--kqt:#B44E00;--ink:#17191C;--peel:#FFF3E2;--pith:#E9DCC8;--muted:#5B5F66;--err:#A8321E}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--peel);color:var(--ink);font-family:'DM Sans',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.55}
+a{color:var(--leaf)}
+.cq-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid var(--pith);background:#fff}
+.cq-brand{display:inline-flex;align-items:center;gap:12px;text-decoration:none;line-height:1}
+.cq-brand img{height:32px;width:auto;display:block}
+.cq-feat{font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:var(--ink);color:var(--peel)}
+.cq-head nav{display:flex;gap:18px;font-size:13.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.cq-head nav a{color:var(--muted);text-decoration:none}
+.cq-head nav a:hover{color:var(--leaf)}
+main{max-width:620px;margin:40px auto 64px;padding:0 20px}
+main.wide{max-width:760px}
+h1{font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-weight:800;font-size:clamp(30px,5vw,42px);letter-spacing:-.02em;line-height:1.08;margin:0 0 10px}
+h2{font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.01em;margin:0 0 6px}
+.lede{color:var(--muted);margin:0 0 26px;font-size:17px}
+.card{background:#fff;border:1px solid var(--pith);border-radius:16px;padding:26px;margin:0 0 20px}
+.tabs{display:flex;gap:6px;background:#fff;border:1px solid var(--pith);border-radius:999px;padding:5px;margin:0 0 20px;width:max-content}
+.tabs button{border:0;background:none;font:inherit;font-weight:700;font-size:14.5px;padding:8px 18px;border-radius:999px;cursor:pointer;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--leaf);color:var(--peel)}
+label{display:block;font-weight:700;font-size:14px;margin:0 0 16px}
+label .hint{display:block;font-weight:400;color:var(--muted);font-size:13.5px;margin-top:2px}
+input[type=text],input[type=email],input[type=password]{display:block;width:100%;margin-top:6px;padding:12px 14px;font:inherit;font-weight:400;border:1.5px solid var(--pith);border-radius:10px;background:#fff;color:var(--ink)}
+input:focus,button:focus-visible,a:focus-visible{outline:3px solid var(--leaf2);outline-offset:2px}
+.check{display:flex;gap:12px;align-items:flex-start;font-weight:400;font-size:15px;margin:0 0 12px;cursor:pointer}
+.check input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--leaf);flex:0 0 auto}
+.check strong{font-weight:700}
+fieldset{border:0;margin:6px 0 18px;padding:0}
+legend{font-weight:700;font-size:14px;margin:0 0 10px;padding:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:6px;padding:12px 22px;font:inherit;font-weight:700;font-size:16px;cursor:pointer;text-decoration:none;box-shadow:0 2px 0 rgba(23,25,28,.18)}
+.btn-primary{background:var(--leaf);color:var(--peel)}
+.btn-primary:hover{background:#17573a}
+.btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--pith);box-shadow:none}
+.btn-ghost:hover{border-color:var(--leaf);color:var(--leaf)}
+.btn-danger{background:#fff;color:var(--err);border:1.5px solid var(--err);box-shadow:none}
+.btn[disabled]{opacity:.55;cursor:wait}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--leaf);text-decoration:underline;cursor:pointer}
+.msg{border-radius:10px;padding:12px 14px;margin:0 0 18px;font-size:15px}
+.msg.ok{background:#E6F2EA;color:#174F33}
+.msg.err{background:#FBE9E4;color:var(--err)}
+.msg:empty{display:none}
+.small{font-size:14px;color:var(--muted)}
+.note{border-left:4px solid var(--kq);background:#fff;padding:14px 16px;border-radius:0 10px 10px 0;font-size:15px;margin:0 0 20px}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:6px 14px;margin:0 0 6px;font-size:15px}
+.kv dt{color:var(--muted)}.kv dd{margin:0;font-weight:500;word-break:break-all}
+.soon li{margin:0 0 6px}
+.hidden{display:none!important}
+footer{text-align:center;font-size:13.5px;color:var(--muted);padding:0 20px 40px}
+@media (max-width:560px){.cq-head nav{display:none}.card{padding:20px}.tabs{width:100%}.tabs button{flex:1;padding:8px 10px}}
+.sep{border:0;border-top:1px solid var(--pith);margin:24px 0}

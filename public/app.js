@@ -771,6 +771,8 @@ async function downloadReportAsDocx() {
     a.download = "Interview_Prep_Report.docx";
     a.click();
     URL.revokeObjectURL(url);
+    const note = $("docxSaved");
+    if (note && res.headers.get("X-Comquat-Saved")) note.classList.remove("hidden");
   } catch (err) {
     console.error(err);
     alert("Could not build the document, use the Download button to try again.");

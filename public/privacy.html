@@ -124,7 +124,7 @@ body{background:#fff;color:#17191C}
   <ul>
     <li>Uploaded CV and job description files are deleted from our server as soon as the text has been read out of them.</li>
     <li>Recorded audio is deleted as soon as it has been transcribed.</li>
-    <li>Your report isn't stored after it's been sent to your browser, apart from what's needed to build your downloadable document in the same request.</li>
+    <li>Your report isn't stored after it's been sent to your browser, apart from what's needed to build your downloadable document in the same request. If you're signed in to a Comquat account, a copy of the Word document is kept in your account until you delete it (see Your Comquat account above).</li>
     <li>Your name, email, and the record that you agreed to this notice (plus whether you opted in to hearing from us) are kept as evidence of consent. You can ask us to delete them at any time.</li>
     <li>Coaching booking details are kept until the session has taken place, plus a short period afterwards for any follow-up.</li>
   </ul>
@@ -136,13 +136,14 @@ body{background:#fff;color:#17191C}
     <li><strong>Your password</strong>, if you set one, stored only as a scrambled one-way code. We can't see it. You can sign in with an email link instead.</li>
     <li><strong>Your email choices</strong>: which of our newsletters and updates you've ticked, plus a record of when you ticked or unticked each one.</li>
     <li><strong>Your download confirmations</strong>: a record, with the date and time, each time you tick the box to say you've checked your CV or cover letter before downloading it.</li>
+    <li><strong>Your saved documents</strong>: a copy of each CV, cover letter and interview prep report you download while signed in, so you can download it again from your account page. Each one holds whatever is in the document, such as your name, contact details and work history.</li>
     <li><strong>When you joined</strong> and when you last signed in.</li>
   </ul>
-  <p>As we add features, your account will also hold the CVs and interview prep reports you make, your master CV and an optional profile with a photo. We'll update this notice before each of those goes live.</p>
-  <p><strong>Why, and our legal basis.</strong> We use your account details to provide the account you asked for (<strong>contract</strong>). We keep your download confirmations because we have a <strong>legitimate interest</strong> in being able to show you checked your documents yourself before using them. We only send you the newsletters and updates you've ticked (<strong>consent</strong>), and you can untick them at any time from your account page.</p>
-  <p><strong>Where it's kept.</strong> Your account is stored with Supabase, in their London data centre. Only you can see your account. We only look at it to help when you ask us to, or to fix a problem.</p>
-  <p><strong>AI and your details.</strong> Nothing in your account (your name, email, password or email choices) is sent to an AI service.</p>
-  <p><strong>How long we keep it.</strong> Until you delete it. You can do that yourself from your account page at any time, and it removes everything straight away. We also take you off the Comquat emails you ticked. If you signed up to The Loudspeaker or anything else separately on our website, that stays as it is, and you can unsubscribe using the link in any email. If you don't sign in for three years, we'll email you a month before closing your account, and then delete it.</p>
+  <p>As we add features, your account will also hold your master CV and an optional profile with a photo. We'll update this notice before each of those goes live.</p>
+  <p><strong>Why, and our legal basis.</strong> We use your account details and keep your saved documents to provide the account you asked for (<strong>contract</strong>). We keep your download confirmations because we have a <strong>legitimate interest</strong> in being able to show you checked your documents yourself before using them. We only send you the newsletters and updates you've ticked (<strong>consent</strong>), and you can untick them at any time from your account page.</p>
+  <p><strong>Where it's kept.</strong> Your account and your saved documents are stored with Supabase, in their London data centre. Only you can see them, and there are no public links to your documents. We only look at your account to help when you ask us to, or to fix a problem.</p>
+  <p><strong>AI and your details.</strong> Nothing in your account (your name, email, password, email choices or saved documents) is sent to an AI service.</p>
+  <p><strong>How long we keep it.</strong> Until you delete it. You can delete any saved document on its own, or your whole account, from your account page at any time, and it's removed straight away. We also take you off the Comquat emails you ticked. If you signed up to The Loudspeaker or anything else separately on our website, that stays as it is, and you can unsubscribe using the link in any email. If you don't sign in for three years, we'll email you a month before closing your account, and then delete it.</p>
 
   <h2>How we keep your details from the AI</h2>
   <p>Before your CV, your answers or anything else you give us goes to the AI, we take out your name, email address, phone number, home address and postcode, website and social media links, and date of birth. We swap each one for a placeholder, such as [NAME]. The AI only ever sees the placeholders. When its work comes back, we put your real details back in before you see it.</p>
@@ -154,7 +155,7 @@ body{background:#fff;color:#17191C}
     <tr><th>Provider</th><th>What they see</th></tr>
     <tr><td>Anthropic (Claude)</td><td>Your job description and CV text, with your personal details taken out first (see above), to research the company and draft your report</td></tr>
     <tr><td>OpenAI</td><td>Your spoken answers (to turn them into text) and a short description of the role (to create your report's cover artwork)</td></tr>
-    <tr><td>Supabase</td><td>Your Comquat account, if you have one, stored in their London data centre</td></tr>
+    <tr><td>Supabase</td><td>Your Comquat account and saved documents, if you have an account, stored in their London data centre</td></tr>
 <tr><td>Resend</td><td>Your name and email, to send booking confirmations, sign-in emails and any newsletters you've ticked, and to let us know a report has been requested</td></tr>
     <tr><td>Stripe</td><td>Payment for a coaching call, if you book one. We never see or store your card details</td></tr>
     <tr><td>Render</td><td>Hosting-level access to run the app</td></tr>

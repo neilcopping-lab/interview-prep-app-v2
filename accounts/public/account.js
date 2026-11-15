@@ -91,7 +91,14 @@
       return post("/api/account/signup", {
         name: fd.get("name"), email: fd.get("email"), password: fd.get("password"),
         agree: fd.get("agree") === "on", subscriptions: subs, next: next,
-      }).then(function (j) { form.reset(); say(j.message, true); });
+      }).then(function (j) {
+        form.reset();
+        // Swap the form for the message, so it's obvious the email has gone.
+        panels.signup.classList.add("hidden");
+        document.getElementById("title").textContent = "Check your email";
+        say(j.message, true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
     });
   }
 

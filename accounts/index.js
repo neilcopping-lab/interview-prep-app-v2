@@ -8,7 +8,8 @@
 //     on .the-common-people.com, so one sign-in covers every Comquat app.
 //   * Every database read and write runs as the signed-in person, so Supabase's
 //     row level security means they can only ever reach their own rows.
-//   * The secret key is used for one thing only: deleting an account.
+//   * The secret key is used for one thing only: deleting an account (and the
+//     saved documents in it).
 //   * Nothing in this module sends anything to an AI service.
 //
 // Settings (Render -> Environment):
@@ -23,6 +24,8 @@ const express = require("express");
 const { createServerClient, parseCookieHeader, serialize } = require("@supabase/ssr");
 const { createClient } = require("@supabase/supabase-js");
 const resendTopics = require("./resendTopics");
+const documents = require("./documents");
+const { zip } = require("./zip");
 
 const TOPICS = ["loudspeaker", "guides", "dispatches", "apprenticeships"];
 
@@ -159,6 +162,9 @@ function mountAccounts(app, opts = {}) {
   // Attach req.user on API and auth routes. Anonymous visitors cost nothing.
   app.use(async (req, res, next) => {
     req.user = null;
+    // Apps call this when a signed-in person downloads a CV, cover letter or
+    // report, so a copy is kept in their account. Does nothing if signed out.
+    req.saveDocument = (doc) => documents.save(req, doc);
     if (!enabled() || !hasSessionCookie(req)) return next();
     if (!/^\/(api|auth)\//.test(req.path)) return next();
     try {
@@ -310,20 +316,82 @@ function mountAccounts(app, opts = {}) {
 
   // ---- download my data -------------------------------------------------------
   api.get("/export", needUser, async (req, res) => {
-    const [{ data: profile }, { data: subs }, { data: consent }] = await Promise.all([
+    const [{ data: profile }, { data: subs }, { data: consent }, docs] = await Promise.all([
       req.sb.from("profiles").select("*").eq("id", req.user.id).maybeSingle(),
       req.sb.from("subscriptions").select("*").eq("user_id", req.user.id).maybeSingle(),
       req.sb.from("consent_log").select("topic, granted, source, wording, created_at").eq("user_id", req.user.id).order("created_at"),
+      documents.list(req).catch(() => []),
     ]);
     const out = {
       exported_at: new Date().toISOString(),
-      about: "Everything your Comquat account holds about you. Saved CVs and reports will appear here once that feature is live.",
+      about: docs.length
+        ? "Everything your Comquat account holds about you. Your saved documents are in the documents folder next to this file."
+        : "Everything your Comquat account holds about you.",
       account: { email: req.user.email },
       profile, subscriptions: subs, consent_history: consent || [],
+      saved_documents: docs.map((d) => ({
+        type: d.kind_label, title: d.title, job_title: d.job_title, company: d.company,
+        file: d.file_name, saved_at: d.created_at,
+      })),
     };
     res.set("Cache-Control", "no-store");
-    res.set("Content-Disposition", 'attachment; filename="my-comquat-data.json"');
-    res.json(out);
+    if (!docs.length) {
+      res.set("Content-Disposition", 'attachment; filename="my-comquat-data.json"');
+      return res.json(out);
+    }
+    // With saved documents, send one zip: the data file plus every document.
+    const files = [{ name: "my-comquat-data.json", data: JSON.stringify(out, null, 2) }];
+    const used = new Set();
+    for (const d of docs) {
+      const row = await documents.getOne(req, d.id);
+      if (!row) continue;
+      let name = `documents/${row.created_at.slice(0, 10)}_${row.file_name}`;
+      for (let n = 2; used.has(name); n++) name = `documents/${row.created_at.slice(0, 10)}_${n}_${row.file_name}`;
+      used.add(name);
+      try { files.push({ name, data: await documents.fileOf(req, row) }); }
+      catch (e) { console.error("[accounts] export file:", e.message); }
+    }
+    res.set("Content-Type", "application/zip");
+    res.set("Content-Disposition", 'attachment; filename="my-comquat-data.zip"');
+    res.send(zip(files));
+  });
+
+  // ---- saved documents ----------------------------------------------------------
+  api.get("/documents", needUser, async (req, res) => {
+    try {
+      res.set("Cache-Control", "no-store");
+      res.json({ documents: await documents.list(req) });
+    } catch (e) {
+      console.error("[accounts] documents list:", e.message);
+      res.status(500).json({ error: "We couldn't load your documents just now. Please try again." });
+    }
+  });
+
+  api.get("/documents/:id/file", needUser, async (req, res) => {
+    const row = await documents.getOne(req, req.params.id).catch(() => null);
+    if (!row) return res.status(404).json({ error: "We couldn't find that document." });
+    try {
+      const buf = await documents.fileOf(req, row);
+      res.set("Cache-Control", "no-store");
+      res.set("Content-Type", row.mime_type);
+      res.set("Content-Disposition", `attachment; filename="${row.file_name.replace(/"/g, "")}"`);
+      res.send(buf);
+    } catch (e) {
+      console.error("[accounts] documents file:", e.message);
+      res.status(500).json({ error: "We couldn't fetch that document just now. Please try again." });
+    }
+  });
+
+  api.post("/documents/:id/delete", writeLimit, requireJson, needUser, async (req, res) => {
+    const row = await documents.getOne(req, req.params.id).catch(() => null);
+    if (!row) return res.status(404).json({ error: "We couldn't find that document." });
+    try {
+      await documents.removeOne(req, row);
+      res.json({ ok: true, message: "Deleted. It's gone from your account for good." });
+    } catch (e) {
+      console.error("[accounts] documents delete:", e.message);
+      res.status(500).json({ error: "We couldn't delete that just now. Please try again." });
+    }
   });
 
   // ---- delete my account --------------------------------------------------------
@@ -334,6 +402,12 @@ function mountAccounts(app, opts = {}) {
     const admin = adminClient();
     if (!admin) return res.status(503).json({ error: "Account deletion isn't switched on yet. Please contact us through the-common-people.com and we'll do it for you." });
     const { id, email } = req.user;
+    // Saved documents first, so no file is left behind without an owner.
+    try { await documents.removeAllFor(admin, id); }
+    catch (e) {
+      console.error("[accounts] delete documents:", e.message);
+      return res.status(500).json({ error: "We couldn't delete your account just now. Please try again." });
+    }
     const { error } = await admin.auth.admin.deleteUser(id);
     if (error) return res.status(500).json({ error: "We couldn't delete your account just now. Please try again." });
     resendTopics.remove(email).catch((e) => console.error("[accounts] resend remove:", e.message));

@@ -9,18 +9,39 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/account/account.css?v=20261115-docs">
+<link rel="stylesheet" href="/account/account.css?v=20261116-tools">
 </head>
 <body data-page="me">
 <header class="cq-head">
   <a class="cq-brand" href="https://the-common-people.com/" aria-label="Comquat, from The Com'mon People"><img src="/account/img/comquat-logo.svg" alt="Comquat" width="140" height="32"><span class="cq-feat">Account</span></a>
-  <nav aria-label="Comquat apps"><a href="https://cv.the-common-people.com/">CV Rewrite</a><a href="https://the-common-people.com/prep-report.html">Interview Prep</a><button class="linkbtn" type="button" id="signout">Sign out</button></nav>
+  <nav aria-label="Comquat apps"><a href="https://cv.the-common-people.com/">CV Rewrite</a><a href="https://prep.the-common-people.com/">Interview Prep</a><button class="linkbtn" type="button" id="signout">Sign out</button></nav>
 </header>
 
 <main class="wide">
   <h1 id="hello">Your account</h1>
   <p class="lede">Everything about your Comquat account, in one place.</p>
   <div class="msg" id="msg" role="status" aria-live="polite"></div>
+
+  <section class="card tools">
+    <h2>Your tools</h2>
+    <p class="small">One sign-in for all three. Whatever you download while signed in lands in My documents below.</p>
+    <div class="tool-grid">
+      <a class="tool" href="https://cv.the-common-people.com/">
+        <strong>CV Rewrite</strong>
+        <span>Your CV rewritten for the job you're going for, without inventing a thing.</span>
+        <em>Rewrite a CV</em>
+      </a>
+      <a class="tool" href="https://prep.the-common-people.com/">
+        <strong>Interview Prep</strong>
+        <span>A report on the company, your opening pitch and the questions to get ready for.</span>
+        <em>Get a prep report</em>
+      </a>
+      <div class="tool tool-soon" aria-disabled="true">
+        <strong>Master CV builder <span class="soon-tag">Coming soon</span></strong>
+        <span>Build one full CV from scratch, then tailor it for every job.</span>
+      </div>
+    </div>
+  </section>
 
   <section class="card">
     <h2>Your details</h2>
@@ -34,7 +55,7 @@
   <section class="card" id="docs-card">
     <h2>My documents</h2>
     <p class="small">Every CV, cover letter and interview prep report you download while signed in is kept here, so you can grab it again whenever you need it. Only you can see them.</p>
-    <p class="small hidden" id="docs-empty">Nothing here yet. Your next download from <a href="https://cv.the-common-people.com/">CV Rewrite</a> or <a href="https://the-common-people.com/prep-report.html">Interview Prep</a> will appear here.</p>
+    <p class="small hidden" id="docs-empty">Nothing here yet. Your next download from <a href="https://cv.the-common-people.com/">CV Rewrite</a> or <a href="https://prep.the-common-people.com/">Interview Prep</a> will appear here.</p>
     <p class="small" id="docs-loading">Loading your documents…</p>
     <ul class="docs" id="docs-list"></ul>
   </section>

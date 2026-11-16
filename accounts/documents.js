@@ -20,6 +20,8 @@ const MIME_OK = new Set([
 ]);
 const MAX_BYTES = 25 * 1024 * 1024;
 
+// Placeholders like [MISSING] are never a real title or job.
+const real = (s) => (/\[[A-Z_ ]+\]/.test(String(s || "")) ? "" : String(s || ""));
 const clip = (s, n) => String(s == null ? "" : s).replace(/[\u0000-\u001f]/g, " ").replace(/\s+/g, " ").trim().slice(0, n);
 const safeFileName = (n) => clip(n, 150).replace(/[^\w.\- ]+/g, "_").replace(/\s+/g, "_") || "document";
 
@@ -66,9 +68,9 @@ async function save(req, doc) {
       const { error } = await req.sb.from("documents").insert({
         user_id: req.user.id,
         kind,
-        title: clip(doc.title || KINDS[kind], 200),
-        job_title: clip(doc.jobTitle, 200),
-        company: clip(doc.company, 200),
+        title: clip(real(doc.title) || KINDS[kind], 200),
+        job_title: clip(real(doc.jobTitle), 200),
+        company: clip(real(doc.company), 200),
         file_name: fileName,
         mime_type: mime,
         size_bytes: data.length,
@@ -98,8 +100,9 @@ async function list(req) {
   if (error) throw new Error(error.message);
   // Only these fields ever go to the browser (never the storage path).
   return (data || []).map((d) => ({
-    id: d.id, kind: d.kind, kind_label: KINDS[d.kind] || "Document", title: d.title,
-    job_title: d.job_title, company: d.company, file_name: d.file_name,
+    id: d.id, kind: d.kind, kind_label: KINDS[d.kind] || "Document",
+    title: real(d.title) || KINDS[d.kind] || "Document",
+    job_title: real(d.job_title), company: real(d.company), file_name: d.file_name,
     mime_type: d.mime_type, size_bytes: d.size_bytes, created_at: d.created_at,
   }));
 }

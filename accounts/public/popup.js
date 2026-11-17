@@ -20,6 +20,7 @@
     ".cqpop *{box-sizing:border-box}" +
     ".cqpop-x{position:absolute;top:10px;right:10px;width:38px;height:38px;border:0;border-radius:999px;background:transparent;color:#5B5F66;font-size:26px;line-height:1;cursor:pointer}" +
     ".cqpop-x:hover{background:#E9DCC8;color:#17191C}" +
+    ".cqpop-logo{display:block;height:34px;width:auto;margin:0 0 14px}" +
     ".cqpop-kick{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:#17191C;color:#FFF3E2;border-radius:999px;padding:5px 11px;margin:0 0 12px}" +
     ".cqpop h2{font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-weight:800;font-size:clamp(24px,5vw,30px);letter-spacing:-.02em;line-height:1.1;margin:0 0 8px;color:#17191C;text-transform:none}" +
     ".cqpop-lede{margin:0 0 16px;color:#5B5F66}" +
@@ -42,7 +43,8 @@
   var HTML =
     '<div class="cqpop" role="dialog" aria-modal="true" aria-labelledby="cqpop-title" aria-describedby="cqpop-lede">' +
     '<button type="button" class="cqpop-x" data-close aria-label="Close">&times;</button>' +
-    '<span class="cqpop-kick">Free Comquat account</span>' +
+    '<img class="cqpop-logo" src="/account/img/comquat-logo.svg" alt="Comquat" width="150" height="34">' +
+    '<span class="cqpop-kick">Free account</span>' +
     '<h2 id="cqpop-title">One sign-in. Three job seeker tools.</h2>' +
     '<p class="cqpop-lede" id="cqpop-lede">Sign up free and everything you make stays in one place, ready when the next job comes up.</p>' +
     "<ul>" +

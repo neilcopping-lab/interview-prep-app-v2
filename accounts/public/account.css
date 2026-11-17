@@ -5,12 +5,17 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--peel);color:var(--ink);font-family:'DM Sans',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.55}
 a{color:var(--leaf)}
-.cq-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid var(--pith);background:#fff}
+.cq-head{display:grid;grid-template-columns:minmax(0,1fr);row-gap:14px;padding:18px 24px 14px;border-bottom:1px solid var(--pith);background:#fff}
+.cq-head .cq-brand{justify-self:start}
 .cq-brand{display:inline-flex;align-items:center;gap:12px;text-decoration:none;line-height:1}
 .cq-brand img{height:32px;width:auto;display:block}
 .cq-feat{font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:var(--ink);color:var(--peel)}
-.cq-head nav{display:flex;gap:18px;font-size:13.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
-.cq-head nav a{color:var(--muted);text-decoration:none}
+.cq-head nav{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;font-size:13.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.cq-head nav a{color:var(--muted);text-decoration:none;white-space:nowrap}
+.cq-head nav a.active{color:var(--leaf)}
+.cq-head nav .linkbtn{font:inherit;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+@media (max-width:760px){.cq-head nav{flex-wrap:nowrap;overflow-x:auto;gap:18px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}.cq-head nav::-webkit-scrollbar{display:none}}
+@media (max-width:480px){.cq-head .cq-feat{display:none}}
 .cq-head nav a:hover{color:var(--leaf)}
 main{max-width:620px;margin:40px auto 64px;padding:0 20px}
 main.wide{max-width:760px}
@@ -67,5 +72,5 @@ a.tool:hover{border-color:var(--leaf);box-shadow:0 4px 14px rgba(31,107,69,.12)}
 .docs .btn{padding:8px 14px;font-size:14px}
 .hidden{display:none!important}
 footer{text-align:center;font-size:13.5px;color:var(--muted);padding:0 20px 40px}
-@media (max-width:560px){.cq-head nav{display:none}.card{padding:20px}.tabs{width:100%}.tabs button{flex:1;padding:8px 10px}}
+@media (max-width:560px){.card{padding:20px}.tabs{width:100%}.tabs button{flex:1;padding:8px 10px}}
 .sep{border:0;border-top:1px solid var(--pith);margin:24px 0}

@@ -25,6 +25,7 @@ const { createServerClient, parseCookieHeader, serialize } = require("@supabase/
 const { createClient } = require("@supabase/supabase-js");
 const resendTopics = require("./resendTopics");
 const documents = require("./documents");
+const inactive = require("./inactive");
 const { zip } = require("./zip");
 
 const TOPICS = ["loudspeaker", "guides", "dispatches", "apprenticeships"];
@@ -83,10 +84,32 @@ function clientFor(req, res) {
   });
 }
 
+let adminCache = null;
 function adminClient() {
   const c = cfg();
   if (!c.url || !c.secret) return null;
-  return createClient(c.url, c.secret, { auth: { persistSession: false, autoRefreshToken: false } });
+  if (!adminCache || adminCache.key !== c.url + c.secret) {
+    adminCache = { key: c.url + c.secret, client: createClient(c.url, c.secret, { auth: { persistSession: false, autoRefreshToken: false } }) };
+  }
+  return adminCache.client;
+}
+
+// Closes one account completely: saved documents, email choices, then the
+// account itself. Used by "Delete my account" and by the three-year clean-up.
+async function closeAccount(admin, user) {
+  await documents.removeAllFor(admin, user.id);
+  const { error } = await admin.auth.admin.deleteUser(user.id);
+  if (error) throw new Error(error.message);
+  if (user.email) resendTopics.remove(user.email).catch((e) => console.error("[accounts] resend remove:", e.message));
+}
+
+// Starts the three-year clean-up of unused accounts. Only one app should call
+// this (CV Rewrite does). Does nothing if accounts or the secret key aren't set.
+function startInactiveAccountJob(opts = {}) {
+  if (!enabled()) return null;
+  const admin = adminClient();
+  if (!admin) return null;
+  return inactive.start({ admin, closeAccount: (u) => closeAccount(admin, u), ...opts });
 }
 
 const hasSessionCookie = (req) => /(?:^|;\s*)sb-[^=]+-auth-token/.test(req.headers.cookie || "");
@@ -170,7 +193,10 @@ function mountAccounts(app, opts = {}) {
     try {
       req.sb = clientFor(req, res);
       const { data } = await req.sb.auth.getUser();
-      if (data && data.user) req.user = { id: data.user.id, email: data.user.email };
+      if (data && data.user) {
+        req.user = { id: data.user.id, email: data.user.email };
+        inactive.touch(adminClient(), req.user.id); // once a day at most
+      }
     } catch (_) { /* treat as signed out */ }
     next();
   });
@@ -316,11 +342,13 @@ function mountAccounts(app, opts = {}) {
 
   // ---- download my data -------------------------------------------------------
   api.get("/export", needUser, async (req, res) => {
-    const [{ data: profile }, { data: subs }, { data: consent }, docs] = await Promise.all([
+    const [{ data: profile }, { data: subs }, { data: consent }, docs, master] = await Promise.all([
       req.sb.from("profiles").select("*").eq("id", req.user.id).maybeSingle(),
       req.sb.from("subscriptions").select("*").eq("user_id", req.user.id).maybeSingle(),
       req.sb.from("consent_log").select("topic, granted, source, wording, created_at").eq("user_id", req.user.id).order("created_at"),
       documents.list(req).catch(() => []),
+      req.sb.from("master_cvs").select("data, updated_at").eq("user_id", req.user.id)
+        .then((r) => (r.data && r.data[0]) || null, () => null),
     ]);
     const out = {
       exported_at: new Date().toISOString(),
@@ -329,6 +357,7 @@ function mountAccounts(app, opts = {}) {
         : "Everything your Comquat account holds about you.",
       account: { email: req.user.email },
       profile, subscriptions: subs, consent_history: consent || [],
+      master_cv: master ? { last_saved: master.updated_at, cv: master.data } : null,
       saved_documents: docs.map((d) => ({
         type: d.kind_label, title: d.title, job_title: d.job_title, company: d.company,
         file: d.file_name, saved_at: d.created_at,
@@ -401,16 +430,12 @@ function mountAccounts(app, opts = {}) {
     }
     const admin = adminClient();
     if (!admin) return res.status(503).json({ error: "Account deletion isn't switched on yet. Please contact us through the-common-people.com and we'll do it for you." });
-    const { id, email } = req.user;
     // Saved documents first, so no file is left behind without an owner.
-    try { await documents.removeAllFor(admin, id); }
+    try { await closeAccount(admin, req.user); }
     catch (e) {
-      console.error("[accounts] delete documents:", e.message);
+      console.error("[accounts] delete:", e.message);
       return res.status(500).json({ error: "We couldn't delete your account just now. Please try again." });
     }
-    const { error } = await admin.auth.admin.deleteUser(id);
-    if (error) return res.status(500).json({ error: "We couldn't delete your account just now. Please try again." });
-    resendTopics.remove(email).catch((e) => console.error("[accounts] resend remove:", e.message));
     await req.sb.auth.signOut().catch(() => {});
     res.json({ ok: true, message: "Your account and everything in it has been deleted." });
   });
@@ -469,4 +494,4 @@ function mountAccounts(app, opts = {}) {
   return { enabled, safeNext, pagesPath };
 }
 
-module.exports = { mountAccounts, enabled, TOPICS, WORDING, _safeNext: safeNext };
+module.exports = { mountAccounts, enabled, startInactiveAccountJob, TOPICS, WORDING, _safeNext: safeNext };

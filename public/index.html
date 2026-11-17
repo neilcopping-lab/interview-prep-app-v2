@@ -119,7 +119,7 @@ input:focus,textarea:focus,select:focus{outline:3px solid #3E9A5F;outline-offset
 .cq-links a:hover,.cq-links a.active{color:#1F6B45}
 .cq-links a.cq-book{margin-left:auto;background:#FF8A1F;color:#17191C;font-weight:700;letter-spacing:.02em;padding:7px 16px;border-radius:999px;line-height:1.2}
 .cq-links a.cq-book:hover{background:#E2650B;color:#17191C}
-@media (max-width:1599px){.cq-links{flex-wrap:wrap}}
+@media (max-width:1599px){.cq-links{flex-wrap:wrap}.cq-links a.cq-book{position:absolute;top:16px;right:20px;margin:0}}
 @media (max-width:760px){
   .cq-links{flex-wrap:nowrap;overflow-x:auto;gap:18px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .cq-links::-webkit-scrollbar{display:none}
@@ -128,18 +128,26 @@ input:focus,textarea:focus,select:focus{outline:3px solid #3E9A5F;outline-offset
 }
 @media (max-width:480px){.site-header .cq-brand .cq-feat{display:none}}
 </style>
+<link rel="stylesheet" href="/account/fresh.css?v=20261118">
 </head>
-<body>
+<body class="fx fx-prep">
 <header class="site-header">
   <div><a class="cq-brand" href="https://the-common-people.com/prep-report.html" aria-label="Comquat Interview Prep, from The Com'mon People"><img src="/img/comquat-logo.svg" alt="Comquat" width="150" height="34"><span class="cq-feat ip">Interview Prep</span></a><span class="cq-by">from The Com'mon People</span></div>
   <nav class="cq-links" aria-label="Primary"><a href="https://the-common-people.com/guides.html">Guides</a><a href="https://the-common-people.com/dispatches.html">Dispatches</a><a href="https://the-common-people.com/loudspeaker.html">Loudspeaker</a><a href="https://the-common-people.com/apprenticeships.html">Apprenticeships</a><a href="https://the-common-people.com/commons-family.html">The Commons</a><a href="https://the-common-people.com/about.html">About</a><a class="active" href="https://the-common-people.com/prep-report.html" aria-current="page">Interview Prep</a><a href="https://cv.the-common-people.com">CV Rewrite</a><a href="https://cv.the-common-people.com/master.html">CV Builder</a><a data-account-link hidden href="https://cv.the-common-people.com/account/?next=https%3A%2F%2Fprep.the-common-people.com%2F">Sign in</a><a class="cq-book" href="https://cal.com/the-common-people.com/interviewcoaching" target="_blank" rel="noopener">Book a coaching call</a></nav>
 </header>
+<section class="fx-hero"><div class="fx-hero-in">
+  <p class="fx-kicker">Interview Prep &middot; Free, always</p>
+  <h1>Walk in ready.</h1>
+  <p class="fx-lede">Tell us about the interview, add the job description and your CV, and we'll build your own prep report: the company, your opening pitch, and the questions to get ready for.</p>
+  <ul class="fx-how"><li><span class="d">1</span>Tell us about the interview</li><li><span class="d">2</span>Practise your answers</li><li><span class="d">3</span>Get your report</li></ul>
+</div></section>
+<div class="fx-wrap"><nav class="fx-steps" id="fxSteps" aria-label="Steps"><span class="fx-s active" data-p="1">1 &middot; The interview</span><span class="fx-s" data-p="2">2 &middot; Your questions</span><span class="fx-s" data-p="3">3 &middot; Your report</span></nav></div>
 
 <main class="wizard">
 
   <!-- STEP 1: INTAKE -->
   <section id="panel1" class="panel">
-    <h2>Tell us about the interview</h2>
+    <h2><span class="fx-num">1</span>Tell us about the interview</h2>
     <p class="panel-intro">Add the job description and your CV, and we'll build your personalised prep report from them.</p>
 
     <div class="pricing-block">
@@ -217,7 +225,7 @@ input:focus,textarea:focus,select:focus{outline:3px solid #3E9A5F;outline-offset
 
   <!-- STEP 2: COMPETENCY QUESTIONS -->
   <section id="panel2" class="panel hidden">
-    <h2>Your competency questions</h2>
+    <h2><span class="fx-num">2</span>Your competency questions</h2>
 
     <div class="star-guide-callout">
       <h3>Answering with STAR stories</h3>
@@ -262,7 +270,7 @@ input:focus,textarea:focus,select:focus{outline:3px solid #3E9A5F;outline-offset
 
   <!-- STEP 3: REPORT -->
   <section id="panel3" class="panel hidden">
-    <h2>Your Interview Prep report</h2>
+    <h2><span class="fx-num">3</span>Your Interview Prep report</h2>
     <p id="genStatus" class="status-line"></p>
     <div id="genProgressBar" class="gen-progress-bar hidden"><div id="genProgressFill" class="gen-progress-fill"></div></div>
     <p id="genCountdown" class="gen-countdown"></p>
@@ -293,5 +301,10 @@ input:focus,textarea:focus,select:focus{outline:3px solid #3E9A5F;outline-offset
 <script src="app.js?v=20261115-docs"></script>
 <script src="/account/nav.js" defer></script>
 <script src="/account/popup.js?v=20261117" defer></script>
+<script>
+/* Step chips follow whichever panel is showing */
+(function(){var chips=document.querySelectorAll('#fxSteps .fx-s');function sync(){var cur=1;[1,2,3].forEach(function(i){var p=document.getElementById('panel'+i);if(p&&!p.classList.contains('hidden'))cur=i;});chips.forEach(function(c){var n=+c.getAttribute('data-p');c.classList.toggle('active',n===cur);c.classList.toggle('done',n<cur);});}
+[1,2,3].forEach(function(i){var p=document.getElementById('panel'+i);if(p)new MutationObserver(sync).observe(p,{attributes:true,attributeFilter:['class']});});sync();})();
+</script>
 </body>
 </html>

@@ -13,7 +13,7 @@ body.fx .fx-hero{padding:0!important;margin:0!important;background:var(--hero)!i
 body.fx .fx-hero:before,body.fx .fx-hero:after{content:"";position:absolute;border-radius:50%;pointer-events:none}
 body.fx .fx-hero:before{width:340px;height:340px;right:-90px;top:-150px;background:#fff;opacity:.18}
 body.fx .fx-hero:after{width:180px;height:180px;left:46%;bottom:-120px;background:var(--sun);opacity:.35}
-body.fx .fx-hero-in{max-width:1240px;margin:0 auto;padding:34px 24px 30px;position:relative;z-index:1}
+body.fx .fx-hero-in{max-width:1080px;box-sizing:border-box;margin:0 auto;padding:34px 24px 30px;position:relative;z-index:1}
 body.fx .fx-kicker{display:inline-block;font-weight:700;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;margin:0 0 10px;color:#fff}
 body.fx .fx-hero h1{color:#fff!important;font-size:clamp(34px,6vw,54px)!important;font-weight:800!important;line-height:1.05!important;margin:0 0 10px!important}
 body.fx .fx-hero p{color:#FFF4EA!important}
@@ -69,7 +69,7 @@ body.fx .record-btn.recording,body.fx .record-btn.is-recording{background:var(--
 body.fx footer,body.fx .site-footer{background:transparent}
 
 /* ---- shared layout bits ---- */
-body.fx .fx-wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+body.fx .fx-wrap{max-width:1080px;box-sizing:border-box;margin:0 auto;padding:0 24px}
 body.fx .fx-hero .lede{color:#FFF4EA!important;font-size:17.5px;max-width:640px;margin:0}
 
 /* ---- My account and sign-in ---- */
@@ -92,7 +92,7 @@ body.fx-account label{font-weight:700}
 
 /* ---- CV Rewrite tool ---- */
 body.fx-cv main section{background:transparent!important;border:0!important}
-body.fx-cv main .wrap{max-width:1000px}
+body.fx-cv main .wrap{max-width:1080px}
 body.fx-cv #accountBar{margin-top:18px}
 body.fx-cv .panel label{font-weight:700!important;font-size:14.5px!important;text-transform:none!important;letter-spacing:0!important;font-family:'DM Sans',sans-serif!important;margin-top:14px}
 body.fx-cv .q{background:linear-gradient(160deg,#FFF3E2,#FFE9E2)!important;border:2px solid #FFD9C2!important;border-radius:18px!important;padding:16px!important}
@@ -102,7 +102,7 @@ body.fx-cv .chip{border-radius:999px!important;font-weight:700}
 body.fx-cv .chip.on{background:var(--ink)!important;border-color:var(--ink)!important}
 
 /* ---- Interview Prep ---- */
-body.fx-prep main.wizard{max-width:1000px;margin:6px auto 60px;padding:0 20px}
+body.fx-prep main.wizard{max-width:1080px;box-sizing:border-box;margin:6px auto 60px;padding:0 24px}
 body.fx-prep .panel-intro{font-size:16px;color:#3F444B}
 body.fx-prep .pricing-block,body.fx-prep .upload-block,body.fx-prep .consent-block,body.fx-prep .star-guide-callout{background:#FFFDF9!important;border:2px solid var(--pith)!important;border-radius:16px!important;padding:16px!important;box-shadow:none!important}
 body.fx-prep .pricing-block{background:linear-gradient(140deg,#EAF7EF,#E3F1FF)!important;border:0!important}
@@ -135,10 +135,7 @@ body.fx-landing .vcard{border-radius:18px!important}
 body.fx-landing .bafig img{border-radius:14px;box-shadow:0 10px 26px rgba(23,25,28,.12)}
 body.fx-landing .bafig.after .lbl{color:#E8467C!important}
 
-body.fx-cv .fx-hero-in,body.fx-prep .fx-hero-in,body.fx-account .fx-hero-in{max-width:1000px;padding-left:20px;padding-right:20px}
-body.fx-account .fx-hero-in{max-width:760px}
 body.fx-prep .form-grid label,body.fx-prep .record-btn{text-transform:none!important;letter-spacing:0!important}
-body.fx-signin .fx-hero-in{max-width:620px}
 body.fx .steps,body.fx .fx-steps{flex-wrap:nowrap!important}
 body.fx-cv main>section{padding-top:8px!important}
 
@@ -155,3 +152,8 @@ body.fx-legal main .legal,body.fx-legal main.legal{background:#fff;border:1px so
 body.fx-legal main.legal{max-width:860px}
 body.fx-legal .legal h2{font-size:21px!important;margin-top:26px}
 @media (max-width:640px){body.fx-legal main .legal,body.fx-legal main.legal{padding:18px 16px!important}}
+
+/* Interview Prep header in the same 1080px container as the other Comquat pages */
+body.fx-prep .site-header{padding-left:max(24px,calc((100% - 1032px) / 2))!important;padding-right:max(24px,calc((100% - 1032px) / 2))!important}
+@media (max-width:1599px){body.fx-prep .cq-links a.cq-book{right:max(20px,calc((100% - 1032px) / 2))!important}}
+@media (max-width:700px){body.fx .fx-hero-in{padding:24px 18px 22px}}

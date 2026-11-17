@@ -50,7 +50,7 @@
     "<ul>" +
     "<li><strong>CV Rewrite</strong>Your CV rewritten for the job you're going for, without inventing a thing.</li>" +
     "<li><strong>Interview Prep</strong>A report on the company, your opening pitch and the questions to get ready for.</li>" +
-    "<li><strong>Master CV builder</strong>Build one full CV from scratch, then tailor it for every job with CV Rewrite.</li>" +
+    "<li><strong>CV Builder</strong>Build one full CV from scratch, then tailor it for every job with CV Rewrite. Yours in My account once you sign up.</li>" +
     "</ul>" +
     '<p class="cqpop-plus">Every CV, cover letter and prep report you download is saved in My documents. Your name and contact details never go to the AI, and you can delete your account whenever you like.</p>' +
     '<div class="cqpop-acts">' +

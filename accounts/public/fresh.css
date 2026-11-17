@@ -8,7 +8,8 @@ body.fx h1,body.fx h2,body.fx h3{font-family:'Bricolage Grotesque','DM Sans',san
 body.fx main a{color:#B44E00}
 
 /* ---- the banner ---- */
-body.fx .fx-hero{padding:0!important;margin:0!important;background:linear-gradient(120deg,#FF8A1F 0%,#F25C54 55%,#E8467C 100%)!important;color:#fff!important;position:relative;overflow:hidden;border:0!important}
+body.fx{--hero:linear-gradient(120deg,#FF8A1F 0%,#F25C54 55%,#E8467C 100%);--badge:linear-gradient(135deg,#FF8A1F,#F25C54);--app:#FF8A1F}
+body.fx .fx-hero{padding:0!important;margin:0!important;background:var(--hero)!important;color:#fff!important;position:relative;overflow:hidden;border:0!important}
 body.fx .fx-hero:before,body.fx .fx-hero:after{content:"";position:absolute;border-radius:50%;pointer-events:none}
 body.fx .fx-hero:before{width:340px;height:340px;right:-90px;top:-150px;background:#fff;opacity:.18}
 body.fx .fx-hero:after{width:180px;height:180px;left:46%;bottom:-120px;background:var(--sun);opacity:.35}
@@ -33,13 +34,13 @@ body.fx .steps .s,body.fx .fx-steps .fx-s{flex:0 0 auto;display:flex;align-items
 body.fx .steps .s.done,body.fx .fx-steps .fx-s.done{border-color:var(--leaf)!important;color:var(--leaf)!important;cursor:pointer}
 body.fx .steps .s.done:before,body.fx .fx-steps .fx-s.done:before{content:"✓";display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--leaf);color:#fff;font-size:12px}
 body.fx .steps .s.active,body.fx .fx-steps .fx-s.active{background:var(--ink)!important;color:#fff!important;border-color:var(--ink)!important}
-body.fx .steps .s.active:before,body.fx .fx-steps .fx-s.active:before{content:"";width:10px;height:10px;border-radius:50%;background:var(--kq)}
+body.fx .steps .s.active:before,body.fx .fx-steps .fx-s.active:before{content:"";width:10px;height:10px;border-radius:50%;background:var(--app)}
 
 /* ---- cards ---- */
 body.fx .panel,body.fx .fx-card,body.fx main .card{background:#fff!important;border:1px solid var(--pith)!important;border-radius:20px!important;padding:24px 26px!important;box-shadow:0 10px 30px rgba(23,25,28,.06)!important;color:var(--ink)!important}
 @media (max-width:640px){body.fx .panel,body.fx .fx-card,body.fx main .card{padding:18px 16px!important;border-radius:16px!important}}
 body.fx .panel h2,body.fx main .card>h2{display:flex;align-items:center;gap:12px;font-size:26px!important;font-weight:800!important;margin:0 0 10px!important}
-body.fx .fx-num{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--kq),var(--coral));color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 38px;transform:rotate(-4deg);font-family:'Bricolage Grotesque',sans-serif}
+body.fx .fx-num{width:38px;height:38px;border-radius:12px;background:var(--badge);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 38px;transform:rotate(-4deg);font-family:'Bricolage Grotesque',sans-serif}
 
 /* ---- tips and notices ---- */
 body.fx .notice,body.fx .fx-tip{background:var(--peel)!important;border:0!important;border-left:4px solid var(--kq)!important;border-radius:0 12px 12px 0!important;padding:11px 14px!important;color:#3F444B!important}
@@ -113,7 +114,7 @@ body.fx-prep .site-footer{padding:20px}
 /* ---- CV Rewrite landing page ---- */
 body.fx-landing main>section{background:var(--cream)!important;border:0!important}
 body.fx-landing main>section:nth-of-type(odd):not(.hero){background:#fff!important}
-body.fx-landing section.hero{background:linear-gradient(120deg,#FF8A1F 0%,#F25C54 55%,#E8467C 100%)!important;position:relative;overflow:hidden}
+body.fx-landing section.hero{background:var(--hero)!important;position:relative;overflow:hidden}
 body.fx-landing section.hero:before{content:"";position:absolute;width:380px;height:380px;right:-110px;top:-170px;border-radius:50%;background:#fff;opacity:.16}
 body.fx-landing section.hero:after{content:"";display:block!important;position:absolute;width:200px;height:200px;left:40%;bottom:-130px;border-radius:50%;background:#FFB547;opacity:.35!important}
 body.fx-landing section.hero .wrap{position:relative;z-index:1}
@@ -126,7 +127,7 @@ body.fx-landing section.hero .btn.ghost{background:rgba(255,255,255,.14)!importa
 body.fx-landing .cq-hero-img{border-radius:22px!important;box-shadow:0 18px 40px rgba(0,0,0,.25);transform:rotate(2deg);border:6px solid #fff}
 body.fx-landing .eyebrow{color:#B44E00!important;font-weight:700}
 body.fx-landing .tile{border:1px solid var(--pith)!important;border-radius:20px!important;box-shadow:0 10px 26px rgba(23,25,28,.06)!important;background:#fff!important}
-body.fx-landing .tile .n{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:44px;padding:0 8px;border-radius:13px;background:linear-gradient(135deg,#FF8A1F,#F25C54);color:#fff!important;transform:rotate(-4deg);font-family:'Bricolage Grotesque',sans-serif}
+body.fx-landing .tile .n{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:44px;padding:0 8px;border-radius:13px;background:var(--badge);color:#fff!important;transform:rotate(-4deg);font-family:'Bricolage Grotesque',sans-serif}
 body.fx-landing .tile .ic{color:#E8467C!important}
 body.fx-landing .whatlist p{background:#fff;border:1px solid var(--pith)!important;border-radius:16px;padding:14px 16px!important;box-shadow:0 6px 18px rgba(23,25,28,.05)}
 body.fx-landing .whatlist strong{color:#B44E00!important}
@@ -140,3 +141,17 @@ body.fx-prep .form-grid label,body.fx-prep .record-btn{text-transform:none!impor
 body.fx-signin .fx-hero-in{max-width:620px}
 body.fx .steps,body.fx .fx-steps{flex-wrap:nowrap!important}
 body.fx-cv main>section{padding-top:8px!important}
+
+/* ---- each app keeps its own colour: CV Rewrite orange, Interview Prep green, CV Builder orange-to-pink ---- */
+body.fx-cv,body.fx-landing{--hero:linear-gradient(120deg,#FF9A2E 0%,#FF7F14 45%,#E2650B 100%);--badge:linear-gradient(135deg,#FF8A1F,#E2650B);--app:#FF8A1F}
+body.fx-prep{--hero:linear-gradient(120deg,#3E9A5F 0%,#1F6B45 55%,#14492F 100%);--badge:linear-gradient(135deg,#3E9A5F,#1F6B45);--app:#3E9A5F}
+body.fx-prep .fx-hero:after{background:#FFB547;opacity:.3}
+body.fx-prep .fx-how li:nth-child(1) .d{background:#FFB547}
+body.fx-cv .fx-hero:after,body.fx-landing section.hero:after{background:#F25C54!important;opacity:.28!important}
+body.fx-landing .tile .ic,body.fx-landing .bafig.after .lbl{color:#E2650B!important}
+/* legal pages */
+body.fx-legal main{max-width:860px;margin:26px auto 60px!important;padding:0 20px!important}
+body.fx-legal main .legal,body.fx-legal main.legal{background:#fff;border:1px solid var(--pith);border-radius:20px;padding:26px 30px!important;box-shadow:0 10px 30px rgba(23,25,28,.06)}
+body.fx-legal main.legal{max-width:860px}
+body.fx-legal .legal h2{font-size:21px!important;margin-top:26px}
+@media (max-width:640px){body.fx-legal main .legal,body.fx-legal main.legal{padding:18px 16px!important}}

@@ -1,0 +1,142 @@
+/* Comquat "fresh" look: the bright style first made for the CV builder, shared by
+   CV Rewrite, Interview Prep and the account pages. Served at /account/fresh.css
+   by both apps. Load it LAST: every rule is scoped to body.fx so it wins over the
+   older page themes. */
+body.fx{--kq:#FF8A1F;--coral:#F25C54;--pink:#E8467C;--sun:#FFB547;--leaf:#1F6B45;--ink:#17191C;--peel:#FFF3E2;--pith:#E9DCC8;--cream:#FFF8EE;--muted:#5B5F66;--violet:#7C3AED;
+  background:var(--cream)!important;color:var(--ink)!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif!important}
+body.fx h1,body.fx h2,body.fx h3{font-family:'Bricolage Grotesque','DM Sans',sans-serif!important;color:var(--ink)!important;letter-spacing:-.01em}
+body.fx main a{color:#B44E00}
+
+/* ---- the banner ---- */
+body.fx .fx-hero{padding:0!important;margin:0!important;background:linear-gradient(120deg,#FF8A1F 0%,#F25C54 55%,#E8467C 100%)!important;color:#fff!important;position:relative;overflow:hidden;border:0!important}
+body.fx .fx-hero:before,body.fx .fx-hero:after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+body.fx .fx-hero:before{width:340px;height:340px;right:-90px;top:-150px;background:#fff;opacity:.18}
+body.fx .fx-hero:after{width:180px;height:180px;left:46%;bottom:-120px;background:var(--sun);opacity:.35}
+body.fx .fx-hero-in{max-width:1240px;margin:0 auto;padding:34px 24px 30px;position:relative;z-index:1}
+body.fx .fx-kicker{display:inline-block;font-weight:700;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;margin:0 0 10px;color:#fff}
+body.fx .fx-hero h1{color:#fff!important;font-size:clamp(34px,6vw,54px)!important;font-weight:800!important;line-height:1.05!important;margin:0 0 10px!important}
+body.fx .fx-hero p{color:#FFF4EA!important}
+body.fx .fx-lede{font-size:17.5px;max-width:640px;margin:0 0 16px}
+body.fx .fx-how{list-style:none;display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0}
+body.fx .fx-how li{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 14px 6px 6px;font-weight:700;font-size:14.5px;color:#fff}
+body.fx .fx-how .d{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:var(--ink);background:var(--sun)}
+body.fx .fx-how li:nth-child(2) .d{background:#fff}
+body.fx .fx-how li:nth-child(3) .d{background:#A7F3D0}
+body.fx .fx-how li:nth-child(4) .d{background:#C4B5FD}
+body.fx .fx-hero-sm .fx-hero-in{padding:26px 24px 24px}
+body.fx .fx-hero-sm h1{font-size:clamp(30px,5vw,44px)!important}
+@media (max-width:700px){body.fx .fx-how{display:none}body.fx .fx-hero h1{font-size:34px!important}body.fx .fx-lede{font-size:15.5px;margin:0}body.fx .fx-hero-in{padding:24px 18px 22px}}
+
+/* ---- step chips ---- */
+body.fx .fx-steps,body.fx .steps{display:flex!important;gap:8px!important;overflow-x:auto;padding:16px 2px 12px!important;margin:0 0 6px!important;scrollbar-width:thin;border:0!important;background:transparent!important}
+body.fx .steps .s,body.fx .fx-steps .fx-s{flex:0 0 auto;display:flex;align-items:center;gap:8px;border:2px solid var(--pith)!important;background:#fff!important;border-radius:999px!important;padding:7px 16px!important;font-weight:700!important;font-size:14px!important;color:var(--ink)!important;letter-spacing:0!important;text-transform:none!important;font-family:'DM Sans',sans-serif!important;cursor:default}
+body.fx .steps .s.done,body.fx .fx-steps .fx-s.done{border-color:var(--leaf)!important;color:var(--leaf)!important;cursor:pointer}
+body.fx .steps .s.done:before,body.fx .fx-steps .fx-s.done:before{content:"✓";display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--leaf);color:#fff;font-size:12px}
+body.fx .steps .s.active,body.fx .fx-steps .fx-s.active{background:var(--ink)!important;color:#fff!important;border-color:var(--ink)!important}
+body.fx .steps .s.active:before,body.fx .fx-steps .fx-s.active:before{content:"";width:10px;height:10px;border-radius:50%;background:var(--kq)}
+
+/* ---- cards ---- */
+body.fx .panel,body.fx .fx-card,body.fx main .card{background:#fff!important;border:1px solid var(--pith)!important;border-radius:20px!important;padding:24px 26px!important;box-shadow:0 10px 30px rgba(23,25,28,.06)!important;color:var(--ink)!important}
+@media (max-width:640px){body.fx .panel,body.fx .fx-card,body.fx main .card{padding:18px 16px!important;border-radius:16px!important}}
+body.fx .panel h2,body.fx main .card>h2{display:flex;align-items:center;gap:12px;font-size:26px!important;font-weight:800!important;margin:0 0 10px!important}
+body.fx .fx-num{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--kq),var(--coral));color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 38px;transform:rotate(-4deg);font-family:'Bricolage Grotesque',sans-serif}
+
+/* ---- tips and notices ---- */
+body.fx .notice,body.fx .fx-tip{background:var(--peel)!important;border:0!important;border-left:4px solid var(--kq)!important;border-radius:0 12px 12px 0!important;padding:11px 14px!important;color:#3F444B!important}
+body.fx .notice.hidden{display:none!important}
+
+/* ---- form fields ---- */
+body.fx input[type=text],body.fx input[type=email],body.fx input[type=url],body.fx input[type=tel],body.fx input[type=password],body.fx textarea,body.fx select{width:100%;box-sizing:border-box;font:inherit!important;font-size:16px!important;padding:11px 13px!important;border:2px solid var(--pith)!important;border-radius:12px!important;background:#fff!important;color:var(--ink)!important;transition:border-color .15s,box-shadow .15s}
+body.fx input:focus,body.fx textarea:focus,body.fx select:focus{outline:none!important;border-color:var(--kq)!important;box-shadow:0 0 0 4px rgba(255,138,31,.18)!important}
+body.fx input[type=file]{font:inherit;font-size:14px;padding:10px;border:2px dashed #F4C9A0;border-radius:12px;background:#FFF6EC;width:100%;box-sizing:border-box;color:var(--muted)}
+body.fx input[type=file]::file-selector-button{border:0;border-radius:999px;background:var(--ink);color:#fff;font:inherit;font-weight:700;padding:7px 14px;margin-right:10px;cursor:pointer}
+body.fx details>summary{cursor:pointer;font-weight:700!important;color:var(--leaf)!important;font-family:'DM Sans',sans-serif!important;text-transform:none!important;letter-spacing:0!important;font-size:15px!important}
+
+/* ---- buttons ---- */
+body.fx .btn,body.fx .btn-primary,body.fx .btn-secondary{border-radius:999px!important;font-weight:700!important;font-family:'DM Sans',sans-serif!important;letter-spacing:0!important;text-transform:none!important}
+body.fx .btn.accent,body.fx main .btn-primary,body.fx .panel .btn-primary,body.fx .btn:not(.ghost):not(.btn-ghost):not(.btn-danger){background:var(--leaf)!important;color:#fff!important;border:0!important;box-shadow:0 6px 16px rgba(31,107,69,.22)!important;padding:12px 22px!important}
+body.fx .btn.accent:hover,body.fx main .btn-primary:hover{background:#17573a!important}
+body.fx .btn.ghost,body.fx .btn-ghost,body.fx .btn-secondary{background:#fff!important;color:var(--ink)!important;border:2px solid var(--pith)!important;box-shadow:none!important}
+body.fx .btn.ghost:hover,body.fx .btn-ghost:hover,body.fx .btn-secondary:hover{border-color:var(--leaf)!important;color:var(--leaf)!important}
+body.fx .fx-spark{background:linear-gradient(120deg,var(--violet),var(--pink))!important;color:#fff!important;box-shadow:0 6px 16px rgba(124,58,237,.28)!important;border:0!important}
+/* record buttons */
+body.fx .record-btn,body.fx [data-rec]{display:inline-flex!important;align-items:center;gap:6px;border:2px solid var(--coral)!important;background:#fff!important;color:#C2362E!important;border-radius:999px!important;padding:7px 14px!important;font:inherit!important;font-weight:700!important;font-size:14px!important;cursor:pointer;box-shadow:none!important}
+body.fx .record-btn:hover,body.fx [data-rec]:hover{background:#FFF0EF!important}
+body.fx .record-btn.recording,body.fx .record-btn.is-recording{background:var(--coral)!important;color:#fff!important}
+
+/* ---- footer ---- */
+body.fx footer,body.fx .site-footer{background:transparent}
+
+/* ---- shared layout bits ---- */
+body.fx .fx-wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+body.fx .fx-hero .lede{color:#FFF4EA!important;font-size:17.5px;max-width:640px;margin:0}
+
+/* ---- My account and sign-in ---- */
+body.fx-account main{margin-top:26px}
+body.fx-account .tools .tool-grid{gap:12px}
+body.fx-account .tool{border:0!important;border-radius:18px!important;padding:16px!important;color:#fff!important;box-shadow:0 8px 22px rgba(23,25,28,.12);transition:transform .15s}
+body.fx-account .tool:hover{transform:translateY(-3px)}
+body.fx-account .tool:nth-child(1){background:linear-gradient(140deg,#FF8A1F,#F25C54)!important}
+body.fx-account .tool:nth-child(2){background:linear-gradient(140deg,#1F6B45,#3E9A5F)!important}
+body.fx-account .tool:nth-child(3){background:linear-gradient(140deg,#7C3AED,#E8467C)!important}
+body.fx-account .tool strong,body.fx-account .tool span{color:#fff!important}
+body.fx-account .tool span{opacity:.92}
+body.fx-account .tool em{background:#fff!important;color:var(--ink)!important;border-radius:999px;padding:7px 14px!important;font-style:normal;font-weight:700;display:inline-block;margin-top:10px}
+body.fx-account .tabs{background:#fff;border:2px solid var(--pith);border-radius:999px;padding:4px}
+body.fx-account .tabs button{border-radius:999px!important;font-weight:700}
+body.fx-account .tabs button[aria-selected="true"]{background:var(--ink)!important;color:#fff!important}
+body.fx-account .check{background:var(--peel);border-radius:12px;padding:10px 12px;margin:0 0 8px}
+body.fx-account .docs li{border-radius:12px}
+body.fx-account label{font-weight:700}
+
+/* ---- CV Rewrite tool ---- */
+body.fx-cv main section{background:transparent!important;border:0!important}
+body.fx-cv main .wrap{max-width:1000px}
+body.fx-cv #accountBar{margin-top:18px}
+body.fx-cv .panel label{font-weight:700!important;font-size:14.5px!important;text-transform:none!important;letter-spacing:0!important;font-family:'DM Sans',sans-serif!important;margin-top:14px}
+body.fx-cv .q{background:linear-gradient(160deg,#FFF3E2,#FFE9E2)!important;border:2px solid #FFD9C2!important;border-radius:18px!important;padding:16px!important}
+body.fx-cv .design-card{border-radius:14px!important;overflow:hidden;box-shadow:0 4px 14px rgba(23,25,28,.08)}
+body.fx-cv .previewbox{border-radius:16px!important;box-shadow:0 8px 24px rgba(23,25,28,.1)}
+body.fx-cv .chip{border-radius:999px!important;font-weight:700}
+body.fx-cv .chip.on{background:var(--ink)!important;border-color:var(--ink)!important}
+
+/* ---- Interview Prep ---- */
+body.fx-prep main.wizard{max-width:1000px;margin:6px auto 60px;padding:0 20px}
+body.fx-prep .panel-intro{font-size:16px;color:#3F444B}
+body.fx-prep .pricing-block,body.fx-prep .upload-block,body.fx-prep .consent-block,body.fx-prep .star-guide-callout{background:#FFFDF9!important;border:2px solid var(--pith)!important;border-radius:16px!important;padding:16px!important;box-shadow:none!important}
+body.fx-prep .pricing-block{background:linear-gradient(140deg,#EAF7EF,#E3F1FF)!important;border:0!important}
+body.fx-prep .upload-block{border-style:dashed!important;border-color:#F4C9A0!important;background:#FFF6EC!important}
+body.fx-prep .form-grid label{font-weight:700;font-size:14.5px}
+body.fx-prep .tooltip-trigger{background:var(--kq)!important;color:#fff!important}
+body.fx-prep .site-footer{padding:20px}
+
+/* ---- CV Rewrite landing page ---- */
+body.fx-landing main>section{background:var(--cream)!important;border:0!important}
+body.fx-landing main>section:nth-of-type(odd):not(.hero){background:#fff!important}
+body.fx-landing section.hero{background:linear-gradient(120deg,#FF8A1F 0%,#F25C54 55%,#E8467C 100%)!important;position:relative;overflow:hidden}
+body.fx-landing section.hero:before{content:"";position:absolute;width:380px;height:380px;right:-110px;top:-170px;border-radius:50%;background:#fff;opacity:.16}
+body.fx-landing section.hero:after{content:"";display:block!important;position:absolute;width:200px;height:200px;left:40%;bottom:-130px;border-radius:50%;background:#FFB547;opacity:.35!important}
+body.fx-landing section.hero .wrap{position:relative;z-index:1}
+body.fx-landing section.hero h1{color:#fff!important}
+body.fx-landing section.hero .eyebrow{display:inline-block;color:#fff!important;background:rgba(255,255,255,.2);border-radius:999px;padding:5px 12px}
+body.fx-landing section.hero .lead,body.fx-landing section.hero .fine,body.fx-landing section.hero .muted{color:#FFF4EA!important}
+body.fx-landing section.hero .price-flag{background:#fff!important;color:#B44E00!important}
+body.fx-landing section.hero .btn.accent{background:#17191C!important;box-shadow:0 8px 20px rgba(0,0,0,.25)!important}
+body.fx-landing section.hero .btn.ghost{background:rgba(255,255,255,.14)!important;color:#fff!important;border-color:rgba(255,255,255,.55)!important}
+body.fx-landing .cq-hero-img{border-radius:22px!important;box-shadow:0 18px 40px rgba(0,0,0,.25);transform:rotate(2deg);border:6px solid #fff}
+body.fx-landing .eyebrow{color:#B44E00!important;font-weight:700}
+body.fx-landing .tile{border:1px solid var(--pith)!important;border-radius:20px!important;box-shadow:0 10px 26px rgba(23,25,28,.06)!important;background:#fff!important}
+body.fx-landing .tile .n{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:44px;padding:0 8px;border-radius:13px;background:linear-gradient(135deg,#FF8A1F,#F25C54);color:#fff!important;transform:rotate(-4deg);font-family:'Bricolage Grotesque',sans-serif}
+body.fx-landing .tile .ic{color:#E8467C!important}
+body.fx-landing .whatlist p{background:#fff;border:1px solid var(--pith)!important;border-radius:16px;padding:14px 16px!important;box-shadow:0 6px 18px rgba(23,25,28,.05)}
+body.fx-landing .whatlist strong{color:#B44E00!important}
+body.fx-landing .vcard{border-radius:18px!important}
+body.fx-landing .bafig img{border-radius:14px;box-shadow:0 10px 26px rgba(23,25,28,.12)}
+body.fx-landing .bafig.after .lbl{color:#E8467C!important}
+
+body.fx-cv .fx-hero-in,body.fx-prep .fx-hero-in,body.fx-account .fx-hero-in{max-width:1000px;padding-left:20px;padding-right:20px}
+body.fx-account .fx-hero-in{max-width:760px}
+body.fx-prep .form-grid label,body.fx-prep .record-btn{text-transform:none!important;letter-spacing:0!important}
+body.fx-signin .fx-hero-in{max-width:620px}
+body.fx .steps,body.fx .fx-steps{flex-wrap:nowrap!important}
+body.fx-cv main>section{padding-top:8px!important}

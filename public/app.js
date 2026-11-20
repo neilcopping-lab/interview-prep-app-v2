@@ -925,3 +925,31 @@ on("confirmBooking", "click", async () => {
     await finalizeBooking({ slot: chosenSlot, name, email, companyName: state.companyName }, statusEl);
   }
 });
+
+// ---- Signed-in bar and prefill (UX review, Nov 2026) --------------------------------
+// One Comquat login across CV Rewrite and Interview Prep: if you're signed in,
+// say so, link to My account, and fill in your name and email so you don't retype them.
+(function () {
+  function onReady(fn) { if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn); else fn(); }
+  onReady(function () {
+    fetch("/api/account/me", { credentials: "same-origin", cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (me) {
+        if (!me || !me.signedIn) return;
+        var nameEl = document.getElementById("candidateName");
+        var emailEl = document.getElementById("candidateEmail");
+        if (nameEl && !nameEl.value && me.name) nameEl.value = me.name;
+        if (emailEl && !emailEl.value && me.email) emailEl.value = me.email;
+        var steps = document.getElementById("fxSteps");
+        if (steps && !document.getElementById("cqSignedIn")) {
+          var bar = document.createElement("div");
+          bar.id = "cqSignedIn";
+          bar.className = "cq-signed-in";
+          bar.innerHTML = 'Signed in as <strong></strong> &middot; Free, always <a href="/account/me.html">My account</a>';
+          bar.querySelector("strong").textContent = me.email;
+          steps.parentNode.insertBefore(bar, steps);
+        }
+      })
+      .catch(function () { /* accounts switched off or offline: carry on as a guest */ });
+  });
+})();

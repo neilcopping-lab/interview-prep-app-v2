@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Anton&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=20261121-ux">
 <style id="cp-2026-theme">
 /* ================= 2026 LIGHT RE-THEME - matches the-common-people.com ================= */
 :root{
@@ -139,7 +139,6 @@ input:focus,textarea:focus,select:focus{outline:3px solid #3E9A5F;outline-offset
   <p class="fx-kicker">Interview Prep &middot; Free, always</p>
   <h1>Walk in ready.</h1>
   <p class="fx-lede">Tell us about the interview, add the job description and your CV, and we'll build your own prep report: the company, your opening pitch, and the questions to get ready for.</p>
-  <ul class="fx-how"><li><span class="d">1</span>Tell us about the interview</li><li><span class="d">2</span>Practise your answers</li><li><span class="d">3</span>Get your report</li></ul>
 </div></section>
 <div class="fx-wrap"><nav class="fx-steps" id="fxSteps" aria-label="Steps"><span class="fx-s active" data-p="1">1 &middot; The interview</span><span class="fx-s" data-p="2">2 &middot; Your questions</span><span class="fx-s" data-p="3">3 &middot; Your report</span></nav></div>
 
@@ -158,15 +157,15 @@ input:focus,textarea:focus,select:focus{outline:3px solid #3E9A5F;outline-offset
     <div class="form-grid">
       <label>
         Your name
-        <input type="text" id="candidateName" placeholder="e.g. Neil Copping">
+        <input type="text" id="candidateName" placeholder="e.g. Sam Taylor" autocomplete="name">
       </label>
       <label>
         Your email
-        <input type="email" id="candidateEmail" placeholder="e.g. neil@example.com">
+        <input type="email" id="candidateEmail" placeholder="e.g. sam@example.com" autocomplete="email">
       </label>
       <label class="form-grid-full">
         Company you're interviewing with
-        <input type="text" id="companyName" placeholder="e.g. Driver Require">
+        <input type="text" id="companyName" placeholder="e.g. Hertfordshire County Council">
       </label>
       <label>
         A personal detail to open with
@@ -195,16 +194,16 @@ input:focus,textarea:focus,select:focus{outline:3px solid #3E9A5F;outline-offset
 
     <div class="upload-block">
       <h3>Job description</h3>
-      <input type="file" id="jdFile" accept=".pdf,.docx,.txt">
+      <input type="file" id="jdFile" aria-label="Upload the job description (PDF, Word or text file)" accept=".pdf,.docx,.txt">
       <p class="upload-or">or paste it below</p>
-      <textarea id="jobDescription" rows="6" placeholder="Paste the job description here"></textarea>
+      <textarea id="jobDescription" aria-label="Or paste the job description" rows="6" placeholder="Paste the job description here"></textarea>
     </div>
 
     <div class="upload-block">
       <h3>Your CV</h3>
-      <input type="file" id="cvFile" accept=".pdf,.docx,.txt">
+      <input type="file" id="cvFile" aria-label="Upload your CV (PDF, Word or text file)" accept=".pdf,.docx,.txt">
       <p class="upload-or">or paste it below</p>
-      <textarea id="cvText" rows="6" placeholder="Paste your CV here"></textarea>
+      <textarea id="cvText" aria-label="Or paste your CV" rows="6" placeholder="Paste your CV here"></textarea>
     </div>
 
     <div class="consent-block">
@@ -298,7 +297,7 @@ input:focus,textarea:focus,select:focus{outline:3px solid #3E9A5F;outline-offset
   <a href="https://cv.the-common-people.com/safeguarding.html" target="_blank" rel="noopener">Keeping you safe</a>
 </footer>
 
-<script src="app.js?v=20261120-ai"></script>
+<script src="app.js?v=20261121-ux"></script>
 <script src="/account/nav.js" defer></script>
 <script src="/account/popup.js?v=20261118" defer></script>
 <script>

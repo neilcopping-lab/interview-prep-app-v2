@@ -528,6 +528,7 @@ async function generateAndShowReport(stripeSessionId) {
     state.generatedReport = report; // reused by downloadReportAsDocx so we don't pay for every AI call (and the cover image) twice
     renderReport(report);
     stopProgress();
+    try { if (window.va) window.va("event", "Prep report ready", {}); } catch (e) {}
     // aiPowered reflects whether a Claude call actually returned real
     // content, not just whether a key is set, so this message stays
     // accurate even when a key is present but invalid/expired/rate-limited.
@@ -952,4 +953,10 @@ on("confirmBooking", "click", async () => {
       })
       .catch(function () { /* accounts switched off or offline: carry on as a guest */ });
   });
+})();
+
+// Anonymous counts for Savri (no personal details): did someone start, and did they finish?
+(function () {
+  var b = document.getElementById("toStep2");
+  if (b) b.addEventListener("click", function () { try { if (window.va) window.va("event", "Prep started", {}); } catch (e) {} });
 })();

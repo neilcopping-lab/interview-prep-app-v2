@@ -358,6 +358,9 @@ function mountAccounts(app, opts = {}) {
       account: { email: req.user.email },
       profile, subscriptions: subs, consent_history: consent || [],
       master_cv: master ? { last_saved: master.updated_at, cv: master.data } : null,
+      // Your job hunt and story bank (empty until those tables exist).
+      job_hunt: await req.sb.from("job_hunt").select("*").eq("user_id", req.user.id).then((r) => r.data || [], () => []),
+      stories: await req.sb.from("stories").select("*").eq("user_id", req.user.id).then((r) => r.data || [], () => []),
       saved_documents: docs.map((d) => ({
         type: d.kind_label, title: d.title, job_title: d.job_title, company: d.company,
         file: d.file_name, saved_at: d.created_at,

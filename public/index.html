@@ -306,5 +306,6 @@ input:focus,textarea:focus,select:focus{outline:3px solid #3E9A5F;outline-offset
 (function(){var chips=document.querySelectorAll('#fxSteps .fx-s');function sync(){var cur=1;[1,2,3].forEach(function(i){var p=document.getElementById('panel'+i);if(p&&!p.classList.contains('hidden'))cur=i;});chips.forEach(function(c){var n=+c.getAttribute('data-p');c.classList.toggle('active',n===cur);c.classList.toggle('done',n<cur);});}
 [1,2,3].forEach(function(i){var p=document.getElementById('panel'+i);if(p)new MutationObserver(sync).observe(p,{attributes:true,attributeFilter:['class']});});sync();})();
 </script>
+<script src="/easyread.js?v=20261121" defer></script>
 </body>
 </html>

@@ -122,11 +122,11 @@ credit, rate limited, etc.) rather than failing silently.
    want new-booking alerts sent to (e.g. your own address) → save.
 4. That's enough to work immediately — emails will send from Resend's shared
    `onboarding@resend.dev` address, which needs no setup but may land in spam more
-   often. To send from your own address instead (e.g. `bookings@thecommonpeople.co.uk`),
+   often. To send from your own address instead (e.g. `bookings@the-common-people.com`),
    verify that domain under **Domains** in Resend (it'll give you DNS records to add
    in Cloudflare, same place you manage the site's other DNS), then set a third
    variable, `RESEND_FROM_EMAIL`, to something like
-   `The Com'mon People <bookings@thecommonpeople.co.uk>`.
+   `The Com'mon People <bookings@the-common-people.com>`.
 5. Test it: book a coaching slot through the app (with a real email address of your
    own) and confirm both the candidate-side confirmation and your own notification
    actually arrive.
@@ -170,10 +170,10 @@ No DNS work needed. The address bar will show the Render URL once someone clicks
 through, which is a bit less polished but works today with zero extra setup.
 
 **Option B — cleaner: put it on its own subdomain of your real domain,** e.g.
-`prep.thecommonpeople.co.uk`, so it never shows an `onrender.com` address at all:
+`prep.the-common-people.com`, so it never shows an `onrender.com` address at all:
 
 1. In Render: your service → **Settings → Custom Domains** → add
-   `prep.thecommonpeople.co.uk` (or whatever subdomain you'd like). Render will show
+   `prep.the-common-people.com` (or whatever subdomain you'd like). Render will show
    you a target hostname to point at (something like `your-service.onrender.com`).
 2. In Cloudflare: DNS → add a **CNAME** record — Name: `prep` (or your chosen
    subdomain), Target: the hostname Render gave you in step 1. Leave proxy status as
@@ -182,7 +182,7 @@ through, which is a bit less polished but works today with zero extra setup.
    certificate for the domain).
 3. Wait for DNS to propagate (usually minutes, sometimes up to an hour) and for
    Render to show the custom domain as verified with a certificate issued.
-4. Then use Option A's link, but pointing at `https://prep.thecommonpeople.co.uk`
+4. Then use Option A's link, but pointing at `https://prep.the-common-people.com`
    instead of the onrender.com address.
 
 Either way, nothing about the app itself needs to change — this is purely about how

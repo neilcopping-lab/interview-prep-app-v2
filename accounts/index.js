@@ -423,6 +423,9 @@ function mountAccounts(app, opts = {}) {
     }
   });
 
+  // ---- your job hunt and story bank (shared with CV Rewrite) ---------------------
+  require("./jobhunt").mountJobHunt(api, { needUser, writeLimit, requireJson });
+
   // ---- delete my account --------------------------------------------------------
   api.post("/delete", authLimit, requireJson, needUser, async (req, res) => {
     if (String(req.body.confirm || "").trim().toUpperCase() !== "DELETE") {

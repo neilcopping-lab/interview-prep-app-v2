@@ -527,6 +527,7 @@ async function generateAndShowReport(stripeSessionId) {
     if (!res.ok) throw new Error(report.error || "Could not generate report");
     state.generatedReport = report; // reused by downloadReportAsDocx so we don't pay for every AI call (and the cover image) twice
     renderReport(report);
+    try { if (window.cqExtras) window.cqExtras(report); } catch (e) { console.error(e); }
     stopProgress();
     try { if (window.va) window.va("event", "Prep report ready", {}); } catch (e) {}
     // aiPowered reflects whether a Claude call actually returned real
@@ -959,4 +960,141 @@ on("confirmBooking", "click", async () => {
 (function () {
   var b = document.getElementById("toStep2");
   if (b) b.addEventListener("click", function () { try { if (window.va) window.va("event", "Prep started", {}); } catch (e) {} });
+})();
+
+
+// ---- Job hunt, on-the-day card, practise out loud, story bank (Nov 2026) ------------
+(function () {
+  var JOB = null;
+  function onReady(fn) { if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn); else fn(); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function post(u, b) { return fetch(u, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(b || {}) }).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "Something went wrong."); return j; }); }); }
+
+  // Coming from a card in Your job hunt: fill in the company, advert and CV.
+  onReady(function () {
+    var id = new URLSearchParams(location.search).get("job");
+    if (!/^[0-9a-f-]{36}$/i.test(id || "")) return;
+    fetch("/api/account/jobs/" + id, { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (!d || !d.job) return;
+      JOB = d.job;
+      var f = function (elId, v) { var e = document.getElementById(elId); if (e && v && !e.value.trim()) e.value = v; };
+      f("companyName", d.job.company); f("jobDescription", d.job.advert); f("cvText", d.job.cv_text);
+      var steps = document.getElementById("fxSteps");
+      if (steps) { var n = document.createElement("p"); n.className = "status-line"; n.textContent = "We've brought across the advert and CV from your job hunt" + (d.job.title ? " for " + d.job.title : "") + ". Check them, then carry on."; steps.parentNode.insertBefore(n, steps.nextSibling); }
+    }).catch(function () {});
+  });
+
+  function flatQuestions(r) {
+    var q = r.questionsToAsk || {}; var out = [];
+    Object.keys(q).forEach(function (k) { (q[k] || []).forEach(function (x) { out.push(typeof x === "string" ? x : (x && (x.question || x.text)) || ""); }); });
+    return out.filter(Boolean);
+  }
+  function icsFile(title, start, place, notes) {
+    var d = new Date(start); if (isNaN(d)) return null;
+    var z = function (t) { return t.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, ""); };
+    var end = new Date(d.getTime() + 60 * 60 * 1000);
+    var line = function (s) { return String(s || "").replace(/[\\,;]/g, function (m) { return "\\" + m; }).replace(/\n/g, "\\n"); };
+    return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Comquat//Interview Prep//EN", "BEGIN:VEVENT", "UID:" + Date.now() + "@prep.the-common-people.com", "DTSTAMP:" + z(new Date()), "DTSTART:" + z(d), "DTEND:" + z(end),
+      "SUMMARY:" + line(title), "LOCATION:" + line(place), "DESCRIPTION:" + line(notes),
+      "BEGIN:VALARM", "TRIGGER:-PT2H", "ACTION:DISPLAY", "DESCRIPTION:" + line(title), "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+  }
+
+  window.cqExtras = function (r) {
+    var host = document.getElementById("reportPreview"); if (!host) return;
+    var old = document.getElementById("cqExtras"); if (old) old.remove();
+    var wrap = document.createElement("div"); wrap.id = "cqExtras";
+    var stars = (r.starAnswers || []).slice(0, 3);
+    var qs = flatQuestions(r).slice(0, 2);
+    var company = r.companyName || (JOB && JOB.company) || "the company";
+    var pitch = r.pitch && r.pitch.bread1 ? String(r.pitch.bread1).replace(/\[AI UPGRADE POINT[^\]]*\]/g, "").slice(0, 400) : "";
+
+    // The on-the-day card.
+    wrap.innerHTML = '<div class="report-block" id="dayCard"><h3>Your on-the-day card</h3><p class="small">Everything you need on one screen. Save it to your phone, or add the interview to your calendar.</p>' +
+      '<div style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))"><label>Date and time<input type="datetime-local" id="dcWhen"></label><label>Where (or the video link)<input type="text" id="dcWhere" maxlength="300"></label></div>' +
+      '<label>Who you\'re meeting <span class="small">(optional)</span><input type="text" id="dcWho" maxlength="200"></label>' +
+      '<div style="background:#F3FAF5;border-radius:12px;padding:14px 16px;margin-top:10px"><p><b>' + esc(company) + '</b></p>' +
+      (pitch ? "<p><b>Open with:</b> " + esc(pitch) + "</p>" : "") +
+      (stars.length ? "<p><b>Your three stories:</b></p><ol>" + stars.map(function (a) { return "<li>" + esc(a.question) + "</li>"; }).join("") + "</ol>" : "") +
+      (qs.length ? "<p><b>Ask them:</b></p><ul>" + qs.map(function (q) { return "<li>" + esc(q) + "</li>"; }).join("") + "</ul>" : "") +
+      "<p><b>If nerves kick in:</b> breathe out slowly, take a sip of water, and remember they invited you because they want you to do well.</p></div>" +
+      '<div class="btn-row" style="margin-top:10px"><button type="button" class="btn-primary" id="dcCal">Add to my calendar</button><button type="button" class="btn-secondary" id="dcPrint">Print or save as PDF</button></div></div>';
+
+    // Practise out loud.
+    var pq = (r.starAnswers || []).map(function (a) { return a.question; }).filter(Boolean);
+    wrap.innerHTML += '<div class="report-block" id="practise"><h3>Practise out loud</h3><p class="small">Pick a question, answer it as if you were in the room, and get kind feedback on what you said. Only your words are checked, never how you look or sound. Try as many times as you like.</p>' +
+      '<label>Question<select id="prQ">' + pq.map(function (q, i) { return '<option value="' + i + '">' + esc(q) + "</option>"; }).join("") + "</select></label>" +
+      '<div class="btn-row"><button type="button" class="btn-primary" id="prRec">Record my answer</button><span id="prTimer" class="small"></span></div>' +
+      '<label>Or type your answer<textarea id="prText" rows="5" placeholder="Your answer appears here after recording. You can also type it."></textarea></label>' +
+      '<button type="button" class="btn-primary" id="prGo">Get feedback</button><div id="prOut"></div></div>';
+
+    // Save the STAR answers to the story bank.
+    if (stars.length) wrap.innerHTML += '<div class="report-block hidden" id="toBank"><h3>Keep these stories</h3><p class="small">Save your shaped answers to Your story bank in My account, ready for your next CV, cover letter or interview.</p><button type="button" class="btn-primary" id="bankGo">Save ' + (r.starAnswers.length) + ' stories to my story bank</button><p id="bankMsg" class="small"></p></div>';
+    host.parentNode.insertBefore(wrap, host.nextSibling);
+
+    document.getElementById("dcCal").onclick = function () {
+      var when = document.getElementById("dcWhen").value;
+      if (!when) { document.getElementById("dcWhen").focus(); return; }
+      var notes = "Open with: " + pitch + "\n\nStories:\n" + stars.map(function (a, i) { return (i + 1) + ". " + a.question; }).join("\n") + "\n\nAsk them:\n" + qs.join("\n");
+      var ics = icsFile("Interview: " + company, when, document.getElementById("dcWhere").value, notes);
+      if (!ics) return;
+      var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = "interview.ics"; a.click();
+      if (JOB) post("/api/account/jobs/" + JOB.id, { status: "interview", interviewAt: new Date(when).toISOString() }).catch(function () {});
+    };
+    document.getElementById("dcPrint").onclick = function () {
+      var w = window.open("", "_blank"); if (!w) return;
+      w.document.write('<!doctype html><meta charset="utf-8"><title>On-the-day card</title><body style="font-family:Arial,sans-serif;max-width:640px;margin:20px auto;line-height:1.5">' + document.getElementById("dayCard").innerHTML.replace(/<div class="btn-row"[\s\S]*$/, "") + "</body>");
+      w.document.close(); w.focus(); w.print();
+    };
+
+    // Recording uses the same transcription as the main questions.
+    var rec = null, chunks = [], t0 = 0, tick = null;
+    document.getElementById("prRec").onclick = function () {
+      var b = this;
+      if (rec && rec.state === "recording") { rec.stop(); return; }
+      if (!navigator.mediaDevices || !window.MediaRecorder) { document.getElementById("prOut").innerHTML = '<p class="small">Recording isn\'t available in this browser, so please type your answer instead.</p>'; return; }
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+        chunks = []; rec = new MediaRecorder(stream);
+        rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+        rec.onstop = function () {
+          clearInterval(tick); stream.getTracks().forEach(function (t) { t.stop(); }); b.textContent = "Record my answer"; document.getElementById("prTimer").textContent = "Turning your answer into text...";
+          var fd = new FormData(); fd.append("audio", new Blob(chunks, { type: rec.mimeType || "audio/webm" }), "answer.webm");
+          fetch("/api/transcribe", { method: "POST", body: fd }).then(function (r) { return r.json(); }).then(function (j) {
+            document.getElementById("prTimer").textContent = j.text ? "" : (j.message || "Please type your answer instead.");
+            if (j.text) document.getElementById("prText").value = j.text;
+          }).catch(function () { document.getElementById("prTimer").textContent = "Please type your answer instead."; });
+        };
+        rec.start(); t0 = Date.now(); b.textContent = "Stop";
+        tick = setInterval(function () { var s = Math.round((Date.now() - t0) / 1000); document.getElementById("prTimer").textContent = Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2) + " (most good answers take 1 to 2 minutes)"; if (s >= 300) rec.stop(); }, 500);
+      }).catch(function () { document.getElementById("prOut").innerHTML = '<p class="small">We couldn\'t use your microphone, so please type your answer instead.</p>'; });
+    };
+    document.getElementById("prGo").onclick = function () {
+      var b = this, q = pq[+document.getElementById("prQ").value] || "", ans = document.getElementById("prText").value;
+      b.disabled = true; document.getElementById("prOut").innerHTML = '<p class="small">Reading your answer...</p>';
+      var nameEl = document.getElementById("candidateName");
+      post("/api/practice-feedback", { question: q, answer: ans, candidateName: nameEl ? nameEl.value : "" }).then(function (f) {
+        var tick3 = function (k, l) { return '<span style="margin-right:12px">' + (f.star[k] ? "&#10003;" : "&#9675;") + " " + l + "</span>"; };
+        document.getElementById("prOut").innerHTML = '<div style="background:#F3FAF5;border-radius:12px;padding:14px 16px;margin-top:10px">' +
+          "<p><b>What worked</b></p><ul>" + f.worked.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" +
+          "<p><b>Try this</b></p><ul>" + f.tryThis.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" +
+          '<p class="small">' + tick3("situation", "What was going on") + tick3("action", "What you did") + tick3("result", "How it turned out") + "</p>" +
+          '<p class="small">' + f.words + " words, " + (f.length === "right" ? "a good length" : f.length === "short" ? "on the short side: add a bit more detail" : "on the long side: try cutting the background") + (f.fillers ? ". You said um, er or like " + f.fillers + " time" + (f.fillers > 1 ? "s" : "") + ": pausing instead is fine" : "") + ".</p>" +
+          '<p class="small">This feedback is generated by AI, and AI can make mistakes.</p></div>';
+      }).catch(function (e) { document.getElementById("prOut").innerHTML = '<p class="small">' + esc(e.message) + "</p>"; }).then(function () { b.disabled = false; });
+    };
+
+    // Signed in: offer the story bank, and keep the job card up to date.
+    fetch("/api/account/stories", { credentials: "same-origin", cache: "no-store" }).then(function (x) { return x.ok ? x.json() : null; }).then(function (j) {
+      if (!j || !j.stories) return;
+      var tb = document.getElementById("toBank"); if (tb) tb.classList.remove("hidden");
+      var go = document.getElementById("bankGo");
+      if (go) go.onclick = function () {
+        go.disabled = true;
+        var list = r.starAnswers || [], done = 0;
+        list.reduce(function (p, a) { return p.then(function () { return post("/api/account/stories", { title: String(a.question || "").slice(0, 200), situation: [a.situation, a.task].filter(function (x) { return x && x !== "—"; }).join(" "), action: a.action && a.action !== "—" ? a.action : "", result: a.result && a.result !== "—" ? a.result : "", source: "interview_prep" }).then(function () { done++; }, function () {}); }); }, Promise.resolve())
+          .then(function () { document.getElementById("bankMsg").textContent = done ? "Saved " + done + " to Your story bank in My account." : "We couldn't save them just now."; });
+      };
+      if (!JOB) post("/api/account/jobs", { title: "Interview at " + company, company: r.companyName || "", advert: (document.getElementById("jobDescription") || {}).value || "", cvText: (document.getElementById("cvText") || {}).value || "" }).then(function (x) { JOB = { id: x.id }; }).catch(function () {});
+      else post("/api/account/jobs/" + JOB.id, { status: "interview" }).catch(function () {});
+    }).catch(function () {});
+  };
 })();

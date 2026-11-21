@@ -14,7 +14,7 @@ const { buildReportDocx } = require("./lib/docxExport");
 const { selectQuestions } = require("./lib/questionBank");
 const { getAvailableSlots, bookSlot } = require("./lib/booking");
 const { recordConsent } = require("./lib/consent");
-const { hasOpenAI, getOpenAI, TRANSCRIBE_MODEL } = require("./lib/aiClients");
+const { hasOpenAI, getOpenAI, TRANSCRIBE_MODEL, hasAnthropic, claudeJSON } = require("./lib/aiClients");
 const { hasStripe, createCheckoutSession, verifyPaidSession, markSessionConsumed, REPORT_BUNDLES } = require("./lib/payments");
 const { getBalance, grantCreditsForSession, consumeCredit } = require("./lib/credits");
 // FREE MODE (Sept 2026): Interview Prep Reports are free, always. Reports no
@@ -120,7 +120,7 @@ app.use((req, res, next) => identityShield.run(() => {
   const b = req.body || {};
   const answers = Array.isArray(b.answers) ? b.answers.map((a) => (a && typeof a === "object" ? Object.values(a).join("\n") : String(a || ""))) : [];
   return {
-    texts: [b.cvText, ...answers],
+    texts: [b.cvText, b.answer, ...answers],
     names: [b.candidateName, b.name],
     emails: [b.candidateEmail, b.email, req.user && req.user.email],
   };
@@ -307,6 +307,48 @@ app.post("/api/report", costlyActionLimiter, async (req, res) => {
 // this email already has report credits left over from an earlier bundle
 // purchase, if so it can skip straight to generating the report instead
 // of sending the candidate to Stripe to pay again.
+// Practise out loud: kind, specific feedback on what someone said in answer
+// to one question. It judges the words only (never how anyone looks or
+// sounds), and it never rewrites the answer into something they didn't say.
+const FILLERS = /\b(um+|uh+|erm+|er|you know|sort of|kind of|basically|like)\b/gi;
+app.post("/api/practice-feedback", costlyActionLimiter, async (req, res) => {
+  const question = String((req.body && req.body.question) || "").slice(0, 600).trim();
+  const answer = String((req.body && req.body.answer) || "").slice(0, 8000).trim();
+  if (!question || answer.split(/\s+/).length < 8) return res.status(400).json({ error: "Give a bit more of an answer first, a few sentences is plenty." });
+  const words = answer.split(/\s+/).filter(Boolean).length;
+  const fillers = (answer.match(FILLERS) || []).length;
+  const length = words < 90 ? "short" : words > 350 ? "long" : "right";
+  const fallback = {
+    worked: ["You gave an answer to the question asked."],
+    tryThis: ["Use one real example: what was going on, what you did, and how it turned out.", "Finish with the result, ideally with a number or what changed."],
+    star: { situation: false, action: false, result: false }
+  };
+  let fb = fallback;
+  if (hasAnthropic()) {
+    try {
+      const out = await claudeJSON(`You are a warm, encouraging UK interview coach. A job seeker has practised answering one interview question out loud. Give feedback on WHAT THEY SAID only. Never comment on accent, voice, appearance, confidence or anything personal. Never invent experience they didn't mention, and never write a new answer for them.
+
+QUESTION: ${question}
+
+THEIR ANSWER (transcribed, may contain small transcription errors):
+${answer}
+
+Return JSON only:
+{
+  "worked": ["one or two specific things that were good, quoting a few of their own words where helpful"],
+  "tryThis": ["one or two specific, doable improvements, e.g. add the result, say what YOU did rather than the team, cut the background"],
+  "star": { "situation": true|false, "action": true|false, "result": true|false }
+}
+Plain, kind UK English, short sentences, no em dashes, max 30 words per point.`, { maxTokens: 700 });
+      if (out && Array.isArray(out.worked) && Array.isArray(out.tryThis)) {
+        const clean = (a) => a.map((x) => String(x || "").replace(/\u2014/g, ",").slice(0, 300)).filter(Boolean).slice(0, 3);
+        fb = { worked: clean(out.worked), tryThis: clean(out.tryThis), star: { situation: !!(out.star && out.star.situation), action: !!(out.star && out.star.action), result: !!(out.star && out.star.result) } };
+      }
+    } catch (e) { console.error("[practice]", e.message); }
+  }
+  res.json({ ...fb, words, fillers, length });
+});
+
 app.get("/api/credits/balance", (req, res) => {
   res.json({ balance: getBalance(req.query.email) });
 });

@@ -1020,10 +1020,15 @@ on("confirmBooking", "click", async () => {
       "<p><b>If nerves kick in:</b> breathe out slowly, take a sip of water, and remember they invited you because they want you to do well.</p></div>" +
       '<div class="btn-row" style="margin-top:10px"><button type="button" class="btn-primary" id="dcCal">Add to my calendar</button><button type="button" class="btn-secondary" id="dcPrint">Print or save as PDF</button></div></div>';
 
-    // Practise out loud.
+    // Practise out loud. The opening pitch from section 7 comes first, then the STAR questions.
     var pq = (r.starAnswers || []).map(function (a) { return a.question; }).filter(Boolean);
+    var noFlag = function (s) { return String(s || "").replace(/\[AI UPGRADE POINT[^\]]*\]/g, "").replace(/^\s*⚠\s*/, "").trim(); };
+    var pitchParts = r.pitch ? [["Connect", noFlag(r.pitch.bread1)], ["Fit", noFlag(r.pitch.filling)], ["Values", noFlag(r.pitch.bread2)]].filter(function (p) { return p[1]; }) : [];
+    var PITCH_Q = "Tell me about yourself.";
     wrap.innerHTML += '<div class="report-block" id="practise"><h3>Practise out loud</h3><p class="small">Pick a question, answer it as if you were in the room, and get kind feedback on what you said. Only your words are checked, never how you look or sound. Try as many times as you like.</p>' +
-      '<label>Question<select id="prQ">' + pq.map(function (q, i) { return '<option value="' + i + '">' + esc(q) + "</option>"; }).join("") + "</select></label>" +
+      '<label>Question<select id="prQ">' + (pitchParts.length ? '<option value="pitch">Tell me about yourself (your opening pitch)</option>' : "") + pq.map(function (q, i) { return '<option value="' + i + '">' + esc(q) + "</option>"; }).join("") + "</select></label>" +
+      (pitchParts.length ? '<div id="prPitch" style="background:#F3FAF5;border-radius:12px;padding:14px 16px;margin:10px 0"><p><b>Your pitch from section 7.</b> Read it through a couple of times, then put it away and say it in your own words. It doesn\'t need to be word perfect. Aim for about a minute.</p>' +
+        pitchParts.map(function (p) { return "<p><b>" + p[0] + ":</b> " + esc(p[1]) + "</p>"; }).join("") + "</div>" : "") +
       '<div class="btn-row"><button type="button" class="btn-primary" id="prRec">Record my answer</button><span id="prTimer" class="small"></span></div>' +
       '<label>Or type your answer<textarea id="prText" rows="5" placeholder="Your answer appears here after recording. You can also type it."></textarea></label>' +
       '<button type="button" class="btn-primary" id="prGo">Get feedback</button><div id="prOut"></div></div>';
@@ -1068,16 +1073,35 @@ on("confirmBooking", "click", async () => {
         tick = setInterval(function () { var s = Math.round((Date.now() - t0) / 1000); document.getElementById("prTimer").textContent = Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2) + " (most good answers take 1 to 2 minutes)"; if (s >= 300) rec.stop(); }, 500);
       }).catch(function () { document.getElementById("prOut").innerHTML = '<p class="small">We couldn\'t use your microphone, so please type your answer instead.</p>'; });
     };
+    // Show the pitch only while the pitch is the chosen question.
+    var prQ = document.getElementById("prQ"), prPitch = document.getElementById("prPitch");
+    var isPitch = function () { return prQ.value === "pitch"; };
+    prQ.onchange = function () { if (prPitch) prPitch.style.display = isPitch() ? "" : "none"; document.getElementById("prOut").innerHTML = ""; };
+    prQ.onchange();
+    // A button in section 7 that jumps straight to practising the pitch.
+    if (pitchParts.length) {
+      var s7 = Array.prototype.filter.call(document.querySelectorAll("#reportPreview .report-block h3"), function (h) { return /^7\.\s*Opening Pitch/i.test(h.textContent); })[0];
+      if (s7 && !s7.parentNode.querySelector(".prPitchGo")) {
+        var go7 = document.createElement("div"); go7.className = "btn-row prPitchGo"; go7.style.marginTop = "12px";
+        go7.innerHTML = '<button type="button" class="btn-primary">Practise your pitch out loud</button>';
+        go7.querySelector("button").onclick = function () { prQ.value = "pitch"; prQ.onchange(); document.getElementById("practise").scrollIntoView({ behavior: "smooth", block: "start" }); };
+        s7.parentNode.appendChild(go7);
+      }
+    }
     document.getElementById("prGo").onclick = function () {
-      var b = this, q = pq[+document.getElementById("prQ").value] || "", ans = document.getElementById("prText").value;
+      var pitchMode = isPitch();
+      var b = this, q = pitchMode ? PITCH_Q : (pq[+prQ.value] || ""), ans = document.getElementById("prText").value;
       b.disabled = true; document.getElementById("prOut").innerHTML = '<p class="small">Reading your answer...</p>';
       var nameEl = document.getElementById("candidateName");
-      post("/api/practice-feedback", { question: q, answer: ans, candidateName: nameEl ? nameEl.value : "" }).then(function (f) {
-        var tick3 = function (k, l) { return '<span style="margin-right:12px">' + (f.star[k] ? "&#10003;" : "&#9675;") + " " + l + "</span>"; };
+      post("/api/practice-feedback", { question: q, answer: ans, kind: pitchMode ? "pitch" : "star", pitch: pitchMode ? pitchParts.map(function (p) { return p[0] + ": " + p[1]; }).join("\n") : "", candidateName: nameEl ? nameEl.value : "" }).then(function (f) {
+        var tick3 = function (set, k, l) { return '<span style="margin-right:12px">' + (set && set[k] ? "&#10003;" : "&#9675;") + " " + l + "</span>"; };
+        var ticks = pitchMode
+          ? tick3(f.pitch, "connect", "Connect: a bit about you") + tick3(f.pitch, "fit", "Fit: your skills and proof") + tick3(f.pitch, "values", "Values: how you work")
+          : tick3(f.star, "situation", "What was going on") + tick3(f.star, "action", "What you did") + tick3(f.star, "result", "How it turned out");
         document.getElementById("prOut").innerHTML = '<div style="background:#F3FAF5;border-radius:12px;padding:14px 16px;margin-top:10px">' +
           "<p><b>What worked</b></p><ul>" + f.worked.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" +
           "<p><b>Try this</b></p><ul>" + f.tryThis.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" +
-          '<p class="small">' + tick3("situation", "What was going on") + tick3("action", "What you did") + tick3("result", "How it turned out") + "</p>" +
+          '<p class="small">' + ticks + "</p>" +
           '<p class="small">' + f.words + " words, " + (f.length === "right" ? "a good length" : f.length === "short" ? "on the short side: add a bit more detail" : "on the long side: try cutting the background") + (f.fillers ? ". You said um, er or like " + f.fillers + " time" + (f.fillers > 1 ? "s" : "") + ": pausing instead is fine" : "") + ".</p>" +
           '<p class="small">This feedback is generated by AI, and AI can make mistakes.</p></div>';
       }).catch(function (e) { document.getElementById("prOut").innerHTML = '<p class="small">' + esc(e.message) + "</p>"; }).then(function () { b.disabled = false; });

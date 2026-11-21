@@ -322,7 +322,46 @@ app.post("/api/practice-feedback", costlyActionLimiter, async (req, res) => {
   if (!question || answer.split(/\s+/).length < 8) return res.status(400).json({ error: "Give a bit more of an answer first, a few sentences is plenty." });
   const words = answer.split(/\s+/).filter(Boolean).length;
   const fillers = (answer.match(FILLERS) || []).length;
-  const length = words < 90 ? "short" : words > 350 ? "long" : "right";
+  // The opening pitch ("tell me about yourself") is judged as a pitch:
+  // Connect, Fit and Values from section 7, and about a minute long.
+  const isPitch = req.body && req.body.kind === "pitch";
+  const theirPitch = isPitch ? String((req.body && req.body.pitch) || "").slice(0, 3000).trim() : "";
+  const length = isPitch ? (words < 60 ? "short" : words > 250 ? "long" : "right") : (words < 90 ? "short" : words > 350 ? "long" : "right");
+  if (isPitch) {
+    let pb = {
+      worked: ["You gave your opening pitch out loud, which is the best way to get it ready."],
+      tryThis: ["Open with a line about you, then your top skills with proof for this role, then two values and how they show in your work."],
+      pitch: { connect: false, fit: false, values: false },
+      star: { situation: false, action: false, result: false }
+    };
+    if (hasAnthropic()) {
+      try {
+        const out = await claudeJSON(`You are a warm, encouraging UK interview coach. A job seeker has practised their opening pitch, their answer to "Tell me about yourself", out loud. Give feedback on WHAT THEY SAID only. Never comment on accent, voice, appearance, confidence or anything personal. Never invent experience they didn't mention, and never write a new pitch for them.
+
+A good pitch has three layers: Connect (a short human detail about them), Fit (their top skills with proof, matched to the job), Values (two values and what they look like in how they work). It does not need to match their written pitch word for word: saying it naturally in their own words is good.
+${theirPitch ? `
+THEIR WRITTEN PITCH (for reference):
+${theirPitch}
+` : ""}
+WHAT THEY SAID (transcribed, may contain small transcription errors):
+${answer}
+
+Return JSON only:
+{
+  "worked": ["one or two specific things that were good, quoting a few of their own words where helpful"],
+  "tryThis": ["one or two specific, doable improvements, e.g. add a number to your proof, name a value and how it shows, cut the life story"],
+  "pitch": { "connect": true|false, "fit": true|false, "values": true|false }
+}
+Plain, kind UK English, short sentences, no em dashes, max 30 words per point.`, { maxTokens: 700 });
+        if (out && Array.isArray(out.worked) && Array.isArray(out.tryThis)) {
+          const clean = (a) => a.map((x) => String(x || "").replace(/\u2014/g, ",").slice(0, 300)).filter(Boolean).slice(0, 3);
+          const p = out.pitch || {};
+          pb = { worked: clean(out.worked), tryThis: clean(out.tryThis), pitch: { connect: !!p.connect, fit: !!p.fit, values: !!p.values }, star: pb.star };
+        }
+      } catch (e) { console.error("[practice:pitch]", e.message); }
+    }
+    return res.json({ ...pb, words, fillers, length });
+  }
   const fallback = {
     worked: ["You gave an answer to the question asked."],
     tryThis: ["Use one real example: what was going on, what you did, and how it turned out.", "Finish with the result, ideally with a number or what changed."],

@@ -26,6 +26,8 @@ const { createClient } = require("@supabase/supabase-js");
 const resendTopics = require("./resendTopics");
 const documents = require("./documents");
 const inactive = require("./inactive");
+const welcome = require("./welcome");
+const aiLevel = require("../lib/aiLevel");
 const { zip } = require("./zip");
 
 const TOPICS = ["loudspeaker", "guides", "dispatches", "apprenticeships"];
@@ -194,7 +196,8 @@ function mountAccounts(app, opts = {}) {
       req.sb = clientFor(req, res);
       const { data } = await req.sb.auth.getUser();
       if (data && data.user) {
-        req.user = { id: data.user.id, email: data.user.email };
+        const meta = data.user.user_metadata || {};
+        req.user = { id: data.user.id, email: data.user.email, aiLevel: aiLevel.clean(meta.ai_level), aiNudgeSeen: Boolean(meta.ai_nudge_seen) };
         inactive.touch(adminClient(), req.user.id); // once a day at most
       }
     } catch (_) { /* treat as signed out */ }
@@ -241,6 +244,8 @@ function mountAccounts(app, opts = {}) {
       memberSince: profile && profile.created_at,
       subscriptions: Object.fromEntries(TOPICS.map((t) => [t, Boolean(subs && subs[t])])),
       wording: WORDING,
+      aiLevel: req.user.aiLevel,
+      aiNudgeSeen: req.user.aiNudgeSeen,
     });
   });
 
@@ -492,6 +497,16 @@ function mountAccounts(app, opts = {}) {
         await sb.auth.updateUser({ data: { pending_subscriptions: null } });
       } catch (e) {
         console.error("[accounts] saving sign-up choices:", e.message);
+      }
+    }
+    // First confirmation: the welcome email, sent once per account.
+    if (!(data.user.user_metadata && data.user.user_metadata.welcome_sent)) {
+      try {
+        await sb.auth.updateUser({ data: { welcome_sent: true } });
+        const { data: prof } = await sb.from("profiles").select("full_name").eq("id", data.user.id).maybeSingle();
+        welcome.send(data.user.email, (prof && prof.full_name) || "").catch((e) => console.error("[accounts] welcome email:", e.message));
+      } catch (e) {
+        console.error("[accounts] welcome email:", e.message);
       }
     }
     res.redirect(next);

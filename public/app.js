@@ -633,6 +633,7 @@ function sourcesHtml(sources) {
 // Falls back to the upgrade-flag treatment if the AI call fell back
 // (bullets will be empty in that case).
 function researchBlock(title, section) {
+  if (section && section.extraOff) return block(title, `<p class="muted">${section.headline}</p>`);
   const headline = section.headline ? `<p>${section.headline}</p>` : "";
   const bullets = section.bullets && section.bullets.length
     ? `<ul>${section.bullets.map((b) => `<li>${b}</li>`).join("")}</ul>`

@@ -130,6 +130,8 @@ app.use(express.static(path.join(__dirname, "public")));
 // Comquat accounts: one login for CV Rewrite + Interview Prep. Lives in
 // ./accounts and stays switched off until the Supabase settings are added.
 const { mountAccounts } = require("./accounts");
+const aiLevel = require("./lib/aiLevel");
+const GUIDE_PREP = "https://the-common-people.com/guide-interview-prep.html";
 const { sourceKey: docKey } = require("./accounts/documents");
 mountAccounts(app);
 
@@ -187,6 +189,7 @@ app.post("/api/extract-cv", upload.single("cv"), async (req, res) => {
 // fails.
 // -------------------------------------------------------------------------
 app.post("/api/questions", costlyActionLimiter, async (req, res) => {
+  if (!aiLevel.gate(req, res, "core", "", GUIDE_PREP)) return;
   const { jobDescription, count } = req.body;
   if (!jobDescription || !jobDescription.trim()) {
     return res.status(400).json({ error: "Job description is required to select questions." });
@@ -207,7 +210,7 @@ app.post("/api/questions", costlyActionLimiter, async (req, res) => {
 // network), it degrades the same way rather than erroring out, the
 // candidate can always just type instead.
 // -------------------------------------------------------------------------
-app.post("/api/transcribe", costlyActionLimiter, upload.single("audio"), async (req, res) => {
+app.post("/api/transcribe", costlyActionLimiter, (req, res, next) => (aiLevel.gate(req, res, "core", "", GUIDE_PREP) ? next() : null), upload.single("audio"), async (req, res) => {
   const filePath = req.file && req.file.path;
   if (!hasOpenAI()) {
     if (filePath) fs.unlink(filePath, () => {});
@@ -289,13 +292,14 @@ async function ensureReportCredit({ stripeSessionId, candidateEmail }) {
 // setup.
 // -------------------------------------------------------------------------
 app.post("/api/report", costlyActionLimiter, async (req, res) => {
+  if (!aiLevel.gate(req, res, "core", "", GUIDE_PREP)) return;
   const { stripeSessionId, candidateEmail } = req.body || {};
   if (hasStripe() && !FREE_REPORTS) {
     const gate = await ensureReportCredit({ stripeSessionId, candidateEmail });
     if (!gate.ok) return res.status(402).json({ error: gate.error || "Payment required." });
   }
   try {
-    const report = await generateReport(req.body);
+    const report = await generateReport({ ...req.body, extras: aiLevel.allows(aiLevel.levelOf(req), "extra") });
     res.json(report);
   } catch (err) {
     console.error(err);
@@ -312,6 +316,7 @@ app.post("/api/report", costlyActionLimiter, async (req, res) => {
 // sounds), and it never rewrites the answer into something they didn't say.
 const FILLERS = /\b(um+|uh+|erm+|er|you know|sort of|kind of|basically|like)\b/gi;
 app.post("/api/practice-feedback", costlyActionLimiter, async (req, res) => {
+  if (!aiLevel.gate(req, res, "core", "", GUIDE_PREP)) return;
   const question = String((req.body && req.body.question) || "").slice(0, 600).trim();
   const answer = String((req.body && req.body.answer) || "").slice(0, 8000).trim();
   if (!question || answer.split(/\s+/).length < 8) return res.status(400).json({ error: "Give a bit more of an answer first, a few sentences is plenty." });
@@ -378,7 +383,8 @@ app.post("/api/report/docx", costlyActionLimiter, async (req, res) => {
         if (!gate.ok) return res.status(402).json({ error: gate.error || "Payment required." });
       }
     }
-    const report = req.body && req.body.report ? req.body.report : await generateReport(req.body);
+    if (!(req.body && req.body.report) && !aiLevel.gate(req, res, "core", "", GUIDE_PREP)) return;
+    const report = req.body && req.body.report ? req.body.report : await generateReport({ ...req.body, extras: aiLevel.allows(aiLevel.levelOf(req), "extra") });
     const buffer = await buildReportDocx(report);
     const filename = `Interview_Prep_${(report.companyName || "report").replace(/[^a-z0-9]/gi, "_")}_${uuid().slice(0, 8)}.docx`;
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");

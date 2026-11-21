@@ -157,3 +157,10 @@ body.fx-legal .legal h2{font-size:21px!important;margin-top:26px}
 body.fx-prep .site-header{padding-left:max(24px,calc((100% - 1032px) / 2))!important;padding-right:max(24px,calc((100% - 1032px) / 2))!important}
 @media (max-width:1599px){body.fx-prep .cq-links a.cq-book{right:max(20px,calc((100% - 1032px) / 2))!important}}
 @media (max-width:700px){body.fx .fx-hero-in{padding:24px 18px 22px}}
+
+/* My account and sign-in: purple to pink, the same as the CV Builder (Nov 2026) */
+body.fx.fx-account{--hero:linear-gradient(120deg,#7C3AED 0%,#B23FC4 50%,#E8467C 100%);--badge:linear-gradient(135deg,#7C3AED,#E8467C);--app:#7C3AED}
+body.fx.fx-account .fx-hero:after{background:#FF9BC4;opacity:.3}
+body.fx.fx-account main a:not(.btn):not(.tool){color:#5B21B6}
+body.fx.fx-account .notice,body.fx.fx-account .fx-tip{border-left-color:#7C3AED!important}
+body.fx.fx-account input:focus,body.fx.fx-account textarea:focus,body.fx.fx-account select:focus{border-color:#7C3AED!important;box-shadow:0 0 0 4px rgba(124,58,237,.18)!important}

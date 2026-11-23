@@ -52,6 +52,7 @@
       signin: document.getElementById("panel-signin"),
       signup: document.getElementById("panel-signup"),
       forgot: document.getElementById("panel-forgot"),
+      mfa: document.getElementById("panel-mfa"),
     };
     var show = function (which) {
       Object.keys(panels).forEach(function (k) { panels[k].classList.toggle("hidden", k !== which); });
@@ -65,17 +66,31 @@
     document.getElementById("show-forgot").addEventListener("click", function () { show("forgot"); });
     document.getElementById("back-signin").addEventListener("click", function () { show("signin"); });
     if (params.get("mode") === "signup") show("signup");
+    // Two-step sign-in: the password or link is done, the app code is next.
+    var askCode = function () {
+      show("mfa");
+      document.getElementById("title").textContent = "One more step";
+      document.querySelector("#tab-signin").parentNode.classList.add("hidden");
+      var box = document.querySelector('#form-mfa input[name="code"]');
+      if (box) box.focus();
+    };
+    if (params.get("mfa") === "1") askCode();
+    onSubmit("form-mfa", function (form, fd) {
+      return post("/api/account/mfa/verify", { code: fd.get("code"), next: next })
+        .then(function (j) { location.assign(j.next || next || "/account/me.html"); });
+    });
     if (params.get("error") === "link") say("That link has expired or has already been used. Please ask for a new one below.", false);
 
     // Already signed in? Go straight on.
     fetch("/api/account/me", { credentials: "same-origin" }).then(function (r) { return r.json(); }).then(function (j) {
       if (j && j.signedIn) location.replace(next || "/account/me.html");
+      else if (j && j.mfaNeeded) askCode();
       if (j && j.accountsOn === false) say("Accounts are being switched on. Please check back very soon.", false);
     }).catch(function () {});
 
     onSubmit("form-login", function (form, fd) {
       return post("/api/account/login", { email: fd.get("email"), password: fd.get("password"), next: next })
-        .then(function (j) { location.assign(j.next || "/account/me.html"); });
+        .then(function (j) { if (j.mfa) { askCode(); return; } location.assign(j.next || "/account/me.html"); });
     });
     onSubmit("form-link", function (form, fd) {
       return post("/api/account/email-link", { email: fd.get("email"), next: next })
@@ -108,7 +123,7 @@
     fetch("/api/account/me", { credentials: "same-origin", cache: "no-store" })
       .then(function (r) { return r.json(); })
       .then(function (j) {
-        if (!j.signedIn) { location.replace("/account/?next=" + encodeURIComponent("/account/me.html")); return; }
+        if (!j.signedIn) { location.replace("/account/?" + (j.mfaNeeded ? "mfa=1&" : "") + "next=" + encodeURIComponent("/account/me.html")); return; }
         var first = (j.name || "").split(/\s+/)[0];
         document.getElementById("hello").textContent = first ? "Hello, " + first : "Your account";
         document.getElementById("email").textContent = j.email;

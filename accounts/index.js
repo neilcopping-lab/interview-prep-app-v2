@@ -25,6 +25,7 @@ const { createServerClient, parseCookieHeader, serialize } = require("@supabase/
 const { createClient } = require("@supabase/supabase-js");
 const resendTopics = require("./resendTopics");
 const documents = require("./documents");
+const mfa = require("./mfa");
 const inactive = require("./inactive");
 const welcome = require("./welcome");
 const aiLevel = require("../lib/aiLevel");
@@ -195,7 +196,9 @@ function mountAccounts(app, opts = {}) {
     try {
       req.sb = clientFor(req, res);
       const { data } = await req.sb.auth.getUser();
-      if (data && data.user) {
+      // Two-step sign-in on but the app code not typed yet: still signed out.
+      if (data && data.user && await mfa.pending(req.sb, data.user)) req.mfaPending = { id: data.user.id, email: data.user.email };
+      else if (data && data.user) {
         const meta = data.user.user_metadata || {};
         req.user = { id: data.user.id, email: data.user.email, aiLevel: aiLevel.clean(meta.ai_level), aiNudgeSeen: Boolean(meta.ai_nudge_seen) };
         inactive.touch(adminClient(), req.user.id); // once a day at most
@@ -230,7 +233,7 @@ function mountAccounts(app, opts = {}) {
 
   // ---- who am I ----------------------------------------------------------
   api.get("/me", async (req, res) => {
-    if (!req.user) return res.json({ signedIn: false, accountsOn: true });
+    if (!req.user) return res.json({ signedIn: false, accountsOn: true, ...(req.mfaPending ? { mfaNeeded: true } : {}) });
     const [{ data: profile }, { data: subs }] = await Promise.all([
       req.sb.from("profiles").select("full_name, created_at").eq("id", req.user.id).maybeSingle(),
       req.sb.from("subscriptions").select(TOPICS.join(",")).eq("user_id", req.user.id).maybeSingle(),
@@ -278,8 +281,18 @@ function mountAccounts(app, opts = {}) {
     const email = String(req.body.email || "").trim().toLowerCase();
     const password = String(req.body.password || "");
     if (!isEmail(email) || !password) return res.status(400).json({ error: "Please enter your email and password." });
-    const { error } = await req.sb.auth.signInWithPassword({ email, password });
+    const { data: signed, error } = await req.sb.auth.signInWithPassword({ email, password });
     if (error) return res.status(400).json({ error: friendly(error) });
+    // Two-step sign-in on: the app code comes next.
+    if (signed && mfa.hasVerified(signed.user)) return res.json({ ok: true, mfa: true, next: safeNext(req.body.next) });
+    res.json({ ok: true, next: safeNext(req.body.next) });
+  });
+
+  // ---- two-step sign-in: the second step (set up in My account on Job Seekers)
+  api.post("/mfa/verify", authLimit, requireJson, async (req, res) => {
+    if (!req.mfaPending) return res.status(400).json({ error: req.user ? "You're already signed in." : "Please sign in again." });
+    const out = await mfa.verify(req.sb, req.body.code).catch((e) => ({ error: friendly(e) }));
+    if (out.error) return res.status(400).json(out);
     res.json({ ok: true, next: safeNext(req.body.next) });
   });
 
@@ -484,6 +497,7 @@ function mountAccounts(app, opts = {}) {
     const { data, error } = result;
     if (error || !data || !data.user) return res.redirect(`${pagesPath}/?error=link`);
     if (type === "recovery" || /reset\.html/.test(next)) next = `${pagesPath}/reset.html`;
+    if (await mfa.pending(sb, data.user)) return res.redirect(`${pagesPath}/?mfa=1&next=${encodeURIComponent(next)}`);
 
     // First confirmation: save the boxes they ticked on the sign-up form.
     const pending = data.user.user_metadata && data.user.user_metadata.pending_subscriptions;

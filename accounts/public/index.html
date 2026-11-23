@@ -67,6 +67,17 @@
     </form>
   </section>
 
+  <!-- TWO-STEP SIGN-IN: the code from their authenticator app -->
+  <section class="card hidden" id="panel-mfa">
+    <h2>One more step</h2>
+    <p class="small">Open your authenticator app and type the six-digit code for <strong>Comquat</strong>.</p>
+    <form id="form-mfa" novalidate>
+      <label>Code from your app<input type="text" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required></label>
+      <button class="btn btn-primary" type="submit">Sign in</button>
+    </form>
+    <details><summary class="small">Lost your phone?</summary><p class="small">Email <a href="mailto:customer.service@the-common-people.com">customer.service@the-common-people.com</a> from the address you use for Comquat, and we'll help you back in.</p></details>
+  </section>
+
   <!-- CREATE ACCOUNT -->
   <section class="card hidden" id="panel-signup" role="tabpanel" aria-labelledby="tab-signup">
     <form id="form-signup" novalidate>
@@ -92,6 +103,6 @@
   </section>
 </main>
 <footer>Comquat is part of <a href="https://the-common-people.com/">The Com'mon People</a>, run by Comquat Ventures UK Ltd.</footer>
-<script src="/account/account.js?v=20261115-spam" defer></script>
+<script src="/account/account.js?v=20261123-mfa" defer></script>
 </body>
 </html>

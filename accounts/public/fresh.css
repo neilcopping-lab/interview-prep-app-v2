@@ -80,6 +80,7 @@ body.fx-account .tool:hover{transform:translateY(-3px)}
 body.fx-account .tool:nth-child(1){background:linear-gradient(140deg,#FF8A1F,#F25C54)!important}
 body.fx-account .tool:nth-child(2){background:linear-gradient(140deg,#1F6B45,#3E9A5F)!important}
 body.fx-account .tool:nth-child(3){background:linear-gradient(140deg,#7C3AED,#E8467C)!important}
+body.fx-account .tool.tool-pitch{background:linear-gradient(140deg,#D7263D,#17191C)!important}
 body.fx-account .tool.tool-options{background:linear-gradient(140deg,#17191C 55%,#2B2E12)!important;border-bottom:6px solid #E6FF1A!important}
 body.fx-account .tool.tool-options strong,body.fx-account .tool.tool-options span{color:#fff!important}
 body.fx-account .tool.tool-options strong{color:#E6FF1A!important}

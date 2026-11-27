@@ -168,3 +168,7 @@ body.fx.fx-account .fx-hero:after{background:#FF9BC4;opacity:.3}
 body.fx.fx-account main a:not(.btn):not(.tool){color:#5B21B6}
 body.fx.fx-account .notice,body.fx.fx-account .fx-tip{border-left-color:#7C3AED!important}
 body.fx.fx-account input:focus,body.fx.fx-account textarea:focus,body.fx.fx-account select:focus{border-color:#7C3AED!important;box-shadow:0 0 0 4px rgba(124,58,237,.18)!important}
+
+/* Nov 2026: the menu now carries "Comquat for Job Seekers" and "Comquat for Recruiters",
+   so it's a touch tighter on laptops to keep My account on the same line. */
+@media (min-width:1024px){html body .nav .links,html body header.cq-head nav{gap:8px 11px!important;font-size:13px!important;letter-spacing:.01em!important}}

@@ -16,7 +16,16 @@
   if (window.__comquatVoice) return;
   window.__comquatVoice = true;
 
-  var URL_ = window.COMQUAT_TRANSCRIBE_URL || "/api/transcribe";
+  // Settings come from the script tag, so each app can point it at its own
+  // transcription endpoint (CSP-friendly, no inline script needed):
+  //   data-transcribe  where recordings go (default /api/transcribe)
+  //   data-ticket      a short-lived pass for pages without a sign-in
+  //   data-me          where to read the AI setting ("" to skip the check)
+  var tag = document.currentScript || document.querySelector('script[src*="voice.js"]');
+  var cfg = (tag && tag.dataset) || {};
+  var URL_ = cfg.transcribe || window.COMQUAT_TRANSCRIBE_URL || "/api/transcribe";
+  var TICKET = cfg.ticket || "";
+  var ME = cfg.me === undefined ? "/api/account/me" : cfg.me;
   var canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
   if (!canRecord) return;
 
@@ -42,16 +51,27 @@
     var l = ta.closest("label") || (ta.id && document.querySelector('label[for="' + ta.id + '"]'));
     return l ? l.textContent : "";
   }
-  // Does this box already have a record button of its own nearby?
-  function hasOwnMic(ta) {
-    var box = ta.parentElement;
-    for (var i = 0; box && i < 2; i++, box = box.parentElement) {
-      if (box.querySelector("[data-rec],[data-mic],.btn-mic,.yo-mic,.record-btn")) return true;
-      var btns = box.querySelectorAll("button");
-      for (var j = 0; j < btns.length; j++) {
-        if (!btns[j].closest(".cq-voice") && /record|microphone|\bmic\b/i.test(btns[j].textContent + " " + (btns[j].getAttribute("aria-label") || ""))) return true;
-      }
+  // Does this box already have a record button of its own? Look for one aimed
+  // at it by id, or one in the same small wrapper as the box.
+  var MIC = "[data-rec],[data-mic],.btn-mic,.yo-mic,.record-btn";
+  function micIn(box) {
+    if (!box) return false;
+    if (box.querySelector(MIC)) return true;
+    var btns = box.querySelectorAll("button");
+    for (var j = 0; j < btns.length; j++) {
+      if (!btns[j].closest(".cq-voice") && /record|microphone|\bmic\b/i.test(btns[j].textContent + " " + (btns[j].getAttribute("aria-label") || ""))) return true;
     }
+    return false;
+  }
+  function hasOwnMic(ta) {
+    // Boxes that talk about recording or the microphone already have their own.
+    if (/recording|microphone/i.test((ta.getAttribute("placeholder") || "") + " " + (ta.getAttribute("aria-label") || ""))) return true;
+    if (ta.id && document.querySelector('[data-mic="' + ta.id + '"],[data-target="' + ta.id + '"],[data-rec="' + ta.id + '"]')) return true;
+    var p = ta.parentElement;
+    if (!p || p === document.body) return false;
+    if (micIn(p)) return true;
+    // A box inside a <label>: the button may sit just after the label.
+    if (p.tagName === "LABEL" && p.parentElement && p.parentElement !== document.body && p.parentElement.children.length <= 4) return micIn(p.parentElement);
     return false;
   }
   function visible(el) { return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length); }
@@ -89,13 +109,21 @@
           var ext = /mp4/.test(mime) ? "mp4" : /ogg/.test(mime) ? "ogg" : /wav/.test(mime) ? "wav" : /mpeg/.test(mime) ? "mp3" : "webm";
           var fd = new FormData();
           fd.append("audio", new Blob(chunks, { type: mime }), "answer." + ext);
+          if (TICKET) fd.append("ticket", TICKET);
           st.textContent = "Turning that into words…";
-          fetch(URL_, { method: "POST", body: fd, credentials: "same-origin" })
+          // Apps that sign in with a token (not a cookie) supply their own
+          // headers through window.comquatVoiceHeaders.
+          Promise.resolve(window.comquatVoiceHeaders ? window.comquatVoiceHeaders() : {})
+            .then(function (headers) { return fetch(URL_, { method: "POST", body: fd, credentials: "same-origin", headers: headers || {} }); })
             .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
             .then(function (res) {
               if (!res.ok || !res.j.text) { st.textContent = (res.j.error || "We couldn't hear that clearly.") + " You can type your answer instead."; return; }
               var had = ta.value.trim();
-              ta.value = had ? had + " " + res.j.text : res.j.text;
+              // Set it the way a person typing would, so React-built pages
+              // (the Opportunity Engine) notice the change too.
+              var v = had ? had + " " + res.j.text : res.j.text;
+              var setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value");
+              if (setter && setter.set) setter.set.call(ta, v); else ta.value = v;
               ta.dispatchEvent(new Event("input", { bubbles: true }));
               ta.dispatchEvent(new Event("change", { bubbles: true }));
               st.textContent = "Done. Have a read and tweak it if you need to.";
@@ -128,11 +156,14 @@
 
   // AI setting Off means no recording. Signed-out visitors keep the button
   // (the server still checks before anything is sent).
-  fetch("/api/account/me", { credentials: "same-origin", cache: "no-store" })
+  function go() { if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start(); }
+  if (!ME) { go(); return; }
+  fetch(ME, { credentials: "same-origin", cache: "no-store" })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (me) {
-      if (me && me.aiLevel === "off") return;
-      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+      var level = me && (me.aiLevel || (me.company && me.company.aiLevel));
+      if (level === "off") return;
+      go();
     })
-    .catch(function () { if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start(); });
+    .catch(go);
 })();

@@ -172,3 +172,4 @@ body.fx.fx-account input:focus,body.fx.fx-account textarea:focus,body.fx.fx-acco
 /* Nov 2026: the menu now carries "Comquat for Job Seekers" and "Comquat for Recruiters",
    so it's a touch tighter on laptops to keep My account on the same line. */
 @media (min-width:1024px){html body .nav .links,html body header.cq-head nav{gap:8px 11px!important;font-size:13px!important;letter-spacing:.01em!important}}
+@media (min-width:1024px) and (max-width:1119px){html body .nav .links,html body header.cq-head nav{gap:8px 9px!important;font-size:12.5px!important;letter-spacing:0!important}}

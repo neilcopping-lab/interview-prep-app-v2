@@ -80,7 +80,9 @@ body.fx-account .tool:hover{transform:translateY(-3px)}
 body.fx-account .tool:nth-child(1){background:linear-gradient(140deg,#FF8A1F,#F25C54)!important}
 body.fx-account .tool:nth-child(2){background:linear-gradient(140deg,#1F6B45,#3E9A5F)!important}
 body.fx-account .tool:nth-child(3){background:linear-gradient(140deg,#7C3AED,#E8467C)!important}
-body.fx-account .tool.tool-options{background:linear-gradient(140deg,#0F766E,#0E7490)!important}
+body.fx-account .tool.tool-options{background:linear-gradient(140deg,#F9FF4A,#C6F500)!important}
+body.fx-account .tool.tool-options strong,body.fx-account .tool.tool-options span{color:#17191C!important}
+body.fx-account .tool.tool-options em{background:#17191C!important;color:#E6FF1A!important}
 body.fx-account .tool strong,body.fx-account .tool span{color:#fff!important}
 body.fx-account .tool span{opacity:.92}
 body.fx-account .tool em{background:#fff!important;color:var(--ink)!important;border-radius:999px;padding:7px 14px!important;font-style:normal;font-weight:700;display:inline-block;margin-top:10px}

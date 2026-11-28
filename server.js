@@ -19,8 +19,9 @@ const { hasStripe, createCheckoutSession, verifyPaidSession, markSessionConsumed
 const { getBalance, grantCreditsForSession, consumeCredit } = require("./lib/credits");
 // FREE MODE (Sept 2026): Interview Prep Reports are free, always. Reports no
 // longer need a payment or a credit. Coaching bookings still go through Stripe.
-// Set FREE_REPORTS=off in Render to switch report payments back on.
-const FREE_REPORTS = process.env.FREE_REPORTS !== "off";
+// Reports have no price at all now (28 Nov 2026), so there is no switch to
+// turn report payments back on.
+const FREE_REPORTS = true;
 const { sendBookingNotificationToOwner, sendBookingConfirmationToCandidate, sendConsentNotificationToOwner, sendCreditNotificationToOwner } = require("./lib/email");
 
 const app = express();
@@ -307,7 +308,8 @@ app.post("/api/report", costlyActionLimiter, async (req, res) => {
   }
 });
 
-// Lets the frontend check, before showing the £15/£20/£25 paywall, whether
+// Left over from when reports were paid for. Reports are free now; this
+// still answers for anyone who bought credits before, and lets the frontend check whether
 // this email already has report credits left over from an earlier bundle
 // purchase, if so it can skip straight to generating the report instead
 // of sending the candidate to Stripe to pay again.
@@ -469,10 +471,9 @@ app.post("/api/consent", (req, res) => {
 });
 
 // -------------------------------------------------------------------------
-// PAYMENT, real Stripe Checkout, shared by both paid products. The
-// frontend calls this right before report generation (£25) and right
-// before confirming a coaching booking (£45), passing `product: "report"`
-// or `product: "coaching"`, gets back a Stripe-hosted checkout URL, and
+// PAYMENT, real Stripe Checkout, for the optional £45 coaching call only.
+// Reports are free, so `product: "coaching"` is the only one accepted. The
+// frontend gets back a Stripe-hosted checkout URL, and
 // redirects the whole page there. Falls back to a clear "not configured"
 // message if STRIPE_SECRET_KEY isn't set yet, rather than erroring out.
 // -------------------------------------------------------------------------

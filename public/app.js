@@ -65,7 +65,7 @@ function restorePendingState() {
 }
 
 // Runs once on page load. `type` (added to both success_url and cancel_url
-// server-side) tells this apart: "report" is the normal £25-report flow
+// server-side) tells this apart: "report" is the old paid-report flow (reports are free now)
 // (also the default, for safety, if it's ever missing); "coaching" is
 // returning from paying the £45 for a coaching slot, which needs a much
 // lighter landing, there's no report state to restore or regenerate here,
